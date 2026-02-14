@@ -32,9 +32,12 @@ interface PatientRowProps {
   onFieldChange?: (field: string, value: any) => void;
   /** Rendered in the always-visible header row (e.g. elapsed wait time) */
   headerExtra?: React.ReactNode;
+  /** Subject line shown prominently above patient name */
+  subject?: string;
+  subjectColor?: string;
 }
 
-export function PatientRow({ patient, children, onEdit, hideDetails, expanded, onToggle, editableFields, draft, onFieldChange, headerExtra }: PatientRowProps) {
+export function PatientRow({ patient, children, onEdit, hideDetails, expanded, onToggle, editableFields, draft, onFieldChange, headerExtra, subject, subjectColor }: PatientRowProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 
@@ -55,34 +58,41 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
       <div className="flex items-center">
         <button
           type="button"
-          className="flex-1 flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.04] transition-colors"
+          className="flex-1 flex flex-col px-4 py-3 text-left hover:bg-white/[0.04] transition-colors gap-1"
           onClick={onToggle}
         >
-          <svg
-            className={cn(
-              "w-3 h-3 shrink-0 text-muted-foreground/50 transition-transform duration-200",
-              expanded && "rotate-90"
-            )}
-            viewBox="0 0 6 10"
-            fill="currentColor"
-          >
-            <path d="M1 1l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span className="font-medium font-mono text-sm truncate text-foreground/90">{patient.name}</span>
-          {patient.age != null && patient.sex && (
-            <span className="text-muted-foreground text-xs font-mono shrink-0">
-              {patient.age}{patient.sex.charAt(0).toUpperCase()}
+          {subject && (
+            <span className={cn("text-[10px] font-mono font-bold uppercase tracking-wider", subjectColor ?? "text-muted-foreground")}>
+              {subject}
             </span>
           )}
-          <span className="text-muted-foreground text-xs font-mono truncate flex-1 text-right">
-            {patient.chief_complaint ?? "—"}
-          </span>
-          {patient.esi_score != null && (
-            <Badge variant={ESI_VARIANT[patient.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
-              ESI {patient.esi_score}
-            </Badge>
-          )}
-          {headerExtra}
+          <div className="flex items-center gap-3 w-full">
+            <svg
+              className={cn(
+                "w-3 h-3 shrink-0 text-muted-foreground/50 transition-transform duration-200",
+                expanded && "rotate-90"
+              )}
+              viewBox="0 0 6 10"
+              fill="currentColor"
+            >
+              <path d="M1 1l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="font-medium font-mono text-sm truncate text-foreground/90">{patient.name}</span>
+            {patient.age != null && patient.sex && (
+              <span className="text-muted-foreground text-xs font-mono shrink-0">
+                {patient.age}{patient.sex.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span className="text-muted-foreground text-xs font-mono truncate flex-1 text-right">
+              {patient.chief_complaint ?? "—"}
+            </span>
+            {patient.esi_score != null && (
+              <Badge variant={ESI_VARIANT[patient.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
+                ESI {patient.esi_score}
+              </Badge>
+            )}
+            {headerExtra}
+          </div>
         </button>
         {onEdit && (
           <button

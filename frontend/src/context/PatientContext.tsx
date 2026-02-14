@@ -208,8 +208,23 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     addLogEntry(patient.pid, patient.name, "called_in", tickRef.current);
   }, [patientHook, addLogEntry]);
 
+  // Wrap discharge/done actions so they always log events
+  const dischargePatientWithLog = useCallback(async (pid: string) => {
+    const p = patientsRef.current.find((pt) => pt.pid === pid);
+    await patientHook.dischargePatient(pid);
+    if (p) addLogEntry(pid, p.name, "discharged", tickRef.current);
+  }, [patientHook, addLogEntry]);
+
+  const markDoneWithLog = useCallback(async (pid: string) => {
+    const p = patientsRef.current.find((pt) => pt.pid === pid);
+    await patientHook.markDone(pid);
+    if (p) addLogEntry(pid, p.name, "marked_done", tickRef.current);
+  }, [patientHook, addLogEntry]);
+
   const value: PatientContextValue = {
     ...patientHook,
+    dischargePatient: dischargePatientWithLog,
+    markDone: markDoneWithLog,
     simState: simHook.simState,
     setSimState: simHook.setSimState,
     start: simHook.start,

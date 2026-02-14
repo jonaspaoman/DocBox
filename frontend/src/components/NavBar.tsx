@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { usePatientContext } from "@/context/PatientContext";
 
 const LINKS = [
   { href: "/", label: "Operations" },
@@ -9,13 +10,59 @@ const LINKS = [
   { href: "/doctor", label: "Doctor" },
 ];
 
+function HeartbeatMonitor({ active }: { active: boolean }) {
+  return (
+    <svg
+      width="32"
+      height="18"
+      viewBox="0 0 64 28"
+      fill="none"
+      className="overflow-visible"
+    >
+      {/* Flat line path */}
+      <polyline
+        points="0,14 18,14 22,14 26,2 30,26 34,8 38,18 42,14 64,14"
+        stroke={active ? "#34d399" : "#555"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        className={active ? "heartbeat-line" : ""}
+      />
+      {/* Sweep dot that traces the line */}
+      {active && (
+        <circle r="2.5" fill="#34d399" className="heartbeat-dot">
+          <animateMotion
+            dur="1.5s"
+            repeatCount="indefinite"
+            path="M0,14 L18,14 L22,14 L26,2 L30,26 L34,8 L38,18 L42,14 L64,14"
+          />
+        </circle>
+      )}
+      {/* Glow filter for active state */}
+      {active && (
+        <defs>
+          <filter id="hb-glow">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      )}
+    </svg>
+  );
+}
+
 export function NavBar() {
   const pathname = usePathname();
+  const { simState } = usePatientContext();
 
   return (
     <header className="bg-[oklch(0.1_0_0)] header-glow px-6 py-3 flex items-center justify-between">
-      <Link href="/" className="flex items-center gap-2">
-        <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 glow-green" />
+      <Link href="/" className="flex items-center gap-2.5">
+        <HeartbeatMonitor active={simState.is_running} />
         <h1 className="text-sm font-mono font-bold tracking-widest text-foreground/90 uppercase">
           DocBox
         </h1>

@@ -152,3 +152,12 @@
   border-bottom: 1px solid oklch(1 0 0 / 6%);
   box-shadow: 0 1px 12px oklch(0.7 0.15 160 / 8%);
 }
+
+/* Heartbeat monitor line animation */
+.heartbeat-line {
+  filter: drop-shadow(0 0 3px #34d399) drop-shadow(0 0 6px #34d39966);
+}
+
+.heartbeat-dot {
+  filter: drop-shadow(0 0 4px #34d399);
+}

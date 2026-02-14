@@ -10,6 +10,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 58,
     chief_complaint: "Chest pain radiating to left arm",
     triage_notes: "58M, substernal chest pain 7/10, onset 2h ago. Diaphoretic. PMH: HTN, hyperlipidemia.",
+    hpi: "58-year-old male with history of HTN and hyperlipidemia presents with 2 hours of substernal chest pressure 7/10 radiating to left arm. Associated diaphoresis and mild nausea. No prior cardiac history. Takes lisinopril 10mg and atorvastatin 40mg daily.",
+    objective: "T 98.4 HR 96 BP 158/92 RR 20 SpO2 97%. Diaphoretic. Heart: regular rate, no murmurs. Lungs clear. No JVD or peripheral edema.",
     esi_score: 2,
     color: "grey",
     status: "called_in",
@@ -24,6 +26,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 34,
     chief_complaint: "Severe abdominal pain, 6 hours",
     triage_notes: "34F, acute RLQ pain 8/10, nausea, low-grade fever 100.4F. Guarding on exam.",
+    hpi: "34-year-old female with no significant PMH presents with 6 hours of acute-onset RLQ abdominal pain. Pain began periumbilically and migrated to RLQ. Associated nausea, one episode of vomiting, and low-grade fever. Last menstrual period 2 weeks ago, regular. Denies vaginal bleeding or discharge.",
+    objective: "T 100.4 HR 92 BP 128/78 RR 18 SpO2 99%. Abdomen: tenderness RLQ with voluntary guarding. Positive McBurney's point. No rebound. Bowel sounds present.",
     esi_score: 3,
     color: "yellow",
     status: "er_bed",
@@ -44,6 +48,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 72,
     chief_complaint: "Fall with hip pain",
     triage_notes: "72M, mechanical fall at home, unable to bear weight on right leg. No LOC.",
+    hpi: "72-year-old male tripped over a rug at home and fell onto right side. Unable to bear weight on right leg since the fall. Denies LOC, head strike, or anticoagulant use. PMH: osteoarthritis, type 2 DM.",
+    objective: "T 98.0 HR 88 BP 148/82 RR 16 SpO2 97%. Right hip: shortened and externally rotated. Tenderness over greater trochanter. Unable to perform SLR. Distal pulses intact, sensation normal.",
     esi_score: 3,
     color: "grey",
     status: "waiting_room",
@@ -58,6 +64,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 28,
     chief_complaint: "Migraine with visual changes",
     triage_notes: "28F, worst headache of life, photophobia, visual scotoma. No fever, no neck stiffness.",
+    hpi: "28-year-old female with known migraine history presents with severe headache 9/10, describes it as 'worst headache of life.' Associated photophobia and right-sided visual scotoma lasting 20 minutes prior to headache onset. No fever, neck stiffness, or recent trauma. Last migraine was 3 months ago.",
+    objective: "T 98.2 HR 76 BP 122/74 RR 14 SpO2 100%. Alert, photophobic. PERRL. No papilledema. Neck supple, negative Kernig and Brudzinski. Neuro exam intact.",
     esi_score: 3,
     color: "grey",
     status: "er_bed",
@@ -76,6 +84,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 45,
     chief_complaint: "Laceration to right forearm",
     triage_notes: "45M, 6cm laceration right forearm from kitchen knife. Bleeding controlled. Neurovascularly intact.",
+    hpi: "45-year-old male sustained a 6cm laceration to the volar aspect of right forearm while cutting vegetables. Bleeding controlled with direct pressure. No numbness or weakness in hand. Right-hand dominant. Tetanus booster 3 years ago.",
+    objective: "T 98.6 HR 74 BP 130/80 RR 14 SpO2 99%. 6cm linear laceration volar right forearm, clean edges, subcutaneous depth. No tendon involvement. Radial pulse 2+, sensation intact to light touch in median/ulnar/radial distributions. Full ROM digits.",
     esi_score: 4,
     color: "green",
     status: "er_bed",
@@ -94,6 +104,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 61,
     chief_complaint: "Shortness of breath, worsening",
     triage_notes: "61F, progressive dyspnea x3 days, SpO2 89% on RA, bilateral crackles. PMH: CHF.",
+    hpi: "61-year-old female with CHF (EF 35%) presents with 3 days of worsening dyspnea at rest and orthopnea. Gained 8 lbs in the past week. Has been non-compliant with fluid restriction and missed furosemide doses. Denies chest pain or fever. PMH: CHF, HTN, DM2.",
+    objective: "T 98.8 HR 110 BP 168/94 RR 28 SpO2 89% on RA → 94% on 4L NC. JVP elevated. Lungs: bilateral crackles to mid-lung fields. Heart: S3 gallop. 2+ pitting edema bilateral LE.",
     esi_score: 2,
     color: "red",
     status: "er_bed",
@@ -114,6 +126,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 19,
     chief_complaint: "Ankle sprain during basketball",
     triage_notes: "19M, inversion injury left ankle playing basketball. Swelling, able to bear weight with pain.",
+    hpi: "19-year-old male inverted left ankle while landing from a jump during basketball game. Immediate swelling and pain over lateral malleolus. Able to bear weight with difficulty. No prior ankle injuries. No pop or crack heard.",
+    objective: "T 98.6 HR 68 BP 118/72 RR 14 SpO2 100%. Left ankle: swelling and ecchymosis over lateral malleolus. TTP over ATFL. Negative squeeze test. Able to bear weight 4 steps with limp. Anterior drawer mildly positive.",
     esi_score: 5,
     color: "grey",
     status: "waiting_room",
@@ -128,6 +142,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 55,
     chief_complaint: "Syncopal episode",
     triage_notes: "55F, witnessed syncope at grocery store. LOC ~30s, now alert. PMH: none known.",
+    hpi: "55-year-old female with no known PMH had a witnessed syncopal episode while standing in line at the grocery store. LOC approximately 30 seconds, no seizure-like activity. Felt lightheaded and nauseated prior. Now alert and oriented. Denies chest pain, palpitations, or recent illness. Has been eating and drinking normally.",
+    objective: "T 98.4 HR 78 BP 110/68 (supine), 98/60 (standing) RR 16 SpO2 98%. Alert, well-appearing. Heart: RRR, no murmurs. Lungs clear. Neuro intact. No tongue bite or incontinence.",
     esi_score: 3,
     color: "grey",
     status: "er_bed",
@@ -147,6 +163,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 40,
     chief_complaint: "Allergic reaction — facial swelling",
     triage_notes: "40M, lip and tongue swelling after eating shellfish. No stridor. Given epi by EMS.",
+    hpi: "40-year-old male developed lip and tongue swelling within 30 minutes of eating shrimp at a restaurant. Also noted diffuse hives and throat tightness. EMS administered epinephrine 0.3mg IM en route. Symptoms improving on arrival. Known shellfish allergy but thought dish was shellfish-free. No prior anaphylaxis episodes. No current medications.",
+    objective: "T 98.6 HR 102 BP 108/70 RR 18 SpO2 98%. Mild lip edema (improving). No stridor or hoarseness. Diffuse urticaria fading. Lungs clear, no wheezing. Oropharynx: mild uvular edema.",
     esi_score: 2,
     color: "grey",
     status: "er_bed",
@@ -162,6 +180,8 @@ export const MOCK_PATIENTS: Patient[] = [
     age: 38,
     chief_complaint: "Wrist pain after fall",
     triage_notes: "38F, FOOSH injury, tenderness over distal radius. Neurovascularly intact.",
+    hpi: "38-year-old female fell forward onto outstretched right hand while jogging. Immediate wrist pain and swelling. Pain 6/10 with movement. Right-hand dominant. No prior fractures. Denies numbness or tingling in fingers.",
+    objective: "T 98.6 HR 72 BP 120/76 RR 14 SpO2 100%. Right wrist: swelling and tenderness over distal radius dorsally. No gross deformity. Radial pulse 2+, capillary refill <2s. Sensation intact. Limited ROM due to pain.",
     esi_score: 4,
     color: "green",
     status: "done",
@@ -173,23 +193,51 @@ export const MOCK_PATIENTS: Patient[] = [
 
 let nextMockId = 11;
 
+const MOCK_TEMPLATES = [
+  {
+    name: "Alex Turner", complaint: "Fever and cough x3 days",
+    triage: "45M, productive cough ×3 days, fever 101.8F, SpO2 96% on RA. No travel history. PMH: asthma.",
+    hpi: "Patient reports 3 days of worsening productive cough with yellow-green sputum, subjective fevers, and mild dyspnea on exertion. Denies hemoptysis, chest pain, or sick contacts. Uses albuterol inhaler PRN.",
+    objective: "T 101.8 HR 98 BP 132/80 RR 20 SpO2 96%. Lungs: decreased breath sounds RLL with crackles. No wheezing. Pharynx clear.",
+  },
+  {
+    name: "Nina Patel", complaint: "Nausea and vomiting",
+    triage: "29F, nausea/vomiting ×12 hrs, unable to keep liquids down. Mild epigastric tenderness. No fever.",
+    hpi: "Patient with 12 hours of persistent nausea and non-bloody, non-bilious vomiting (6 episodes). Ate leftover takeout last night. Mild cramping abdominal pain. Last BM this morning, normal. Denies diarrhea, fever, or recent travel.",
+    objective: "T 98.6 HR 104 BP 108/68 RR 16 SpO2 99%. Abdomen: soft, mild epigastric tenderness, no guarding or rebound. Mucous membranes dry.",
+  },
+  {
+    name: "Oscar Mendez", complaint: "Lower back pain",
+    triage: "52M, acute lower back pain after lifting heavy box. No radiation to legs. No bowel/bladder changes.",
+    hpi: "Patient was lifting a heavy box at work 6 hours ago and felt sudden sharp pain in the lower back. Pain is 7/10, worse with movement, better lying flat. No leg weakness, numbness, or tingling. No bowel or bladder dysfunction. No prior back surgeries.",
+    objective: "T 98.4 HR 82 BP 140/88 RR 16 SpO2 99%. Lumbar paraspinal tenderness bilaterally. No midline tenderness. SLR negative bilaterally. Strength 5/5 LE. Sensation intact. Rectal tone normal.",
+  },
+  {
+    name: "Grace Kim", complaint: "Skin rash spreading",
+    triage: "33F, diffuse urticarial rash ×6 hrs, started on trunk now spreading to extremities. No SOB or throat tightness. Started new laundry detergent yesterday.",
+    hpi: "Patient noticed itchy raised welts on torso 6 hours ago, now spread to arms and legs. Recently switched laundry detergent. Denies new medications, foods, or insect bites. No lip/tongue swelling, difficulty breathing, or voice changes. No prior similar episodes.",
+    objective: "T 98.6 HR 78 BP 118/72 RR 14 SpO2 100%. Diffuse urticarial plaques on trunk and extremities. No angioedema. Oropharynx clear. Lungs clear bilaterally.",
+  },
+  {
+    name: "Felix Dubois", complaint: "Dizziness and lightheadedness",
+    triage: "67M, episodic dizziness ×2 days, worse with head turning. One near-fall. PMH: HTN, BPH.",
+    hpi: "Patient reports 2 days of intermittent room-spinning dizziness triggered by head movements, particularly rolling over in bed and looking up. Associated nausea, no vomiting. One near-fall yesterday. Denies hearing changes, tinnitus, headache, or focal weakness. Medications: lisinopril, tamsulosin.",
+    objective: "T 98.2 HR 72 BP 138/82 RR 14 SpO2 98%. Dix-Hallpike positive on right with rotatory nystagmus and reproduction of vertigo. Neurological exam otherwise normal. Gait steady with Romberg negative.",
+  },
+];
+
 export function getNextMockPatient(): Patient {
-  const names = ["Alex Turner", "Nina Patel", "Oscar Mendez", "Grace Kim", "Felix Dubois"];
-  const complaints = [
-    "Fever and cough x3 days",
-    "Nausea and vomiting",
-    "Lower back pain",
-    "Skin rash spreading",
-    "Dizziness and lightheadedness",
-  ];
-  const i = (nextMockId - 11) % names.length;
+  const i = (nextMockId - 11) % MOCK_TEMPLATES.length;
+  const t = MOCK_TEMPLATES[i];
   const patient: Patient = {
     pid: `p${nextMockId++}`,
-    name: names[i],
+    name: t.name,
     sex: Math.random() > 0.5 ? "M" : "F",
     age: Math.floor(Math.random() * 60) + 18,
-    chief_complaint: complaints[i],
-    triage_notes: `Auto-generated simulated patient. ${complaints[i]}.`,
+    chief_complaint: t.complaint,
+    triage_notes: t.triage,
+    hpi: t.hpi,
+    objective: t.objective,
     esi_score: Math.floor(Math.random() * 4) + 2,
     color: "grey",
     status: "called_in",

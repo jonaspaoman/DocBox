@@ -41,6 +41,7 @@ export interface Patient {
   lab_results?: LabResult[];
   time_to_discharge?: number;
   discharge_blocked_reason?: string;
+  rejection_notes?: string[];
   discharge_papers?: Record<string, string>;
   entered_current_status_tick?: number;
   created_at?: string;
