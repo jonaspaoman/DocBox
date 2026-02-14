@@ -27,8 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        <NavBar />
-        <PatientProvider>{children}</PatientProvider>
+        <PatientProvider>
+          <NavBar />
+          {children}
+        </PatientProvider>
       </body>
     </html>
   );

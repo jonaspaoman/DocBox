@@ -2,6 +2,7 @@
 
 import { Board } from "@/components/Board";
 import { ControlPanel } from "@/components/ControlPanel";
+import { MetricsBar } from "@/components/MetricsBar";
 import { LogPanel } from "@/components/LogPanel";
 import { usePatientContext } from "@/context/PatientContext";
 
@@ -47,7 +48,8 @@ export default function Home() {
           eventLog={eventLog}
         />
       </div>
-      <div className="w-[260px] shrink-0">
+      <div className="w-[300px] shrink-0 flex flex-col border-l border-border/30">
+        <MetricsBar patients={patients} eventLog={eventLog} currentTick={simState.current_tick} />
         <LogPanel entries={eventLog} />
       </div>
     </div>

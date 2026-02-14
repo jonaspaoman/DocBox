@@ -26,24 +26,35 @@ export default function NursePage() {
   const [expandedPid, setExpandedPid] = useState<string | null>(null);
 
   const calledIn = useMemo(() => {
-    const filtered = patients.filter((p) => p.status === "called_in");
-    if (!search.trim()) return filtered;
-    const q = search.toLowerCase();
-    return filtered.filter((p) => p.name.toLowerCase().includes(q));
-  }, [patients, search]);
+    let filtered = patients.filter((p) => p.status === "called_in");
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter((p) => p.name.toLowerCase().includes(q));
+    }
+    // Most recent first
+    filtered.sort((a, b) => {
+      const ta = arrivalTimes.get(a.pid)?.getTime() ?? 0;
+      const tb = arrivalTimes.get(b.pid)?.getTime() ?? 0;
+      return tb - ta;
+    });
+    return filtered;
+  }, [patients, search, arrivalTimes]);
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
       <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-2 max-w-2xl mx-auto w-full">
-        <h2 className="text-sm font-mono font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
-          Incoming Patients
+        <div className="mb-4">
+          <h1 className="text-lg font-mono font-bold text-foreground/90 tracking-wide">Nurse Inbox</h1>
+          <p className="text-[11px] font-mono text-muted-foreground/50 mt-0.5">Review and triage incoming patients</p>
+        </div>
+        <div className="flex items-center gap-2 mb-3">
           <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-            {calledIn.length}
+            {calledIn.length} pending
           </span>
-        </h2>
+        </div>
         {calledIn.length === 0 && (
           <p className="text-muted-foreground text-xs font-mono py-8 text-center">
-            No incoming patients right now.
+            No notifications right now.
           </p>
         )}
         {calledIn.map((p) => (
@@ -136,6 +147,8 @@ function NursePatientRow({
       editableFields={editing ? nurseEditableFields : undefined}
       draft={editing ? draft : undefined}
       onFieldChange={editing ? (field, value) => setDraft({ ...draft, [field]: value }) : undefined}
+      subject="Incoming Patient"
+      subjectColor="text-yellow-400"
       headerExtra={arrivalTime ? <ElapsedTime since={arrivalTime} className="text-yellow-400 text-[10px] shrink-0" /> : undefined}
     >
       {editing ? (
