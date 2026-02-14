@@ -64,9 +64,11 @@ class SimulationEngine:
     async def _check_labs(self, tick: int):
         patients = get_db().table("patients").select("*").eq("status", "er_bed").execute().data
         for p in patients:
-            if not p.get("lab_results"):
+            ed_session = p.get("ed_session") or {}
+            labs = ed_session.get("labs")
+            if not labs:
                 continue
-            for lab in p["lab_results"]:
+            for lab in labs:
                 if lab.get("arrives_at_tick") == tick:
                     color = "red" if lab.get("is_surprising") else p["color"]
                     changes = {"color": color, "version": p["version"] + 1}
@@ -148,8 +150,10 @@ class SimulationEngine:
         patient_data = self.dataset[self.inject_index].copy()
         self.inject_index += 1
 
-        if patient_data.get("lab_results"):
-            for lab in patient_data["lab_results"]:
+        ed_session = patient_data.get("ed_session") or {}
+        labs = ed_session.get("labs")
+        if labs:
+            for lab in labs:
                 lab["arrives_at_tick"] = tick + lab.get("arrives_at_tick", 10)
 
         patient_data["entered_current_status_tick"] = tick
