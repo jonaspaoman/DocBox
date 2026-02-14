@@ -20,7 +20,7 @@ VAPI_ASSISTANT_ID = os.environ["VAPI_ASSISTANT_ID"]
 def main():
     client = Vapi(token=VAPI_API_KEY)
 
-    calls = client.calls.list(assistant_id=VAPI_ASSISTANT_ID, limit=50)
+    calls = client.calls.list(assistant_id=VAPI_ASSISTANT_ID, limit=1)
 
     for call in calls:
         transcript = getattr(call, "transcript", None) or (
