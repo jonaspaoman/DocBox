@@ -147,10 +147,3 @@ Keep it clear, warm, and under 300 words."""
     assert "follow" in avs.lower() or "return" in avs.lower(), "AVS should mention follow-up or return instructions"
 
 
-def main():
-    client = client()
-    test_openai_api_key_valid(client)
-    test_discharge_evaluation_format(client)
-
-if __name__ == "__main__":
-    main()

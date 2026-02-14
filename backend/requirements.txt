@@ -4,5 +4,6 @@ pydantic
 openai
 supabase
 httpx
+requests
 pytest
 pytest-asyncio
