@@ -1,0 +1,337 @@
+[
+  {
+    "name": "Maria Santos",
+    "sex": "F",
+    "age": 34,
+    "chief_complaint": "Severe abdominal pain, 6 hours",
+    "hpi": "34F presents with acute onset RLQ abdominal pain radiating to back. Pain 8/10. Associated nausea, one episode vomiting. No fever. LMP 2 weeks ago.",
+    "pmh": "No significant PMH. No prior surgeries.",
+    "objective": "T 99.1 HR 92 BP 128/78 RR 18. Tenderness RLQ with guarding. Positive McBurney's point. No rebound.",
+    "primary_diagnoses": "Acute appendicitis",
+    "plan": "Surgical consult, IV antibiotics, NPO, admit for appendectomy.",
+    "esi_score": 3,
+    "triage_notes": "34F, acute RLQ pain 8/10, nausea/vomiting, guarding on exam. Concern for appendicitis. ESI 3.",
+    "lab_results": [
+      {"test": "CBC", "result": "WBC 14.2k (elevated)", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "CMP", "result": "Normal", "is_surprising": false, "arrives_at_tick": 10},
+      {"test": "CT Abdomen", "result": "Inflamed appendix, no perforation", "is_surprising": false, "arrives_at_tick": 15}
+    ]
+  },
+  {
+    "name": "James Walker",
+    "sex": "M",
+    "age": 62,
+    "chief_complaint": "Chest pain, 2 hours",
+    "hpi": "62M with substernal chest pressure radiating to left arm, onset 2 hours ago at rest. Associated diaphoresis and nausea. Hx HTN, hyperlipidemia, smoker 30 pack-years.",
+    "pmh": "Hypertension, hyperlipidemia, type 2 diabetes. No prior cardiac history.",
+    "objective": "T 98.6 HR 98 BP 158/92 RR 20 SpO2 96%. Diaphoretic. Heart RRR, no murmurs. Lungs clear.",
+    "primary_diagnoses": "Acute coronary syndrome",
+    "plan": "Serial troponins, 12-lead ECG, aspirin 325mg, nitroglycerin PRN, cardiology consult.",
+    "esi_score": 2,
+    "triage_notes": "62M, chest pressure with arm radiation and diaphoresis. Cardiac risk factors. ESI 2.",
+    "lab_results": [
+      {"test": "Troponin", "result": "0.08 ng/mL (elevated)", "is_surprising": true, "arrives_at_tick": 6},
+      {"test": "CBC", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "BMP", "result": "Glucose 198, otherwise normal", "is_surprising": false, "arrives_at_tick": 8}
+    ]
+  },
+  {
+    "name": "Ashley Chen",
+    "sex": "F",
+    "age": 28,
+    "chief_complaint": "Laceration to left forearm",
+    "hpi": "28F cut left forearm on broken glass while washing dishes. Bleeding controlled with pressure. No numbness or weakness distally. Tetanus up to date.",
+    "pmh": "None. NKDA.",
+    "objective": "T 98.4 HR 72 BP 118/70 RR 14. 4cm linear laceration left volar forearm, clean edges, no tendon/nerve involvement. Intact sensation and motor distally.",
+    "primary_diagnoses": "Simple laceration, left forearm",
+    "plan": "Wound irrigation, primary closure with sutures, tetanus booster if needed, wound care instructions.",
+    "esi_score": 5,
+    "triage_notes": "28F, simple forearm laceration from glass. Hemostasis achieved. No neurovascular compromise. ESI 5.",
+    "lab_results": []
+  },
+  {
+    "name": "Robert Mitchell",
+    "sex": "M",
+    "age": 45,
+    "chief_complaint": "Asthma exacerbation",
+    "hpi": "45M with known asthma presents with progressive dyspnea and wheezing x 12 hours. Used albuterol inhaler 6 times without relief. Triggered by upper respiratory infection 3 days ago.",
+    "pmh": "Asthma (moderate persistent), seasonal allergies. Uses fluticasone/salmeterol daily.",
+    "objective": "T 99.0 HR 110 BP 138/82 RR 28 SpO2 91% on RA. Diffuse expiratory wheezes bilaterally. Accessory muscle use. Speaking in short sentences.",
+    "primary_diagnoses": "Acute asthma exacerbation, moderate-severe",
+    "plan": "Continuous nebulized albuterol, ipratropium, IV methylprednisolone 125mg, supplemental O2, reassess in 1 hour.",
+    "esi_score": 2,
+    "triage_notes": "45M, severe asthma exacerbation. SpO2 91%, accessory muscle use, poor response to home nebulizer. ESI 2.",
+    "lab_results": [
+      {"test": "ABG", "result": "pH 7.38, pCO2 42, pO2 68", "is_surprising": false, "arrives_at_tick": 7},
+      {"test": "Chest X-ray", "result": "Hyperinflation, no infiltrates or pneumothorax", "is_surprising": false, "arrives_at_tick": 10}
+    ]
+  },
+  {
+    "name": "Linda Okafor",
+    "sex": "F",
+    "age": 71,
+    "chief_complaint": "Fall with hip pain",
+    "hpi": "71F tripped on a rug at home and fell onto right side. Unable to bear weight on right leg. No head strike or LOC. On warfarin for atrial fibrillation.",
+    "pmh": "Atrial fibrillation, osteoporosis, hypertension. Warfarin 5mg daily.",
+    "objective": "T 98.2 HR 88 (irregular) BP 142/78 RR 16. Right leg shortened and externally rotated. TTP right hip. Neurovascularly intact distally.",
+    "primary_diagnoses": "Right hip fracture",
+    "plan": "X-ray hip, check INR, orthopedic consult, pain management with IV acetaminophen, hold warfarin.",
+    "esi_score": 3,
+    "triage_notes": "71F, fall with right hip pain, unable to bear weight. On warfarin. Shortened/externally rotated leg. ESI 3.",
+    "lab_results": [
+      {"test": "X-ray Hip", "result": "Displaced femoral neck fracture", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "INR", "result": "3.8 (supratherapeutic)", "is_surprising": true, "arrives_at_tick": 6},
+      {"test": "CBC", "result": "Hgb 11.2, otherwise normal", "is_surprising": false, "arrives_at_tick": 7}
+    ]
+  },
+  {
+    "name": "David Park",
+    "sex": "M",
+    "age": 19,
+    "chief_complaint": "Migraine headache",
+    "hpi": "19M with known migraines presents with severe left-sided throbbing headache x 8 hours. Associated photophobia, nausea. Took sumatriptan at home without relief. No fever, neck stiffness, or visual changes.",
+    "pmh": "Migraine with aura, diagnosed age 14. No other conditions.",
+    "objective": "T 98.6 HR 68 BP 122/74 RR 14. Alert, photophobic, no focal neuro deficits. Neck supple. Kernig/Brudzinski negative.",
+    "primary_diagnoses": "Migraine headache, intractable",
+    "plan": "IV metoclopramide 10mg + diphenhydramine 25mg, IV ketorolac 30mg, dark quiet room, reassess in 45 min.",
+    "esi_score": 4,
+    "triage_notes": "19M, intractable migraine not responsive to sumatriptan. No red flags for secondary cause. ESI 4.",
+    "lab_results": []
+  },
+  {
+    "name": "Patricia Gomez",
+    "sex": "F",
+    "age": 55,
+    "chief_complaint": "Dysuria and flank pain, 3 days",
+    "hpi": "55F with burning urination, urinary frequency, and right flank pain x 3 days. Fever to 101.5 this morning. No vaginal discharge. History of recurrent UTIs.",
+    "pmh": "Recurrent UTIs, type 2 diabetes (A1c 7.8), hypertension.",
+    "objective": "T 101.8 HR 96 BP 132/78 RR 18. Right CVA tenderness. Suprapubic tenderness. No peritoneal signs.",
+    "primary_diagnoses": "Acute pyelonephritis",
+    "plan": "UA with culture, blood cultures, BMP, CBC. IV ceftriaxone 1g, IV fluids, reassess for admission vs outpatient antibiotics.",
+    "esi_score": 3,
+    "triage_notes": "55F, dysuria with fever 101.8 and flank pain. Diabetic. Concern for pyelonephritis. ESI 3.",
+    "lab_results": [
+      {"test": "Urinalysis", "result": "Positive nitrites, WBC >50, bacteria", "is_surprising": false, "arrives_at_tick": 5},
+      {"test": "CBC", "result": "WBC 16.8k", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "BMP", "result": "Creatinine 1.4 (baseline 0.9)", "is_surprising": false, "arrives_at_tick": 8}
+    ]
+  },
+  {
+    "name": "Kevin Brooks",
+    "sex": "M",
+    "age": 8,
+    "chief_complaint": "Right wrist injury after fall from monkey bars",
+    "hpi": "8M fell from monkey bars at school, landed on outstretched right hand. Immediate pain and swelling right wrist. No open wound. Moving fingers but guarding wrist. Mom reports no prior fractures.",
+    "pmh": "None. Up to date on immunizations. NKDA.",
+    "objective": "T 98.4 HR 92 BP 108/68 RR 18. Swelling and deformity distal right forearm/wrist. TTP dorsal wrist. Intact radial pulse, cap refill <2s, moves all fingers.",
+    "primary_diagnoses": "Distal radius fracture (suspected buckle fracture)",
+    "plan": "X-ray wrist, splint, ibuprofen for pain, orthopedic follow-up in 1 week.",
+    "esi_score": 4,
+    "triage_notes": "8M, fall on outstretched hand, wrist deformity and swelling. Neurovascularly intact. ESI 4.",
+    "lab_results": [
+      {"test": "X-ray Wrist", "result": "Buckle fracture distal radius, no displacement", "is_surprising": false, "arrives_at_tick": 7}
+    ]
+  },
+  {
+    "name": "Susan Williams",
+    "sex": "F",
+    "age": 42,
+    "chief_complaint": "Allergic reaction with hives",
+    "hpi": "42F developed diffuse urticaria 1 hour after eating shrimp at a restaurant. Denies lip/tongue swelling, difficulty breathing, or throat tightness. Has known shellfish allergy but did not realize dish contained shrimp.",
+    "pmh": "Shellfish allergy, seasonal allergies. Carries EpiPen but did not use.",
+    "objective": "T 98.6 HR 84 BP 124/76 RR 16 SpO2 99%. Diffuse urticarial rash trunk and extremities. No angioedema. No wheezing or stridor. Oropharynx clear.",
+    "primary_diagnoses": "Acute urticaria, allergic reaction to shellfish",
+    "plan": "IM epinephrine 0.3mg (given prophylactically), IV diphenhydramine 50mg, IV famotidine 20mg, IV methylprednisolone 125mg. Monitor 4 hours for biphasic reaction.",
+    "esi_score": 3,
+    "triage_notes": "42F, acute urticaria after shellfish exposure. No anaphylaxis features currently. Known allergy. ESI 3.",
+    "lab_results": []
+  },
+  {
+    "name": "Thomas Anderson",
+    "sex": "M",
+    "age": 38,
+    "chief_complaint": "Syncope at work",
+    "hpi": "38M had witnessed syncopal episode at work. Was standing in a meeting, felt lightheaded, then collapsed. LOC ~10 seconds per coworkers. No seizure activity. Rapid recovery. No chest pain, palpitations, or headache. Skipped breakfast, only had coffee.",
+    "pmh": "No significant PMH. Social drinker. No medications.",
+    "objective": "T 98.4 HR 64 BP 118/72 RR 14 SpO2 100%. Alert, oriented. Orthostatics negative. Cardiac exam normal. Neuro exam nonfocal.",
+    "primary_diagnoses": "Vasovagal syncope",
+    "plan": "ECG, orthostatic vitals, BMP, CBC. If workup negative, discharge with PCP follow-up.",
+    "esi_score": 3,
+    "triage_notes": "38M, witnessed syncope at work with rapid recovery. No cardiac symptoms. Likely vasovagal. ESI 3.",
+    "lab_results": [
+      {"test": "ECG", "result": "Normal sinus rhythm, no ST changes", "is_surprising": false, "arrives_at_tick": 5},
+      {"test": "BMP", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "CBC", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8}
+    ]
+  },
+  {
+    "name": "Fatima Al-Hassan",
+    "sex": "F",
+    "age": 67,
+    "chief_complaint": "Shortness of breath, worsening 2 days",
+    "hpi": "67F with CHF presents with progressive dyspnea on exertion and orthopnea x 2 days. 5lb weight gain this week. Ran out of furosemide 4 days ago. Bilateral leg swelling. PND last night.",
+    "pmh": "CHF (EF 35%), hypertension, type 2 diabetes, CKD stage 3.",
+    "objective": "T 98.2 HR 102 BP 168/94 RR 24 SpO2 92% on RA. JVD present. Bibasilar crackles. 2+ bilateral lower extremity edema.",
+    "primary_diagnoses": "Acute decompensated heart failure",
+    "plan": "IV furosemide 40mg, supplemental O2, BNP, BMP, chest X-ray, daily weights, cardiology consult.",
+    "esi_score": 2,
+    "triage_notes": "67F, CHF exacerbation with dyspnea, edema, SpO2 92%. Medication non-compliance. ESI 2.",
+    "lab_results": [
+      {"test": "BNP", "result": "1850 pg/mL (markedly elevated)", "is_surprising": false, "arrives_at_tick": 7},
+      {"test": "BMP", "result": "K 5.2, Cr 1.8", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "Chest X-ray", "result": "Bilateral pleural effusions, pulmonary edema", "is_surprising": false, "arrives_at_tick": 10}
+    ]
+  },
+  {
+    "name": "Marcus Johnson",
+    "sex": "M",
+    "age": 25,
+    "chief_complaint": "Ankle injury playing basketball",
+    "hpi": "25M rolled right ankle during a basketball game 3 hours ago. Immediate swelling and pain. Unable to bear weight. No pop or crack heard. Applying ice intermittently.",
+    "pmh": "None. NKDA.",
+    "objective": "T 98.6 HR 74 BP 126/78 RR 14. Swelling and ecchymosis right lateral ankle. TTP anterior talofibular ligament. Negative squeeze test. Negative Ottawa rules but X-ray ordered given inability to bear weight.",
+    "primary_diagnoses": "Right ankle sprain, grade 2",
+    "plan": "X-ray ankle to rule out fracture, RICE protocol, ACE wrap, crutches, ibuprofen, ortho follow-up if not improving in 1 week.",
+    "esi_score": 5,
+    "triage_notes": "25M, ankle inversion injury playing basketball. Swelling, unable to bear weight. ESI 5.",
+    "lab_results": [
+      {"test": "X-ray Ankle", "result": "No fracture. Soft tissue swelling laterally.", "is_surprising": false, "arrives_at_tick": 7}
+    ]
+  },
+  {
+    "name": "Dorothy Chen",
+    "sex": "F",
+    "age": 78,
+    "chief_complaint": "Confusion and fever",
+    "hpi": "78F brought by daughter who noticed mom increasingly confused over 24 hours. Fever to 102 at home. Decreased oral intake. Baseline: independent, sharp. Daughter reports foul-smelling urine. No cough, no falls.",
+    "pmh": "Hypertension, osteoarthritis, mild cognitive impairment. Lisinopril, acetaminophen PRN.",
+    "objective": "T 102.4 HR 104 BP 98/58 RR 20 SpO2 97%. Confused, oriented to person only. Dry mucous membranes. Suprapubic tenderness. No nuchal rigidity.",
+    "primary_diagnoses": "Urinary tract infection with sepsis",
+    "plan": "Blood cultures x2, UA with culture, CBC, BMP, lactate. IV NS bolus 1L, IV ceftriaxone 1g. Reassess mental status after fluids.",
+    "esi_score": 2,
+    "triage_notes": "78F, acute confusion and fever 102.4. Hypotensive. Concern for urosepsis. ESI 2.",
+    "lab_results": [
+      {"test": "Lactate", "result": "4.2 mmol/L (elevated)", "is_surprising": true, "arrives_at_tick": 5},
+      {"test": "UA", "result": "Positive nitrites, WBC >100, bacteria", "is_surprising": false, "arrives_at_tick": 6},
+      {"test": "CBC", "result": "WBC 22k, bands 15%", "is_surprising": false, "arrives_at_tick": 8}
+    ]
+  },
+  {
+    "name": "Ryan O'Brien",
+    "sex": "M",
+    "age": 32,
+    "chief_complaint": "Kidney stone pain",
+    "hpi": "32M with sudden onset severe left flank pain radiating to groin x 4 hours. Pain colicky, 10/10. Associated nausea and vomiting. Hematuria noted. History of one prior kidney stone 2 years ago.",
+    "pmh": "Prior calcium oxalate kidney stone. No chronic conditions.",
+    "objective": "T 98.8 HR 102 BP 148/88 RR 20. Writhing in pain. Left CVA tenderness. Abdomen soft, nondistended. No peritoneal signs.",
+    "primary_diagnoses": "Acute nephrolithiasis",
+    "plan": "IV ketorolac 30mg, IV ondansetron 4mg, CT abdomen/pelvis without contrast, UA, BMP. Urology consult if stone >6mm or signs of obstruction.",
+    "esi_score": 3,
+    "triage_notes": "32M, severe colicky flank pain with hematuria. History of kidney stones. ESI 3.",
+    "lab_results": [
+      {"test": "UA", "result": "Hematuria, no infection", "is_surprising": false, "arrives_at_tick": 5},
+      {"test": "CT Abdomen", "result": "4mm left ureteral stone at UVJ, mild hydronephrosis", "is_surprising": false, "arrives_at_tick": 12}
+    ]
+  },
+  {
+    "name": "Emily Torres",
+    "sex": "F",
+    "age": 16,
+    "chief_complaint": "Abdominal pain and vomiting, 2 days",
+    "hpi": "16F with 2 days of diffuse abdominal pain, nausea, and vomiting. Unable to keep anything down. Increased thirst and urination last 2 weeks. Lost 8 lbs recently. No prior medical history. No possibility of pregnancy per patient.",
+    "pmh": "None. No medications. NKDA.",
+    "objective": "T 98.0 HR 118 BP 108/62 RR 26 (Kussmaul). Fruity breath odor. Diffuse abdominal tenderness without guarding. Dry mucous membranes. Alert but fatigued.",
+    "primary_diagnoses": "Diabetic ketoacidosis, new-onset type 1 diabetes",
+    "plan": "IV NS bolus, insulin drip per DKA protocol, BMP q2h, POC glucose q1h, endocrinology consult, ICU admission.",
+    "esi_score": 2,
+    "triage_notes": "16F, vomiting with Kussmaul breathing and fruity breath. New-onset DKA suspected. ESI 2.",
+    "lab_results": [
+      {"test": "POC Glucose", "result": "486 mg/dL", "is_surprising": false, "arrives_at_tick": 3},
+      {"test": "BMP", "result": "Glucose 486, K 5.8, bicarb 8, AG 28", "is_surprising": false, "arrives_at_tick": 7},
+      {"test": "VBG", "result": "pH 7.18, pCO2 18", "is_surprising": false, "arrives_at_tick": 7}
+    ]
+  },
+  {
+    "name": "George Harris",
+    "sex": "M",
+    "age": 54,
+    "chief_complaint": "Nosebleed, 1 hour, won't stop",
+    "hpi": "54M with anterior epistaxis x 1 hour. Tried direct pressure at home for 20 min without success. On aspirin and clopidogrel after coronary stent 6 months ago. No history of nosebleeds.",
+    "pmh": "CAD s/p PCI with DES 6 months ago, hypertension, hyperlipidemia. ASA 81mg + clopidogrel daily.",
+    "objective": "T 98.6 HR 82 BP 158/92 RR 16. Active bleeding from left anterior nasal septum. No posterior bleeding visualized. Oropharynx clear of blood.",
+    "primary_diagnoses": "Anterior epistaxis",
+    "plan": "Anterior nasal packing with Merocel, oxymetazoline spray, CBC, INR/PT. Hold aspirin discussion with cardiology. ENT follow-up 48-72 hours for packing removal.",
+    "esi_score": 4,
+    "triage_notes": "54M, uncontrolled anterior nosebleed on dual antiplatelet therapy. ESI 4.",
+    "lab_results": [
+      {"test": "CBC", "result": "Hgb 13.8, platelets 188k, normal", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "INR", "result": "1.1 (normal)", "is_surprising": false, "arrives_at_tick": 7}
+    ]
+  },
+  {
+    "name": "Carmen Reyes",
+    "sex": "F",
+    "age": 40,
+    "chief_complaint": "Lower back pain, acute onset",
+    "hpi": "40F with acute onset lower back pain after lifting a heavy box at work 6 hours ago. Pain localized to lumbar region, 7/10. Radiates to left buttock but not past knee. No saddle anesthesia, no bowel/bladder changes, no leg weakness.",
+    "pmh": "Obesity (BMI 34). No prior back problems.",
+    "objective": "T 98.6 HR 76 BP 130/82 RR 16. Paravertebral muscle spasm L4-L5. Negative SLR bilaterally. Intact strength and sensation bilateral lower extremities. Normal gait (antalgic).",
+    "primary_diagnoses": "Acute lumbar strain",
+    "plan": "Ibuprofen 600mg TID, cyclobenzaprine 10mg at bedtime, activity as tolerated, ice/heat, return if weakness or bladder symptoms develop.",
+    "esi_score": 4,
+    "triage_notes": "40F, acute low back pain after lifting. No red flags. Muscle spasm. ESI 4.",
+    "lab_results": []
+  },
+  {
+    "name": "Harold Washington",
+    "sex": "M",
+    "age": 70,
+    "chief_complaint": "Rectal bleeding",
+    "hpi": "70M with bright red blood per rectum x 2 episodes today. Approximately 1 cup total. Associated lightheadedness on standing. No abdominal pain. No prior GI bleeding. On aspirin for stroke prevention.",
+    "pmh": "Hypertension, prior TIA, BPH. Aspirin 81mg, tamsulosin.",
+    "objective": "T 98.4 HR 96 BP 118/68 (orthostatic drop 20 mmHg systolic on standing) RR 16. Pale conjunctivae. Abdomen soft, nontender. Rectal: bright red blood, no masses.",
+    "primary_diagnoses": "Lower GI bleed, likely diverticular",
+    "plan": "Two large bore IVs, type and screen, CBC, BMP, coags. IV NS bolus. GI consult for colonoscopy. Transfuse if Hgb <7.",
+    "esi_score": 3,
+    "triage_notes": "70M, rectal bleeding with orthostatic hypotension. On aspirin. Possible diverticular bleed. ESI 3.",
+    "lab_results": [
+      {"test": "CBC", "result": "Hgb 9.2 (low), platelets normal", "is_surprising": false, "arrives_at_tick": 7},
+      {"test": "BMP", "result": "BUN 32 (elevated), Cr 1.1", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "Type and Screen", "result": "O positive, antibody screen negative", "is_surprising": false, "arrives_at_tick": 10}
+    ]
+  },
+  {
+    "name": "Sophia Kim",
+    "sex": "F",
+    "age": 23,
+    "chief_complaint": "Sore throat and fever, 3 days",
+    "hpi": "23F with sore throat, fever to 102, and difficulty swallowing x 3 days. No cough. No rash. Roommate had strep throat last week. Has been taking ibuprofen with minimal relief.",
+    "pmh": "None. NKDA. No medications.",
+    "objective": "T 101.6 HR 88 BP 116/72 RR 16. Pharyngeal erythema with bilateral tonsillar exudates. Tender anterior cervical lymphadenopathy. No trismus or uvular deviation. Lungs clear.",
+    "primary_diagnoses": "Acute pharyngitis, likely streptococcal",
+    "plan": "Rapid strep test, if positive start amoxicillin 500mg TID x 10 days. Supportive care. Return if worsening or difficulty breathing.",
+    "esi_score": 5,
+    "triage_notes": "23F, sore throat with fever and tonsillar exudates. Strep contact. ESI 5.",
+    "lab_results": [
+      {"test": "Rapid Strep", "result": "Positive", "is_surprising": false, "arrives_at_tick": 4}
+    ]
+  },
+  {
+    "name": "William Davis",
+    "sex": "M",
+    "age": 58,
+    "chief_complaint": "Sudden severe headache",
+    "hpi": "58M with sudden onset 'worst headache of my life' while straining at gym. Pain 10/10, global, onset within seconds. Associated neck stiffness and photophobia. No prior similar headache. No trauma.",
+    "pmh": "Hypertension (poorly controlled), smoker. Lisinopril 20mg (admits non-compliance).",
+    "objective": "T 98.8 HR 88 BP 192/108 RR 18. Alert but in distress. Neck stiffness present. Photophobic. Kernig positive. No focal neurological deficits. GCS 15.",
+    "primary_diagnoses": "Subarachnoid hemorrhage (rule out)",
+    "plan": "Stat CT head without contrast. If negative, lumbar puncture. Neurosurgery on standby. IV labetalol for BP control. Strict bedrest.",
+    "esi_score": 2,
+    "triage_notes": "58M, thunderclap headache with meningismus. Concern for SAH. Hypertensive. ESI 2.",
+    "lab_results": [
+      {"test": "CT Head", "result": "Subarachnoid hemorrhage in basal cisterns", "is_surprising": false, "arrives_at_tick": 6},
+      {"test": "CBC", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8},
+      {"test": "BMP/Coags", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8}
+    ]
+  }
+]
