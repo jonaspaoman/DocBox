@@ -32,38 +32,32 @@ class LabResult(BaseModel):
     arrives_at_tick: int
 
 
-class DischargePapers(BaseModel):
-    disposition: Optional[str] = None
-    diagnosis: Optional[str] = None
-    discharge_justification: Optional[str] = None
-    admitting_attending: Optional[str] = None
-    follow_up: Optional[str] = None
-    follow_up_instructions: Optional[str] = None
-    warning_instructions: Optional[str] = None
-    soap_note: Optional[str] = None
-    avs: Optional[str] = None
-    work_school_form: Optional[str] = None
-
-
-class EDSession(BaseModel):
-    triage: Optional[Triage] = None
-    doctor_notes: Optional[DoctorNotes] = None
-    labs: Optional[list[LabResult]] = None
-    discharge_papers: Optional[DischargePapers] = None
-
-
 class Patient(BaseModel):
     pid: UUID
-    demographics: Demographics
-    medical_history: Optional[str] = None
-    ed_session: Optional[EDSession] = None
+    name: str
+    sex: Optional[str] = None
+    age: Optional[int] = None
+    dob: Optional[date] = None
+    chief_complaint: Optional[str] = None
+    hpi: Optional[str] = None
+    pmh: Optional[str] = None
+    family_social_history: Optional[str] = None
+    review_of_systems: Optional[str] = None
+    objective: Optional[str] = None
+    primary_diagnoses: Optional[str] = None
+    justification: Optional[str] = None
+    plan: Optional[str] = None
+    esi_score: Optional[int] = None
+    triage_notes: Optional[str] = None
     color: str = "grey"
     status: str = "called_in"
     bed_number: Optional[int] = None
     is_simulated: bool = True
     version: int = 0
+    lab_results: Optional[list[LabResult]] = None
     time_to_discharge: Optional[int] = None
     discharge_blocked_reason: Optional[str] = None
+    discharge_papers: Optional[dict] = None
     entered_current_status_tick: int = 0
 
 

@@ -1,30 +1,26 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+"""WebSocket connection manager stub — will be replaced by Person B's real implementation."""
+
 import json
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 router = APIRouter()
 
 
 class ConnectionManager:
     def __init__(self):
-        self.active: list[WebSocket] = []
+        self.active_connections: list[WebSocket] = []
 
-    async def connect(self, ws: WebSocket):
-        await ws.accept()
-        self.active.append(ws)
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
 
-    def disconnect(self, ws: WebSocket):
-        self.active.remove(ws)
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
 
     async def broadcast(self, message: dict):
-        data = json.dumps(message, default=str)
-        dead = []
-        for ws in self.active:
-            try:
-                await ws.send_text(data)
-            except Exception:
-                dead.append(ws)
-        for ws in dead:
-            self.active.remove(ws)
+        data = json.dumps(message)
+        for connection in self.active_connections:
+            await connection.send_text(data)
 
 
 manager = ConnectionManager()
