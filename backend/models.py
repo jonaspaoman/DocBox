@@ -1,9 +1,28 @@
-"""Shared Pydantic models — canonical source from Person B's handoff."""
-
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
+
+
+class Demographics(BaseModel):
+    name: str
+    sex: Optional[str] = None
+    dob: Optional[date] = None
+    address: Optional[str] = None
+
+
+class Triage(BaseModel):
+    chief_complaint_summary: Optional[str] = None
+    hpi_narrative: Optional[str] = None
+    esi_score: Optional[int] = None
+    time_admitted: Optional[datetime] = None
+
+
+class DoctorNotes(BaseModel):
+    subjective: Optional[str] = None
+    objective: Optional[str] = None
+    assessment: Optional[str] = None
+    plan: Optional[str] = None
 
 
 class LabResult(BaseModel):

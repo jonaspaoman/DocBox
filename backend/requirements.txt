@@ -7,3 +7,7 @@ httpx
 requests
 pytest
 pytest-asyncio
+supabase
+python-dotenv
+pydantic
+websockets

@@ -32,12 +32,27 @@ Doctor /doctor ◄──REST──►         │
 ## Patient Data Model
 
 ```
-Patient = {pid, name, sex, age, dob, chief_complaint, hpi, pmh, family_social_history,
-           review_of_systems, objective, primary_diagnoses, justification, plan,
-           esi_score, triage_notes, color, status, bed_number, is_simulated, version,
-           lab_results, time_to_discharge, discharge_blocked_reason, discharge_papers,
-           entered_current_status_tick, created_at, updated_at}
+Patient
+├── pid (UUID)
+├── demographics: { name, sex, dob, address }
+├── medical_history: "paragraph of prior conditions"
+├── ed_session
+│   ├── triage: { chief_complaint_summary, hpi_narrative, esi_score, time_admitted }
+│   ├── doctor_notes: { subjective, objective, assessment, plan }  ← SOAP format
+│   ├── labs: [{ test, result, is_surprising, arrives_at_tick }]
+│   └── discharge_papers: { disposition, diagnosis, discharge_justification,
+│                           admitting_attending, follow_up,
+│                           follow_up_instructions, warning_instructions,
+│                           soap_note, avs, work_school_form }
+├── color, status, bed_number (flat system fields)
+├── is_simulated, version, entered_current_status_tick
+├── time_to_discharge, discharge_blocked_reason
+└── created_at, updated_at
 ```
+
+- `demographics`, `medical_history`, and `ed_session` are JSONB columns in Supabase
+- System fields (`color`, `status`, `bed_number`, etc.) remain flat columns
+- `age` is derived from `dob` — not stored
 
 ## Patient Lifecycle
 

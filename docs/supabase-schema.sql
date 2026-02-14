@@ -4,30 +4,16 @@
 -- Patients table
 CREATE TABLE patients (
   pid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  sex TEXT,
-  age INT,
-  dob DATE,
-  chief_complaint TEXT,
-  hpi TEXT,                          -- History of Present Illness
-  pmh TEXT,                          -- Past Medical History
-  family_social_history TEXT,
-  review_of_systems TEXT,
-  objective TEXT,                    -- Physical exam findings, vitals
-  primary_diagnoses TEXT,
-  justification TEXT,                -- Clinical reasoning
-  plan TEXT,                         -- Treatment plan
-  esi_score INT CHECK (esi_score BETWEEN 1 AND 5),
-  triage_notes TEXT,
-  color TEXT DEFAULT 'grey',         -- grey|yellow|green|red
-  status TEXT DEFAULT 'called_in',   -- called_in|waiting_room|er_bed|or|discharge|icu|done
+  demographics JSONB NOT NULL,                -- {name, sex, dob, address}
+  medical_history TEXT,                        -- paragraph of prior conditions
+  ed_session JSONB,                            -- {triage, doctor_notes, labs, discharge_papers}
+  color TEXT DEFAULT 'grey',                   -- grey|yellow|green|red
+  status TEXT DEFAULT 'called_in',             -- called_in|waiting_room|er_bed|or|discharge|icu|done
   bed_number INT,
   is_simulated BOOLEAN DEFAULT TRUE,
   version INT DEFAULT 0,
-  lab_results JSONB,                 -- [{test, result, is_surprising, arrives_at_tick}]
-  time_to_discharge INT,             -- tick number when discharge-ready
+  time_to_discharge INT,                       -- tick number when discharge-ready
   discharge_blocked_reason TEXT,
-  discharge_papers JSONB,            -- {soap_note, avs, work_school_form}
   entered_current_status_tick INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
