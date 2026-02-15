@@ -33,12 +33,12 @@ function findNextAvailableBed(patients: Patient[]): number | null {
 function FlowArrow({ label, active }: { label: string; active: boolean }) {
   return (
     <div className="flex flex-col items-center justify-center w-20 shrink-0 select-none gap-1.5">
-      <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest whitespace-nowrap">
+      <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
       <div className="relative w-full h-5 flex items-center">
         {/* Track line */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gray-200 rounded-full" />
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-white/[0.1] rounded-full" />
         {/* Animated chevrons — only when running */}
         {active && (
           <div className="absolute inset-x-0 top-0 bottom-0 overflow-hidden">
@@ -48,7 +48,7 @@ function FlowArrow({ label, active }: { label: string; active: boolean }) {
           </div>
         )}
         {/* Arrow tip */}
-        <svg className={`absolute -right-1 top-1/2 -translate-y-1/2 ${active ? "text-emerald-400" : "text-gray-300"}`} width="10" height="12" viewBox="0 0 10 12">
+        <svg className={`absolute -right-1 top-1/2 -translate-y-1/2 ${active ? "text-emerald-400" : "text-white/20"}`} width="10" height="12" viewBox="0 0 10 12">
           <path d="M2 2l5 4-5 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
@@ -125,8 +125,8 @@ export function Board({
         <FlowArrow label="Assign" active={isRunning} />
 
         {/* Hospital boundary */}
-        <div className="relative bg-white rounded-lg p-3 border border-emerald-500/20 flex flex-col gap-3">
-          <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/60 bg-white border border-emerald-500/20 rounded">
+        <div className="relative bg-[oklch(0.14_0_0)] rounded-lg p-3 border border-emerald-500/15 flex flex-col gap-3">
+          <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-500/50 bg-[oklch(0.14_0_0)] border border-emerald-500/15 rounded">
             Hospital
           </div>
           <BedGrid

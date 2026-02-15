@@ -51,14 +51,14 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
 
   return (
     <div className={cn(
-      "rounded-md overflow-hidden border-l-2 border border-gray-200 bg-gray-50 transition-colors",
-      expanded && "border-gray-300 bg-gray-100",
+      "rounded-md overflow-hidden border-l-2 border border-white/[0.08] bg-white/[0.03] transition-colors",
+      expanded && "border-white/[0.12] bg-white/[0.05]",
       COLOR_BORDER[patient.color] || "border-l-gray-500"
     )}>
       <div className="flex items-center">
         <button
           type="button"
-          className="flex-1 flex flex-col px-4 py-3 text-left hover:bg-gray-100 transition-colors gap-1"
+          className="flex-1 flex flex-col px-4 py-3 text-left hover:bg-white/[0.04] transition-colors gap-1"
           onClick={onToggle}
         >
           {subject && (
@@ -98,7 +98,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
           <button
             type="button"
             onClick={onEdit}
-            className="px-3 py-3 text-xs font-mono font-medium text-muted-foreground hover:text-foreground hover:bg-gray-100 transition-colors shrink-0"
+            className="px-3 py-3 text-xs font-mono font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.04] transition-colors shrink-0"
           >
             Edit
           </button>
@@ -109,27 +109,27 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
         className="transition-[max-height,opacity] duration-200 ease-in-out overflow-hidden"
         style={{ maxHeight: expanded ? height + 32 : 0, opacity: expanded ? 1 : 0 }}
       >
-        <div ref={contentRef} className="px-4 pb-4 space-y-2 border-t border-gray-200 pt-3">
+        <div ref={contentRef} className="px-4 pb-4 space-y-2 border-t border-white/[0.08] pt-3">
           {!hideDetails && (
             <>
               {/* Demographics bar */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono rounded-md border border-gray-200 bg-gray-50 p-2.5">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono rounded-md border border-white/[0.08] bg-white/[0.03] p-2.5">
                 {editableFields?.has("name") ? (
                   <>
                     <span className="text-muted-foreground/50 uppercase">Name</span>
-                    <input className="bg-transparent border-b border-gray-300 text-foreground/80 outline-none text-xs font-mono" value={draft?.name ?? patient.name} onChange={(e) => onFieldChange?.("name", e.target.value)} />
+                    <input className="bg-transparent border-b border-white/[0.15] text-foreground/80 outline-none text-xs font-mono" value={draft?.name ?? patient.name} onChange={(e) => onFieldChange?.("name", e.target.value)} />
                   </>
                 ) : null}
                 {editableFields?.has("age") ? (
                   <>
                     <span className="text-muted-foreground/50 uppercase">Age</span>
-                    <input type="number" className="bg-transparent border-b border-gray-300 text-foreground/80 outline-none text-xs font-mono w-16" value={draft?.age ?? patient.age ?? ""} onChange={(e) => onFieldChange?.("age", parseInt(e.target.value) || 0)} />
+                    <input type="number" className="bg-transparent border-b border-white/[0.15] text-foreground/80 outline-none text-xs font-mono w-16" value={draft?.age ?? patient.age ?? ""} onChange={(e) => onFieldChange?.("age", parseInt(e.target.value) || 0)} />
                   </>
                 ) : null}
                 {editableFields?.has("sex") ? (
                   <>
                     <span className="text-muted-foreground/50 uppercase">Sex</span>
-                    <select className="bg-transparent border-b border-gray-300 text-foreground/80 outline-none text-xs font-mono" value={draft?.sex ?? patient.sex ?? ""} onChange={(e) => onFieldChange?.("sex", e.target.value)}>
+                    <select className="bg-transparent border-b border-white/[0.15] text-foreground/80 outline-none text-xs font-mono" value={draft?.sex ?? patient.sex ?? ""} onChange={(e) => onFieldChange?.("sex", e.target.value)}>
                       <option value="">—</option>
                       <option value="M">M</option>
                       <option value="F">F</option>
@@ -139,7 +139,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
                 {editableFields?.has("esi_score") ? (
                   <>
                     <span className="text-muted-foreground/50 uppercase">ESI Score</span>
-                    <select className="bg-transparent border-b border-gray-300 text-foreground/80 outline-none text-xs font-mono" value={draft?.esi_score ?? patient.esi_score ?? 3} onChange={(e) => onFieldChange?.("esi_score", parseInt(e.target.value))}>
+                    <select className="bg-transparent border-b border-white/[0.15] text-foreground/80 outline-none text-xs font-mono" value={draft?.esi_score ?? patient.esi_score ?? 3} onChange={(e) => onFieldChange?.("esi_score", parseInt(e.target.value))}>
                       <option value={1}>1 — Resuscitation</option>
                       <option value={2}>2 — Emergent</option>
                       <option value={3}>3 — Urgent</option>
@@ -149,11 +149,11 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
                   </>
                 ) : null}
                 <span className="text-muted-foreground/50 uppercase">Status</span>
-                <span className="text-emerald-600">{patient.status}</span>
+                <span className="text-emerald-400">{patient.status}</span>
                 {patient.bed_number != null && (
                   <>
                     <span className="text-muted-foreground/50 uppercase">Bed</span>
-                    <span className="text-emerald-600">#{patient.bed_number}</span>
+                    <span className="text-emerald-400">#{patient.bed_number}</span>
                   </>
                 )}
                 {patient.dob && (
@@ -165,7 +165,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
                 {patient.time_to_discharge != null && (
                   <>
                     <span className="text-muted-foreground/50 uppercase">TTD</span>
-                    <span className="text-emerald-600">{patient.time_to_discharge} ticks</span>
+                    <span className="text-emerald-400">{patient.time_to_discharge} ticks</span>
                   </>
                 )}
               </div>
@@ -201,7 +201,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
 
               {/* Lab Results */}
               {patient.lab_results && patient.lab_results.length > 0 && (
-                <div className="rounded-md border border-gray-200 bg-gray-50 p-2.5">
+                <div className="rounded-md border border-white/[0.08] bg-white/[0.03] p-2.5">
                   <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
                     Lab Results
                   </span>
@@ -231,7 +231,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
               {/* Discharge Papers */}
               {patient.discharge_papers &&
                 Object.keys(patient.discharge_papers).length > 0 && (
-                  <div className="rounded-md border border-gray-200 bg-gray-50 p-2.5">
+                  <div className="rounded-md border border-white/[0.08] bg-white/[0.03] p-2.5">
                     <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
                       Discharge Papers
                     </span>
@@ -256,18 +256,18 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
 
 function Section({ label, value, highlight, editable, onChange, multiline }: { label: string; value: string; highlight?: "red"; editable?: boolean; onChange?: (v: string) => void; multiline?: boolean }) {
   return (
-    <div className="rounded-md border border-gray-200 bg-gray-50 p-2.5">
+    <div className="rounded-md border border-white/[0.08] bg-white/[0.03] p-2.5">
       <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">{label}</span>
       {editable ? (
         multiline ? (
           <textarea
-            className="w-full mt-1 rounded-md border border-gray-300 bg-gray-100 px-2 py-1.5 text-sm font-mono min-h-[60px] resize-y text-foreground/80 outline-none focus:border-emerald-500/40"
+            className="w-full mt-1 rounded-md border border-white/[0.12] bg-white/[0.06] px-2 py-1.5 text-sm font-mono min-h-[60px] resize-y text-foreground/80 outline-none focus:border-emerald-500/40"
             value={value}
             onChange={(e) => onChange?.(e.target.value)}
           />
         ) : (
           <input
-            className="w-full mt-1 bg-transparent border-b border-gray-300 text-sm text-foreground/80 outline-none font-mono focus:border-emerald-500/40 pb-0.5"
+            className="w-full mt-1 bg-transparent border-b border-white/[0.15] text-sm text-foreground/80 outline-none font-mono focus:border-emerald-500/40 pb-0.5"
             value={value}
             onChange={(e) => onChange?.(e.target.value)}
           />

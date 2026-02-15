@@ -13,11 +13,11 @@ const COLOR_MAP: Record<PatientColor, string> = {
 };
 
 const ESI_COLOR: Record<number, string> = {
-  1: "text-red-600",
-  2: "text-orange-600",
-  3: "text-yellow-600",
-  4: "text-green-600",
-  5: "text-blue-600",
+  1: "text-red-400",
+  2: "text-orange-400",
+  3: "text-yellow-400",
+  4: "text-green-400",
+  5: "text-blue-400",
 };
 
 const GLOW_MAP: Record<PatientColor, string> = {

@@ -15,14 +15,14 @@ const EVENT_LABELS: Record<LogEventType, string> = {
 };
 
 const EVENT_COLORS: Record<LogEventType, string> = {
-  called_in: "text-yellow-600",
-  accepted: "text-blue-600",
-  assigned_bed: "text-blue-600",
-  flagged_discharge: "text-emerald-600",
-  discharged: "text-emerald-600",
-  marked_done: "text-emerald-600",
-  lab_arrived: "text-orange-600",
-  turned_red: "text-red-600",
+  called_in: "text-yellow-400",
+  accepted: "text-blue-400",
+  assigned_bed: "text-blue-400",
+  flagged_discharge: "text-emerald-400",
+  discharged: "text-emerald-400",
+  marked_done: "text-emerald-400",
+  lab_arrived: "text-orange-400",
+  turned_red: "text-red-400",
 };
 
 interface EventLogProps {
@@ -57,8 +57,8 @@ export function EventLog({ entries, open, onToggle }: EventLogProps) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full right-0 mb-2 w-[420px] max-h-[320px] overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg z-50">
-          <div className="sticky top-0 bg-white border-b border-gray-200 px-3 py-1.5 flex items-center justify-between">
+        <div className="absolute bottom-full right-0 mb-2 w-[420px] max-h-[320px] overflow-y-auto rounded-md border border-white/[0.08] bg-[oklch(0.14_0_0)] shadow-lg z-50">
+          <div className="sticky top-0 bg-[oklch(0.14_0_0)] border-b border-white/[0.08] px-3 py-1.5 flex items-center justify-between">
             <span className="text-[10px] font-mono font-semibold text-muted-foreground/60 uppercase tracking-widest">
               Event Log
             </span>
@@ -75,7 +75,7 @@ export function EventLog({ entries, open, onToggle }: EventLogProps) {
               {[...entries].reverse().map((entry) => (
                 <div
                   key={entry.id}
-                  className="flex items-baseline gap-2 px-2 py-1 rounded hover:bg-gray-100 text-xs font-mono"
+                  className="flex items-baseline gap-2 px-2 py-1 rounded hover:bg-white/[0.04] text-xs font-mono"
                 >
                   <span className="text-muted-foreground/40 shrink-0 text-[10px]">
                     {entry.timestamp.toLocaleTimeString("en-US", { hour12: false })}

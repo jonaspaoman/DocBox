@@ -34,11 +34,11 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const ESI_COLORS: Record<number, string> = {
-  1: "bg-red-100 text-red-600 border-red-300",
-  2: "bg-orange-100 text-orange-600 border-orange-300",
-  3: "bg-yellow-100 text-yellow-600 border-yellow-300",
-  4: "bg-green-100 text-green-600 border-green-300",
-  5: "bg-blue-100 text-blue-600 border-blue-300",
+  1: "bg-red-500/20 text-red-400 border-red-500/30",
+  2: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+  3: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  4: "bg-green-500/20 text-green-400 border-green-500/30",
+  5: "bg-blue-500/20 text-blue-400 border-blue-500/30",
 };
 
 export function PatientModal({
@@ -64,7 +64,7 @@ export function PatientModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto bg-white border-gray-200">
+      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto bg-[oklch(0.14_0_0)] border-white/[0.08]">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between pr-6">
             <span className="font-mono text-foreground flex items-center gap-2">
@@ -105,7 +105,7 @@ export function PatientModal({
             {patient.bed_number != null && (
               <>
                 <span className="text-muted-foreground/60 uppercase">Bed</span>
-                <span className="text-emerald-600">#{patient.bed_number}</span>
+                <span className="text-emerald-400">#{patient.bed_number}</span>
               </>
             )}
             {patient.time_to_discharge != null && (
@@ -117,13 +117,13 @@ export function PatientModal({
             {arrivalEntry && (
               <>
                 <span className="text-muted-foreground/60 uppercase">Wait</span>
-                <ElapsedTime since={arrivalEntry.timestamp} className="text-yellow-600 text-xs" />
+                <ElapsedTime since={arrivalEntry.timestamp} className="text-yellow-400 text-xs" />
               </>
             )}
             {currentStatusEntry && patient.status !== "done" && (
               <>
                 <span className="text-muted-foreground/60 uppercase">In Status</span>
-                <ElapsedTime since={currentStatusEntry.timestamp} className="text-emerald-600 text-xs" />
+                <ElapsedTime since={currentStatusEntry.timestamp} className="text-emerald-400 text-xs" />
               </>
             )}
           </div>
@@ -172,10 +172,10 @@ export function PatientModal({
           {/* Doctor Rejection Notes */}
           {patient.rejection_notes && patient.rejection_notes.length > 0 && (
             <div>
-              <div className="font-mono text-[10px] uppercase tracking-widest text-yellow-600 mb-1.5">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-yellow-400 mb-1.5">
                 Doctor Rejection Notes
               </div>
-              <div className="space-y-1.5 border border-yellow-300 rounded p-2.5 bg-yellow-50">
+              <div className="space-y-1.5 border border-yellow-500/30 rounded p-2.5 bg-yellow-500/10">
                 {patient.rejection_notes.map((note, i) => (
                   <div key={i} className="flex gap-2 text-xs font-mono">
                     <span className="text-yellow-500 shrink-0">#{i + 1}</span>
@@ -189,13 +189,13 @@ export function PatientModal({
           {/* Discharge Papers */}
           {patient.discharge_papers && Object.keys(patient.discharge_papers).length > 0 && (
             <div>
-              <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1.5">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-400 mb-1.5">
                 Discharge Papers
               </div>
-              <div className="space-y-2 border border-emerald-300 rounded p-2.5 bg-emerald-50">
+              <div className="space-y-2 border border-emerald-500/30 rounded p-2.5 bg-emerald-500/10">
                 {Object.entries(patient.discharge_papers).map(([key, val]) => (
                   <div key={key}>
-                    <span className="text-[9px] font-mono font-semibold text-emerald-600 uppercase tracking-wider">
+                    <span className="text-[9px] font-mono font-semibold text-emerald-400 uppercase tracking-wider">
                       {key.replace(/_/g, " ")}
                     </span>
                     <p className="text-xs font-mono text-foreground/75 whitespace-pre-wrap mt-0.5 leading-relaxed">{val}</p>
