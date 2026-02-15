@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Patient } from "@/lib/types";
 import OpenAI from "openai";
+import { autocompletePatient } from "../autocomplete-patient/route";
 
 const VAPI_API_KEY = process.env.VAPI_API_KEY ?? "";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY ?? "";
@@ -141,6 +142,15 @@ async function checkForNewCalls() {
     const data = await extractPatientData(transcript);
     const patient = buildPatient(latest.id, data);
     console.log(`[vapi] Extracted: ${patient.name} (ESI ${patient.esi_score})`);
+
+    console.log(`[vapi] Autocompleting clinical fields via GPT-4o...`);
+    try {
+      const autoFields = await autocompletePatient(patient);
+      Object.assign(patient, autoFields);
+      console.log(`[vapi] Autocomplete done — ${patient.lab_results?.length ?? 0} labs, discharge in ${patient.time_to_discharge} ticks`);
+    } catch (e) {
+      console.error("[vapi] Autocomplete failed, patient will have partial data:", e);
+    }
 
     pendingPatients.push(patient);
   } catch (e) {

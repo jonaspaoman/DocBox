@@ -28,6 +28,7 @@ interface PatientContextValue {
   flagForDischarge: (pid: string) => void;
   dischargePatient: (pid: string) => Promise<void>;
   markDone: (pid: string) => Promise<void>;
+  acknowledgeLab: (pid: string) => void;
   simState: SimState;
   setSimState: React.Dispatch<React.SetStateAction<SimState>>;
   start: () => Promise<void>;
@@ -93,7 +94,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       // Check for surprising lab results arriving this tick — turn patient red
       if (p.status === "er_bed" && p.color !== "red" && p.color !== "green" && p.lab_results) {
         const hasSurprise = p.lab_results.some(
-          (lab) => lab.is_surprising && lab.arrives_at_tick <= currentTick
+          (lab) => lab.is_surprising && !lab.acknowledged && lab.arrives_at_tick <= currentTick
         );
         if (hasSurprise) {
           patientHook.updatePatient(p.pid, { color: "red" });
@@ -124,12 +125,11 @@ export function PatientProvider({ children }: { children: ReactNode }) {
 
       // Semi-auto and full-auto: flag for discharge after a delay
       // If time_to_discharge is set (from LLM rejection), use that; otherwise random
-      if (p.status === "er_bed" && p.color !== "green") {
+      // Block discharge flagging for red patients until lab is acknowledged
+      if (p.status === "er_bed" && p.color !== "green" && !(p.color === "red" && !p.lab_acknowledged)) {
         if (!dischargeTimers.current.has(p.pid)) {
           const delay = p.time_to_discharge
-            ?? (p.color === "red"
-              ? Math.floor(Math.random() * 11) + 8
-              : Math.floor(Math.random() * 9) + 4);
+            ?? Math.floor(Math.random() * 9) + 4;
           dischargeTimers.current.set(p.pid, currentTick + delay);
         }
         const readyAt = dischargeTimers.current.get(p.pid)!;
@@ -223,6 +223,19 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     if (p) addLogEntry(pid, p.name, "marked_done", tickRef.current);
   }, [patientHook, addLogEntry]);
 
+  const acknowledgeLab = useCallback((pid: string) => {
+    const p = patientsRef.current.find((pt) => pt.pid === pid);
+    const updatedLabs = p?.lab_results?.map((lab) =>
+      lab.is_surprising ? { ...lab, acknowledged: true } : lab
+    );
+    patientHook.updatePatient(pid, {
+      lab_acknowledged: true,
+      color: "grey",
+      ...(updatedLabs ? { lab_results: updatedLabs } : {}),
+    });
+    dischargeTimers.current.delete(pid);
+  }, [patientHook]);
+
   // Poll for real Vapi patients
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -245,6 +258,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     ...patientHook,
     dischargePatient: dischargePatientWithLog,
     markDone: markDoneWithLog,
+    acknowledgeLab,
     simState: simHook.simState,
     setSimState: simHook.setSimState,
     start: simHook.start,

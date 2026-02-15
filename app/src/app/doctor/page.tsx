@@ -272,7 +272,7 @@ const COLOR_BORDER: Record<string, string> = {
 };
 
 export default function DoctorPage() {
-  const { patients, updatePatient, dischargePatient, eventLog, simState } = usePatientContext();
+  const { patients, updatePatient, dischargePatient, acknowledgeLab, eventLog, simState } = usePatientContext();
 
   const [search, setSearch] = useState("");
   const [selectedPid, setSelectedPid] = useState<string | null>(null);
@@ -607,6 +607,17 @@ export default function DoctorPage() {
                   onClick={() => handleStartReview(selectedPid!, selectedPatient)}
                 >
                   Review Discharge
+                </Button>
+              )}
+              {selectedPatient.color === "red" && !selectedPatient.lab_acknowledged && (
+                <Button
+                  className="font-mono text-sm bg-amber-600 hover:bg-amber-700 text-white px-5 h-9"
+                  onClick={() => {
+                    acknowledgeLab(selectedPid!);
+                    setSelectedPid(null);
+                  }}
+                >
+                  Acknowledge Lab
                 </Button>
               )}
               <Button

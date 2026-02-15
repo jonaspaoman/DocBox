@@ -6,53 +6,55 @@ ER management system for hackathon demo — optimizes patient intake and dischar
 
 | Area | Technology |
 |------|-----------|
-| Frontend | Next.js + Tailwind + shadcn/ui + Framer Motion |
-| Backend | Python FastAPI |
-| Database | Supabase (Postgres only, FastAPI handles WebSockets) |
-| Voice agent | Vapi (phone number for triage + discharge dispute) |
-| LLM | GPT-4o (discharge reasoning, SOAP notes, paperwork) |
-| Doctor view | Mobile web fallback at `/doctor` route |
+| App | Next.js (App Router) + Tailwind + shadcn/ui + Framer Motion |
+| API Routes | Next.js API routes (`/api/reject`, `/api/vapi-patient`) |
+| Voice agent | Vapi (phone number for triage) |
+| LLM | GPT-4o via OpenAI SDK (rejection reasoning, patient data extraction) |
+| Doctor view | `/doctor` route (mobile-optimized) |
+| Nurse view | `/nurse` route (mobile-optimized) |
 | Auth | None |
-| Hosting | Vercel (UI), local/cloud (backend) |
+| Hosting | Vercel |
 
 ## Architecture
 
 ```
-Next.js UI ◄──WebSocket──► FastAPI Backend ◄──► Supabase (Postgres)
-                                  ▲
-Doctor /doctor ◄──REST──►         │
-                            Vapi Voice ──► OpenAI GPT-4o
+Next.js App (Vercel)
+├── Main board (/)           ← kanban view, simulation engine runs client-side
+├── Doctor inbox (/doctor)   ← discharge review, reject/approve, paperwork
+├── Nurse inbox (/nurse)     ← accept called-in patients to waiting room
+├── API: /api/vapi-patient   ← polls Vapi for completed calls, extracts patient via GPT-4o
+└── API: /api/reject         ← GPT-4o processes doctor rejection notes
+         ▲
+         │
+    Vapi Voice Agent ──► OpenAI GPT-4o
 ```
 
-- **Intake**: Vapi voice agent acts as triage nurse. Collects vitals, history, chief complaint. Outputs: triage notes, ESI score (1-5), patient record in DB. ESI 1-2 simulates "Call 911 recommended" — never actually calls 911.
-- **Outtake**: AI agent monitors ER beds, computes `time_to_discharge` via GPT-4o, waits for lab results, then notifies doctor. Doctor can accept (gets auto-filled discharge paperwork: ED SOAP note, AVS, work/school form) or dispute.
-- **Observability**: Backend broadcasts patient state deltas via WebSockets on a clock cycle. Frontend animates changes.
-- **UI**: Kanban board — patients as colored dots moving through pipeline. Hospital boundary visual around ER beds.
+- **No separate backend server** — simulation runs client-side in `PatientContext.tsx`.
+- **No database** — patient state lives in React state (shared across pages via context). Mock data loaded from `patients.json`.
+- **Vapi integration** — API route polls Vapi for completed calls every 3 seconds, extracts structured patient data from transcripts via GPT-4o, queues patients for the frontend to pick up.
+- **Discharge paperwork** — generated client-side in `doctor/page.tsx` using template matching on chief complaint keywords. No LLM call for paperwork generation.
+- **Rejection flow** — calls `/api/reject` which uses GPT-4o to determine additional wait time and labs.
 
 ## Patient Data Model
 
 ```
-Patient
-├── pid (UUID)
-├── demographics: { name, sex, dob, address }
-├── medical_history: "paragraph of prior conditions"
-├── ed_session
-│   ├── triage: { chief_complaint_summary, hpi_narrative, esi_score, time_admitted }
-│   ├── doctor_notes: { subjective, objective, assessment, plan }  ← SOAP format
-│   ├── labs: [{ test, result, is_surprising, arrives_at_tick }]
-│   └── discharge_papers: { disposition, diagnosis, discharge_justification,
-│                           admitting_attending, follow_up,
-│                           follow_up_instructions, warning_instructions,
-│                           soap_note, avs, work_school_form }
-├── color, status, bed_number (flat system fields)
-├── is_simulated, version, entered_current_status_tick
+Patient (flat — all fields at top level)
+├── pid: string
+├── name, sex, age, dob
+├── chief_complaint, hpi, pmh, family_social_history, review_of_systems
+├── objective, primary_diagnoses, justification, plan
+├── esi_score (1-5), triage_notes
+├── color: "grey" | "yellow" | "green" | "red"
+├── status: "called_in" | "waiting_room" | "er_bed" | "or" | "discharge" | "icu" | "done"
+├── bed_number (1-16)
+├── is_simulated, version
+├── lab_results: [{ test, result, is_surprising, arrives_at_tick }]
 ├── time_to_discharge, discharge_blocked_reason
+├── rejection_notes: string[]
+├── discharge_papers: Record<string, string>
+├── entered_current_status_tick
 └── created_at, updated_at
 ```
-
-- `demographics`, `medical_history`, and `ed_session` are JSONB columns in Supabase
-- System fields (`color`, `status`, `bed_number`, etc.) remain flat columns
-- `age` is derived from `dob` — not stored
 
 ## Patient Lifecycle
 
@@ -60,7 +62,15 @@ Patient
 called_in → waiting_room → er_bed → (or | discharge | icu) → done
 ```
 
-Each transition has PENDING gates in manual mode. Each patient has individual transition probabilities.
+## Simulation Modes
+
+| Mode | Behavior |
+|------|----------|
+| `manual` | No auto-progression. User must manually advance patients. |
+| `semi-auto` | Patients auto-flow through pipeline (one action per tick, randomly chosen). Doctor must approve discharges. |
+| `full-auto` | Like semi-auto but also auto-discharges green patients and marks OR/ICU patients done. |
+
+Simulation tick interval: `1500ms / speed_multiplier`. Each tick, one random advanceable patient action fires. ~25% chance of injecting a new patient per tick.
 
 ## Patient Colors
 
@@ -68,8 +78,8 @@ Each transition has PENDING gates in manual mode. Each patient has individual tr
 |-------|---------|
 | `grey` | Default simulated patient |
 | `yellow` | Real person who called in via Vapi |
-| `green` | Ready to discharge |
-| `red` | Flagged — surprising test result |
+| `green` | Ready to discharge (flagged by timer expiry) |
+| `red` | Flagged — surprising lab result arrived |
 
 ## Key Constraints
 
@@ -77,32 +87,59 @@ Each transition has PENDING gates in manual mode. Each patient has individual tr
 - **Never call 911** — only simulate the recommendation.
 - **One caller at a time** for real intake; simulated patients stream in parallel.
 - **Patient summaries**: 2-4 sentences max.
-- **Realtime updates**: WebSocket events/deltas, not polling/refreshes.
 - **ER beds**: 16 beds in a 4x4 grid.
 - **Demo duration**: 2-3 minutes.
-
-## Team Split
-
-- **Person A (Frontend)**: Next.js animated kanban board → `docs/frontend-handoff.md`
-- **Person B (Backend Core)**: FastAPI server, Supabase, simulation engine, WebSocket, REST API → `docs/backend-core-handoff.md`
-- **Person C (AI + Integrations)**: Vapi, discharge agent, paperwork generation, doctor mobile page → `docs/ai-integrations-handoff.md`
 
 ## File Structure
 
 ```
-/backend
-  main.py, api.py, websocket.py, simulation.py    # Person B
-  discharge_api.py, discharge_agent.py, paperwork.py  # Person C
-  db.py, models.py                                  # Person B (shared)
-  /data/patients.json                               # Person B
+/app                          # Next.js app
+  /src
+    /app
+      page.tsx                # Main kanban board
+      layout.tsx              # Root layout with PatientProvider
+      /doctor/page.tsx        # Doctor inbox + discharge paperwork
+      /nurse/page.tsx         # Nurse inbox + accept patients
+      /api/reject/route.ts    # GPT-4o rejection processing
+      /api/vapi-patient/route.ts  # Vapi call polling + GPT-4o extraction
+    /components
+      Board.tsx, Column.tsx, BedGrid.tsx, PatientDot.tsx
+      PatientModal.tsx, PatientRow.tsx
+      ControlPanel.tsx, NavBar.tsx, MetricsBar.tsx
+      EventLog.tsx, LogPanel.tsx, ElapsedTime.tsx
+      /ui (shadcn components)
+    /context
+      PatientContext.tsx       # Global state + simulation engine
+    /hooks
+      usePatients.ts           # Patient CRUD state
+      useSimulation.ts         # Sim state + controls
+      useWebSocket.ts          # WebSocket connection (optional, for external backend)
+    /lib
+      api.ts                   # REST helpers (falls back to mock data)
+      types.ts                 # TypeScript interfaces
+      mock-data.ts             # Fallback mock patients
+      patients.json            # Patient dataset for injection
+      utils.ts
+/data
+  patients.json                # Patient dataset (root copy)
 /docs
   frontend-handoff.md, backend-core-handoff.md, ai-integrations-handoff.md
   supabase-schema.sql
-/frontend                                           # Person A
+/tests                         # Python test stubs (legacy)
+```
+
+## Environment Variables
+
+```
+# app/.env.local
+VAPI_API_KEY=...              # For polling Vapi calls
+VAPI_ASSISTANT_ID=...         # Vapi triage assistant ID
+OPENAI_API_KEY=...            # For GPT-4o (rejection + extraction)
+NEXT_PUBLIC_API_URL=...       # Optional external backend URL
+NEXT_PUBLIC_WS_URL=...        # Optional WebSocket URL
 ```
 
 ## Services
 
-- UI: Vercel
+- UI + API routes: Vercel
 - Voice agent (triage nurse): Vapi
-- Database: Supabase
