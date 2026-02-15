@@ -223,6 +223,24 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     if (p) addLogEntry(pid, p.name, "marked_done", tickRef.current);
   }, [patientHook, addLogEntry]);
 
+  // Poll for real Vapi patients
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/vapi-patient");
+        if (!res.ok) return;
+        const patients: Patient[] = await res.json();
+        for (const p of patients) {
+          patientHook.addPatient(p);
+          addLogEntry(p.pid, p.name, "called_in", tickRef.current);
+        }
+      } catch {
+        // Silently ignore fetch errors
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [patientHook, addLogEntry]);
+
   const value: PatientContextValue = {
     ...patientHook,
     dischargePatient: dischargePatientWithLog,
