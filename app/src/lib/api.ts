@@ -118,3 +118,34 @@ export async function fetchSimState(): Promise<SimState> {
     is_running: false,
   };
 }
+
+// --- Rejection LLM ---
+
+export interface RejectionResult {
+  time_to_discharge: number;
+  additional_labs: { test: string; result: string; is_surprising: boolean; arrives_at_tick: number }[];
+  reasoning: string;
+}
+
+export async function processRejection(
+  patient: Patient,
+  rejectionNote: string,
+  currentTick: number
+): Promise<RejectionResult> {
+  try {
+    const res = await fetch("/api/reject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ patient, rejectionNote, currentTick }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch {
+    console.warn("Rejection LLM call failed, using defaults");
+    return {
+      time_to_discharge: Math.floor(Math.random() * 9) + 4,
+      additional_labs: [],
+      reasoning: "LLM unavailable — using default delay.",
+    };
+  }
+}

@@ -59,12 +59,12 @@ export function usePatients() {
     api.assignBed(pid, bedNumber);
   }, []);
 
-  // Flag for discharge: marks patient green (still in er_bed)
+  // Flag for discharge: marks patient green (still in er_bed), clears time_to_discharge
   const flagForDischarge = useCallback((pid: string) => {
     setPatients((prev) =>
       prev.map((p) =>
         p.pid === pid
-          ? { ...p, color: "green" as const, version: p.version + 1 }
+          ? { ...p, color: "green" as const, time_to_discharge: undefined, version: p.version + 1 }
           : p
       )
     );

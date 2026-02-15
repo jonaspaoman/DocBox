@@ -122,12 +122,14 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Semi-auto and full-auto: flag for discharge after a random delay
+      // Semi-auto and full-auto: flag for discharge after a delay
+      // If time_to_discharge is set (from LLM rejection), use that; otherwise random
       if (p.status === "er_bed" && p.color !== "green") {
         if (!dischargeTimers.current.has(p.pid)) {
-          const delay = p.color === "red"
-            ? Math.floor(Math.random() * 11) + 8
-            : Math.floor(Math.random() * 9) + 4;
+          const delay = p.time_to_discharge
+            ?? (p.color === "red"
+              ? Math.floor(Math.random() * 11) + 8
+              : Math.floor(Math.random() * 9) + 4);
           dischargeTimers.current.set(p.pid, currentTick + delay);
         }
         const readyAt = dischargeTimers.current.get(p.pid)!;

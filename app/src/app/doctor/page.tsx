@@ -260,7 +260,7 @@ function generateDischargePapers(p: Patient): DischargePapers {
 }
 
 export default function DoctorPage() {
-  const { patients, updatePatient, dischargePatient, eventLog } = usePatientContext();
+  const { patients, updatePatient, dischargePatient, eventLog, simState } = usePatientContext();
 
   const [search, setSearch] = useState("");
   const [expandedPid, setExpandedPid] = useState<string | null>(null);
@@ -272,6 +272,7 @@ export default function DoctorPage() {
   // Reject mode
   const [rejectingPid, setRejectingPid] = useState<string | null>(null);
   const [rejectionNote, setRejectionNote] = useState("");
+  const [rejectLoading, setRejectLoading] = useState(false);
 
   const eventTimes = useMemo(() => {
     const dischargeTimes = new Map<string, Date>();
@@ -363,18 +364,32 @@ export default function DoctorPage() {
     setRejectionNote("");
   };
 
-  const handleConfirmReject = (pid: string) => {
+  const handleConfirmReject = async (pid: string) => {
     const p = patients.find((pt) => pt.pid === pid);
     if (!p) return;
     const note = rejectionNote.trim();
     if (!note) return;
+
+    setRejectLoading(true);
+
+    // Call LLM for discharge delay + additional labs
+    const llmResult = await api.processRejection(p, note, simState.current_tick);
+
     const existingNotes = p.rejection_notes ?? [];
+    const existingLabs = p.lab_results ?? [];
+
     const changes: Partial<Patient> = {
       color: "grey" as const,
       rejection_notes: [...existingNotes, note],
+      time_to_discharge: llmResult.time_to_discharge,
+      ...(llmResult.additional_labs.length > 0
+        ? { lab_results: [...existingLabs, ...llmResult.additional_labs] }
+        : {}),
     };
+
     api.updatePatient(pid, changes);
     updatePatient(pid, changes);
+    setRejectLoading(false);
     setRejectingPid(null);
     setRejectionNote("");
     setExpandedPid(null);
@@ -598,10 +613,10 @@ export default function DoctorPage() {
                 size="sm"
                 variant="destructive"
                 className="font-mono text-xs"
-                disabled={!rejectionNote.trim()}
+                disabled={!rejectionNote.trim() || rejectLoading}
                 onClick={() => handleConfirmReject(rejectingPid)}
               >
-                Confirm Rejection
+                {rejectLoading ? "Processing..." : "Confirm Rejection"}
               </Button>
               <Button
                 size="sm"
