@@ -18,6 +18,14 @@ function findNextAvailableBed(patients: Patient[]): number | null {
 }
 
 export type AppMode = "docbox" | "baseline";
+export type BaselineChallengeState = "instructions" | "running" | "completed" | null;
+
+export interface BaselineScore {
+  pid: string;
+  formType: "intake" | "discharge";
+  score: number;
+  max: number;
+}
 
 interface PatientContextValue {
   patients: Patient[];
@@ -48,6 +56,13 @@ interface PatientContextValue {
   setBaselineSelectedPid: (pid: string | null) => void;
   /** Raw patients (before baseline color override) for sidebar file viewer */
   rawPatients: Patient[];
+  baselineChallengeState: BaselineChallengeState;
+  baselineStartTime: number | null;
+  baselineFinalTime: number | null;
+  startBaselineChallenge: () => Promise<void>;
+  baselineGroundTruth: Map<string, Patient>;
+  baselineScores: BaselineScore[];
+  recordBaselineScore: (pid: string, formType: "intake" | "discharge", score: number, max: number) => void;
 }
 
 const PatientContext = createContext<PatientContextValue | null>(null);
@@ -58,8 +73,13 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   const patientHook = usePatients();
   const simHook = useSimulation();
   const [eventLog, setEventLog] = useState<LogEntry[]>([]);
-  const [appMode, setAppMode] = useState<AppMode>("docbox");
+  const [appMode, setAppModeRaw] = useState<AppMode>("docbox");
   const [baselineSelectedPid, setBaselineSelectedPid] = useState<string | null>(null);
+  const [baselineChallengeState, setBaselineChallengeState] = useState<BaselineChallengeState>(null);
+  const [baselineStartTime, setBaselineStartTime] = useState<number | null>(null);
+  const [baselineFinalTime, setBaselineFinalTime] = useState<number | null>(null);
+  const [baselineGroundTruth, setBaselineGroundTruth] = useState<Map<string, Patient>>(new Map());
+  const [baselineScores, setBaselineScores] = useState<BaselineScore[]>([]);
 
   const addLogEntry = useCallback((pid: string, patientName: string, event: LogEventType, tick: number) => {
     const entry: LogEntry = {
@@ -89,12 +109,15 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   tickRef.current = simHook.simState.current_tick;
   const appModeRef = useRef(appMode);
   appModeRef.current = appMode;
+  const baselineChallengeStateRef = useRef(baselineChallengeState);
+  baselineChallengeStateRef.current = baselineChallengeState;
 
   const addLogEntryRef = useRef(addLogEntry);
   addLogEntryRef.current = addLogEntry;
 
   const dischargeTimers = useRef<Map<string, number>>(new Map());
   const waitTimers = useRef<Map<string, number>>(new Map());
+  const baselinePendingPatients = useRef<Patient[]>([]);
 
   const simTick = useCallback(() => {
     simHook.tick();
@@ -230,8 +253,16 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       pick.action();
     }
 
-    // Occasionally inject a new patient
-    if (Math.random() < 0.25) {
+    // Drip-feed pending challenge patients one per tick (both modes)
+    if (baselinePendingPatients.current.length > 0) {
+      const next = baselinePendingPatients.current.shift()!;
+      patientHook.addPatient(next);
+      addLogEntryRef.current(next.pid, next.name, "called_in", currentTick);
+    }
+
+    // Occasionally inject a new patient (skip in baseline challenge — fixed pool of 5)
+    const isBaselineChallenge = appModeRef.current === "baseline" && baselineChallengeStateRef.current === "running";
+    if (!isBaselineChallenge && Math.random() < 0.25) {
       injectPatient().then(({ patient }) => {
         patientHook.addPatient(patient);
         addLogEntryRef.current(patient.pid, patient.name, "called_in", currentTick);
@@ -248,6 +279,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(id);
   }, [simHook.simState.is_running, simHook.simState.mode, simHook.simState.speed_multiplier, simTick]);
 
+
   const resetSim = useCallback(async () => {
     await stopSim();
     simHook.setSimState({
@@ -260,6 +292,18 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     dischargeTimers.current.clear();
     waitTimers.current.clear();
     setEventLog([]);
+    baselinePendingPatients.current = [];
+
+    // Baseline: reset to instructions popup. DocBox: clear scoreboard.
+    if (appModeRef.current === "baseline") {
+      setBaselineChallengeState("instructions");
+    } else {
+      setBaselineChallengeState(null);
+    }
+    setBaselineStartTime(null);
+    setBaselineFinalTime(null);
+    setBaselineGroundTruth(new Map());
+    setBaselineScores([]);
   }, [simHook, patientHook]);
 
   const injectNewPatient = useCallback(async () => {
@@ -267,6 +311,83 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     patientHook.addPatient(patient);
     addLogEntry(patient.pid, patient.name, "called_in", tickRef.current);
   }, [patientHook, addLogEntry]);
+
+  // Wrap setAppMode to manage challenge state transitions
+  const setAppMode = useCallback((mode: AppMode) => {
+    setAppModeRaw(mode);
+    if (mode === "baseline") {
+      setBaselineChallengeState("instructions");
+    } else {
+      // DocBox: no challenge popup, scoreboard appears on START
+      setBaselineChallengeState(null);
+    }
+    setBaselineStartTime(null);
+    setBaselineFinalTime(null);
+    setBaselineGroundTruth(new Map());
+    setBaselineScores([]);
+
+  }, []);
+
+  // Start the baseline challenge: reset sim, inject 10 patients, start timer
+  const startBaselineChallenge = useCallback(async () => {
+    // Reset sim first
+    await stopSim();
+    simHook.setSimState({
+      current_tick: 0,
+      speed_multiplier: simHook.simState.speed_multiplier,
+      mode: simHook.simState.mode,
+      is_running: false,
+    });
+    patientHook.setPatients([]);
+    dischargeTimers.current.clear();
+    waitTimers.current.clear();
+    setEventLog([]);
+
+
+    // Generate 5 patients, add the first one immediately, queue the rest
+    const all: Patient[] = [];
+    for (let i = 0; i < 5; i++) {
+      const { patient } = await injectPatient();
+      all.push(patient);
+    }
+
+    // Save ground truth for all 5 (before any user edits)
+    const truth = new Map<string, Patient>();
+    for (const p of all) truth.set(p.pid, { ...p });
+    setBaselineGroundTruth(truth);
+    setBaselineScores([]);
+
+    // Add first patient now, queue rest for drip-feed via simTick
+    const [first, ...rest] = all;
+    patientHook.setPatients([first]);
+    addLogEntry(first.pid, first.name, "called_in", 0);
+    baselinePendingPatients.current = rest;
+
+    // Start the simulation
+    simHook.setSimState((prev) => ({ ...prev, is_running: true }));
+
+    // Start the challenge timer
+    setBaselineStartTime(Date.now());
+    setBaselineFinalTime(null);
+    setBaselineChallengeState("running");
+  }, [simHook, patientHook, addLogEntry]);
+
+  const recordBaselineScore = useCallback((pid: string, formType: "intake" | "discharge", score: number, max: number) => {
+    setBaselineScores((prev) => [...prev, { pid, formType, score, max }]);
+  }, []);
+
+  // Detect baseline challenge completion: all 5 patients done (baseline only)
+  useEffect(() => {
+    if (appModeRef.current !== "baseline") return;
+    if (baselineChallengeStateRef.current !== "running") return;
+    if (!baselineStartTime) return;
+    const doneCount = patientHook.patients.filter((p) => p.status === "done").length;
+    if (doneCount >= 5) {
+      setBaselineFinalTime(Date.now() - baselineStartTime);
+      setBaselineChallengeState("completed");
+    }
+  }, [patientHook.patients, baselineStartTime]);
+
 
   // Wrap discharge/done actions so they always log events
   const dischargePatientWithLog = useCallback(async (pid: string) => {
@@ -376,6 +497,13 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     baselineSelectedPid,
     setBaselineSelectedPid,
     rawPatients: patientHook.patients,
+    baselineChallengeState,
+    baselineStartTime,
+    baselineFinalTime,
+    startBaselineChallenge,
+    baselineGroundTruth,
+    baselineScores,
+    recordBaselineScore,
   };
 
   return (

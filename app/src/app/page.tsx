@@ -4,6 +4,7 @@ import { Board } from "@/components/Board";
 import { ControlPanel } from "@/components/ControlPanel";
 import { MetricsBar } from "@/components/MetricsBar";
 import { SidebarPanel } from "@/components/SidebarPanel";
+import { BaselineChallenge } from "@/components/BaselineChallenge";
 import { usePatientContext } from "@/context/PatientContext";
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-full">
+      <BaselineChallenge />
       <div className="relative flex flex-1 min-h-0">
         <div className="flex-1 min-w-0 overflow-hidden">
           <Board

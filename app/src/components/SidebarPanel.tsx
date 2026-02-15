@@ -14,23 +14,29 @@ interface SidebarPanelProps {
   entries: LogEntry[];
 }
 
-function PatientFileViewer({ patient }: { patient: Patient }) {
-  const fields: { label: string; value?: string | number | null }[] = [
-    { label: "Name", value: patient.name },
-    { label: "Age", value: patient.age },
-    { label: "Sex", value: patient.sex },
-    { label: "DOB", value: patient.dob },
-    { label: "ESI Score", value: patient.esi_score != null ? `${patient.esi_score}` : null },
-    { label: "Chief Complaint", value: patient.chief_complaint },
-    { label: "Triage Notes", value: patient.triage_notes },
-    { label: "HPI", value: patient.hpi },
-    { label: "PMH", value: patient.pmh },
-    { label: "Family / Social Hx", value: patient.family_social_history },
-    { label: "Review of Systems", value: patient.review_of_systems },
-    { label: "Objective", value: patient.objective },
-    { label: "Diagnoses", value: patient.primary_diagnoses },
-    { label: "Plan", value: patient.plan },
-  ];
+function PatientFileViewer({ patient, showDischarge, dischargeData }: { patient: Patient; showDischarge?: boolean; dischargeData?: Record<string, string> }) {
+  const papers = dischargeData ?? patient.discharge_papers;
+  const hasPapers = papers && Object.keys(papers).length > 0;
+  const isDischarge = !!showDischarge;
+
+  const fields: { label: string; value?: string | number | null }[] = isDischarge && hasPapers
+    ? Object.entries(papers!).map(([key, value]) => ({ label: key, value }))
+    : [
+        { label: "Name", value: patient.name },
+        { label: "Age", value: patient.age },
+        { label: "Sex", value: patient.sex },
+        { label: "DOB", value: patient.dob },
+        { label: "ESI Score", value: patient.esi_score != null ? `${patient.esi_score}` : null },
+        { label: "Chief Complaint", value: patient.chief_complaint },
+        { label: "Triage Notes", value: patient.triage_notes },
+        { label: "HPI", value: patient.hpi },
+        { label: "PMH", value: patient.pmh },
+        { label: "Family / Social Hx", value: patient.family_social_history },
+        { label: "Review of Systems", value: patient.review_of_systems },
+        { label: "Objective", value: patient.objective },
+        { label: "Diagnoses", value: patient.primary_diagnoses },
+        { label: "Plan", value: patient.plan },
+      ];
 
   return (
     <div className="flex flex-col h-full">
@@ -40,10 +46,10 @@ function PatientFileViewer({ patient }: { patient: Patient }) {
           <polyline points="14 2 14 8 20 8" />
         </svg>
         <span className="text-[11px] font-mono font-bold text-foreground/90 uppercase tracking-widest">
-          Patient File
+          {isDischarge ? "Discharge File" : "Patient File"}
         </span>
       </div>
-      <div className="flex-1 overflow-y-auto min-h-0 bg-gray-50/50">
+      <div className="flex-1 overflow-y-auto min-h-0 bg-gray-50/50 select-text cursor-text">
         <div className="px-3 py-2 space-y-1.5">
           <div className="text-[13px] font-mono font-bold text-foreground/85 pb-1 border-b border-border/20">
             {patient.name}
@@ -53,19 +59,25 @@ function PatientFileViewer({ patient }: { patient: Patient }) {
               </span>
             )}
           </div>
-          {fields.map(({ label, value }) => {
-            if (value == null || String(value).trim() === "") return null;
-            return (
-              <div key={label}>
-                <span className="text-[9px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-widest">
-                  {label}
-                </span>
-                <p className="text-[11px] font-mono text-foreground/75 leading-relaxed whitespace-pre-wrap">
-                  {String(value)}
-                </p>
-              </div>
-            );
-          })}
+          {isDischarge && !hasPapers ? (
+            <p className="text-muted-foreground/30 text-[11px] font-mono text-center pt-6 leading-relaxed">
+              No discharge data available for this patient.
+            </p>
+          ) : (
+            fields.map(({ label, value }) => {
+              if (value == null || String(value).trim() === "") return null;
+              return (
+                <div key={label}>
+                  <span className="text-[9px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-widest">
+                    {label}
+                  </span>
+                  <p className="text-[11px] font-mono text-foreground/75 leading-relaxed whitespace-pre-wrap select-text">
+                    {String(value)}
+                  </p>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
@@ -74,7 +86,7 @@ function PatientFileViewer({ patient }: { patient: Patient }) {
 
 export function SidebarPanel({ entries }: SidebarPanelProps) {
   const [tab, setTab] = useState<SidebarTab>("nurse");
-  const { patients, appMode, baselineSelectedPid, rawPatients } = usePatientContext();
+  const { patients, appMode, baselineSelectedPid, rawPatients, baselineGroundTruth } = usePatientContext();
   const isBaseline = appMode === "baseline";
 
   const nurseCount = useMemo(() => patients.filter((p) => p.status === "called_in").length, [patients]);
@@ -90,12 +102,18 @@ export function SidebarPanel({ entries }: SidebarPanelProps) {
     const selectedPatient = baselineSelectedPid
       ? rawPatients.find((p) => p.pid === baselineSelectedPid) ?? null
       : null;
+    const livePatient = baselineSelectedPid
+      ? patients.find((p) => p.pid === baselineSelectedPid) ?? null
+      : null;
+    const liveStatus = livePatient?.status;
+    const isInBed = liveStatus === "er_bed" || liveStatus === "discharge" || liveStatus === "done";
+    const groundTruth = baselineSelectedPid ? baselineGroundTruth.get(baselineSelectedPid) : undefined;
 
     return (
       <div className="flex flex-col h-full bg-white">
         <div className="flex-1 min-h-0 overflow-hidden border-t border-border/30">
           {selectedPatient ? (
-            <PatientFileViewer patient={selectedPatient} />
+            <PatientFileViewer patient={selectedPatient} showDischarge={isInBed} dischargeData={isInBed ? groundTruth?.discharge_papers : undefined} />
           ) : (
             <div className="flex flex-col h-full">
               <div className="px-3 py-2.5 border-b border-border/30 flex items-center gap-2 shrink-0">

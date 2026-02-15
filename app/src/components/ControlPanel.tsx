@@ -42,32 +42,38 @@ export function ControlPanel({
 
   return (
     <div className="border-t border-border/50 bg-white px-5 py-2.5 flex items-center gap-5 shrink-0 overflow-x-auto">
-      {/* Start / Pause / Resume / Reset / Add Patient */}
+      {/* Start / Pause / Resume / Add Patient — hidden in baseline. Reset always visible. */}
       <div className="flex gap-2 shrink-0">
-        {simState.is_running ? (
-          <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 gap-2 px-3.5" onClick={onStop}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
-            PAUSE
-          </Button>
-        ) : simState.current_tick > 0 ? (
-          <Button size="sm" className="font-mono text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-3.5" onClick={onStart}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
-            RESUME
-          </Button>
-        ) : (
-          <Button size="sm" className="font-mono text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-3.5" onClick={onStart}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
-            START
-          </Button>
+        {!isBaseline && (
+          <>
+            {simState.is_running ? (
+              <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 gap-2 px-3.5" onClick={onStop}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
+                PAUSE
+              </Button>
+            ) : simState.current_tick > 0 ? (
+              <Button size="sm" className="font-mono text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-3.5" onClick={onStart}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
+                RESUME
+              </Button>
+            ) : (
+              <Button size="sm" className="font-mono text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-3.5" onClick={onStart}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
+                START
+              </Button>
+            )}
+          </>
         )}
         <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-border/50 gap-2 px-3.5" onClick={onReset}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M1 3.5A4 4 0 0 1 8.5 3M9 6.5A4 4 0 0 1 1.5 7" /><polyline points="1,1 1,4 4,4" /><polyline points="9,9 9,6 6,6" /></svg>
           RESET
         </Button>
-        <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-border/50 gap-2 px-3" onClick={onInject}>
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="5" y1="1" x2="5" y2="9" /><line x1="1" y1="5" x2="9" y2="5" /></svg>
-          Patient
-        </Button>
+        {!isBaseline && (
+          <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-border/50 gap-2 px-3" onClick={onInject}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="5" y1="1" x2="5" y2="9" /><line x1="1" y1="5" x2="9" y2="5" /></svg>
+            Patient
+          </Button>
+        )}
       </div>
 
       {/* Speed */}

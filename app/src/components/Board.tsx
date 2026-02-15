@@ -230,6 +230,7 @@ export function Board({
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   const handlePatientClick = useCallback((patient: Patient) => {
+    if (isBaseline && patient.status === "waiting_room") return;
     setSelectedPatient(patient);
     if (isBaseline) {
       setBaselineSelectedPid(patient.pid);
