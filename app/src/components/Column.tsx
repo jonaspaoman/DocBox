@@ -2,6 +2,7 @@
 
 import { Patient } from "@/lib/types";
 import { PatientDot } from "./PatientDot";
+import { usePatientContext } from "@/context/PatientContext";
 
 interface ColumnProps {
   title: string;
@@ -18,6 +19,8 @@ interface ColumnProps {
 }
 
 export function Column({ title, patients, onPatientClick, className = "", accentColor = "border-l-muted-foreground/20", compact = false, waitTimes, showEsi = false, overduePids, icon, titleColor }: ColumnProps) {
+  const { appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
   return (
     <div className={`flex flex-col ${className}`}>
       <div className="flex items-center justify-between mb-1 px-2">
@@ -32,13 +35,15 @@ export function Column({ title, patients, onPatientClick, className = "", accent
       <div className={`flex flex-col gap-1 px-2.5 py-2 rounded-lg border border-gray-200 bg-white/80 overflow-y-auto border-l-[3px] ${compact ? "h-[56px]" : "h-[260px]"} ${accentColor}`}>
         {[...patients]
           .sort((a, b) => {
-            // Overdue patients first
-            const aOver = overduePids?.has(a.pid) ? 0 : 1;
-            const bOver = overduePids?.has(b.pid) ? 0 : 1;
-            if (aOver !== bOver) return aOver - bOver;
-            // Red patients next
-            if (a.color === "red" && b.color !== "red") return -1;
-            if (b.color === "red" && a.color !== "red") return 1;
+            if (!isBaseline) {
+              // Overdue patients first
+              const aOver = overduePids?.has(a.pid) ? 0 : 1;
+              const bOver = overduePids?.has(b.pid) ? 0 : 1;
+              if (aOver !== bOver) return aOver - bOver;
+              // Red patients next
+              if (a.color === "red" && b.color !== "red") return -1;
+              if (b.color === "red" && a.color !== "red") return 1;
+            }
             // Then by ESI score (lowest = most urgent first)
             const esiA = a.esi_score ?? 5;
             const esiB = b.esi_score ?? 5;

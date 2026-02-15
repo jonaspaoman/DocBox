@@ -5,7 +5,7 @@ import { LogPanel } from "@/components/LogPanel";
 import { SidebarNurse } from "@/components/SidebarNurse";
 import { SidebarDoctor } from "@/components/SidebarDoctor";
 import { usePatientContext } from "@/context/PatientContext";
-import { LogEntry } from "@/lib/types";
+import { Patient, LogEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type SidebarTab = "nurse" | "doctor";
@@ -14,9 +14,68 @@ interface SidebarPanelProps {
   entries: LogEntry[];
 }
 
+function PatientFileViewer({ patient }: { patient: Patient }) {
+  const fields: { label: string; value?: string | number | null }[] = [
+    { label: "Name", value: patient.name },
+    { label: "Age", value: patient.age },
+    { label: "Sex", value: patient.sex },
+    { label: "DOB", value: patient.dob },
+    { label: "ESI Score", value: patient.esi_score != null ? `${patient.esi_score}` : null },
+    { label: "Chief Complaint", value: patient.chief_complaint },
+    { label: "Triage Notes", value: patient.triage_notes },
+    { label: "HPI", value: patient.hpi },
+    { label: "PMH", value: patient.pmh },
+    { label: "Family / Social Hx", value: patient.family_social_history },
+    { label: "Review of Systems", value: patient.review_of_systems },
+    { label: "Objective", value: patient.objective },
+    { label: "Diagnoses", value: patient.primary_diagnoses },
+    { label: "Plan", value: patient.plan },
+  ];
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="px-3 py-2.5 border-b border-border/30 flex items-center gap-2 shrink-0 bg-white">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-foreground/50">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+        <span className="text-[11px] font-mono font-bold text-foreground/90 uppercase tracking-widest">
+          Patient File
+        </span>
+      </div>
+      <div className="flex-1 overflow-y-auto min-h-0 bg-gray-50/50">
+        <div className="px-3 py-2 space-y-1.5">
+          <div className="text-[13px] font-mono font-bold text-foreground/85 pb-1 border-b border-border/20">
+            {patient.name}
+            {patient.age != null && patient.sex && (
+              <span className="text-muted-foreground/50 font-normal ml-2">
+                {patient.age}{patient.sex.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
+          {fields.map(({ label, value }) => {
+            if (value == null || String(value).trim() === "") return null;
+            return (
+              <div key={label}>
+                <span className="text-[9px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-widest">
+                  {label}
+                </span>
+                <p className="text-[11px] font-mono text-foreground/75 leading-relaxed whitespace-pre-wrap">
+                  {String(value)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function SidebarPanel({ entries }: SidebarPanelProps) {
   const [tab, setTab] = useState<SidebarTab>("nurse");
-  const { patients } = usePatientContext();
+  const { patients, appMode, baselineSelectedPid, rawPatients } = usePatientContext();
+  const isBaseline = appMode === "baseline";
 
   const nurseCount = useMemo(() => patients.filter((p) => p.status === "called_in").length, [patients]);
   const doctorCount = useMemo(() => patients.filter((p) => p.status === "er_bed" && (p.color === "green" || p.color === "red")).length, [patients]);
@@ -25,6 +84,43 @@ export function SidebarPanel({ entries }: SidebarPanelProps) {
     { key: "nurse", label: "Nurse", count: nurseCount },
     { key: "doctor", label: "Doctor", count: doctorCount },
   ];
+
+  // In baseline mode, show patient file viewer + log at bottom
+  if (isBaseline) {
+    const selectedPatient = baselineSelectedPid
+      ? rawPatients.find((p) => p.pid === baselineSelectedPid) ?? null
+      : null;
+
+    return (
+      <div className="flex flex-col h-full bg-white">
+        <div className="flex-1 min-h-0 overflow-hidden border-t border-border/30">
+          {selectedPatient ? (
+            <PatientFileViewer patient={selectedPatient} />
+          ) : (
+            <div className="flex flex-col h-full">
+              <div className="px-3 py-2.5 border-b border-border/30 flex items-center gap-2 shrink-0">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-foreground/50">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <span className="text-[11px] font-mono font-bold text-foreground/90 uppercase tracking-widest">
+                  Patient File
+                </span>
+              </div>
+              <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+                <p className="text-muted-foreground/30 text-[11px] font-mono text-center px-6 leading-relaxed">
+                  Click a patient on the board to view their file here.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="h-[150px] shrink-0 border-t border-border/30 overflow-hidden">
+          <LogPanel entries={entries} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full bg-white">

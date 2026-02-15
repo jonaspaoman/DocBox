@@ -6,6 +6,8 @@ import { Slider } from "@/components/ui/slider";
 import { SimState, LogEntry } from "@/lib/types";
 import { EventLog } from "@/components/EventLog";
 
+import { usePatientContext } from "@/context/PatientContext";
+
 interface ControlPanelProps {
   simState: SimState;
   onStart: () => void;
@@ -34,6 +36,8 @@ export function ControlPanel({
   onSetMode,
   eventLog = [],
 }: ControlPanelProps) {
+  const { appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
   const [logOpen, setLogOpen] = useState(false);
 
   return (
@@ -82,23 +86,25 @@ export function ControlPanel({
         </span>
       </div>
 
-      {/* Mode Selector — segmented control with sliding highlight */}
-      <div className="flex rounded-lg border border-border/40 bg-muted/20 p-1 gap-1 shrink-0">
-        {MODES.map((m) => (
-          <button
-            key={m.value}
-            onClick={() => onSetMode(m.value)}
-            title={m.tooltip}
-            className={`py-1.5 px-4 text-[11px] font-mono font-medium rounded-md transition-colors text-center whitespace-nowrap ${
-              simState.mode === m.value
-                ? "bg-emerald-600 text-white"
-                : "text-muted-foreground/60 hover:text-foreground hover:bg-black/[0.04]"
-            }`}
-          >
-            {m.label}
-          </button>
-        ))}
-      </div>
+      {/* Mode Selector — hidden in baseline mode */}
+      {!isBaseline && (
+        <div className="flex rounded-lg border border-border/40 bg-muted/20 p-1 gap-1 shrink-0">
+          {MODES.map((m) => (
+            <button
+              key={m.value}
+              onClick={() => onSetMode(m.value)}
+              title={m.tooltip}
+              className={`py-1.5 px-4 text-[11px] font-mono font-medium rounded-md transition-colors text-center whitespace-nowrap ${
+                simState.mode === m.value
+                  ? "bg-emerald-600 text-white"
+                  : "text-muted-foreground/60 hover:text-foreground hover:bg-black/[0.04]"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Live indicator + Tick + Log */}
       <div className="ml-auto flex items-center gap-4 shrink-0">

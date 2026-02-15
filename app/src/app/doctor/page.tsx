@@ -272,7 +272,8 @@ const COLOR_BORDER: Record<string, string> = {
 };
 
 export default function DoctorPage() {
-  const { patients, updatePatient, dischargePatient, acknowledgeLab, eventLog, simState } = usePatientContext();
+  const { patients, updatePatient, dischargePatient, acknowledgeLab, eventLog, simState, appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
 
   const [search, setSearch] = useState("");
   const [selectedPid, setSelectedPid] = useState<string | null>(null);
@@ -305,6 +306,8 @@ export default function DoctorPage() {
   }, [eventLog]);
 
   const inboxItems = useMemo(() => {
+    // In baseline mode, no notifications — doctor must search for patients
+    if (isBaseline) return [];
     const items: InboxItem[] = [];
     for (const p of patients) {
       if (p.status !== "er_bed") continue;
@@ -328,30 +331,50 @@ export default function DoctorPage() {
     if (!search.trim()) return items;
     const q = search.toLowerCase();
     return items.filter((item) => item.patient.name.toLowerCase().includes(q) || item.subject.toLowerCase().includes(q));
-  }, [patients, eventTimes, search]);
+  }, [patients, eventTimes, search, isBaseline]);
 
   // Search results: all er_bed patients not already in inbox
+  // In baseline mode, always show all er_bed patients (no inbox notifications)
   const searchResults = useMemo(() => {
+    const inboxPids = new Set(inboxItems.map((item) => item.patient.pid));
+    const erBedPatients = patients.filter(
+      (p) => p.status === "er_bed" && !inboxPids.has(p.pid)
+    );
+    if (isBaseline) {
+      if (!search.trim()) return erBedPatients;
+      const q = search.toLowerCase();
+      return erBedPatients.filter(
+        (p) => p.name.toLowerCase().includes(q) ||
+          (p.chief_complaint ?? "").toLowerCase().includes(q) ||
+          String(p.bed_number ?? "").includes(q)
+      );
+    }
     if (!search.trim()) return [];
     const q = search.toLowerCase();
-    const inboxPids = new Set(inboxItems.map((item) => item.patient.pid));
-    return patients.filter(
-      (p) => p.status === "er_bed" && !inboxPids.has(p.pid) && (
-        p.name.toLowerCase().includes(q) ||
+    return erBedPatients.filter(
+      (p) => p.name.toLowerCase().includes(q) ||
         (p.chief_complaint ?? "").toLowerCase().includes(q) ||
         String(p.bed_number ?? "").includes(q)
-      )
     );
-  }, [patients, search, inboxItems]);
+  }, [patients, search, inboxItems, isBaseline]);
 
   // --- Review Discharge ---
   const handleStartReview = (pid: string, patient: Patient) => {
     setReviewingPid(pid);
     setRejectingPid(null);
-    setPaperDrafts((prev) => ({
-      ...prev,
-      [pid]: generateDischargePapers(patient),
-    }));
+    if (isBaseline) {
+      // In baseline mode, provide blank fields — doctor must fill in manually
+      const blankPapers: DischargePapers = {};
+      for (const { key } of PAPER_FIELDS) {
+        blankPapers[key] = "";
+      }
+      setPaperDrafts((prev) => ({ ...prev, [pid]: blankPapers }));
+    } else {
+      setPaperDrafts((prev) => ({
+        ...prev,
+        [pid]: generateDischargePapers(patient),
+      }));
+    }
   };
 
   const handlePaperFieldChange = (pid: string, key: string, value: string) => {
@@ -361,7 +384,15 @@ export default function DoctorPage() {
     }));
   };
 
+  // In baseline, all discharge paper fields must be filled before approving
+  const dischargeValid = !isBaseline || (
+    reviewingPid != null &&
+    paperDrafts[reviewingPid] != null &&
+    PAPER_FIELDS.every(({ key }) => (paperDrafts[reviewingPid]?.[key] ?? "").trim() !== "")
+  );
+
   const handleApproveDischarge = (pid: string) => {
+    if (!dischargeValid) return;
     const papers = paperDrafts[pid];
     if (papers) {
       const changes: Partial<Patient> = { discharge_papers: papers };
@@ -449,10 +480,12 @@ export default function DoctorPage() {
       <div className="sticky top-[44px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
-            <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Doctor Inbox</h1>
-            <span className="text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-              {inboxItems.length}
-            </span>
+            <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">{isBaseline ? "Doctor Station" : "Doctor Inbox"}</h1>
+            {!isBaseline && (
+              <span className="text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                {inboxItems.length}
+              </span>
+            )}
           </div>
           <Input
             placeholder="Search patients..."
@@ -466,7 +499,7 @@ export default function DoctorPage() {
       {/* Inbox list */}
       <div className="flex-1 overflow-y-auto px-5 py-4 max-w-xl mx-auto w-full">
         <div className="space-y-2.5">
-          {inboxItems.length === 0 && (
+          {inboxItems.length === 0 && !isBaseline && (
             <p className="text-muted-foreground/50 text-sm font-mono py-12 text-center">
               No notifications right now.
             </p>
@@ -477,7 +510,7 @@ export default function DoctorPage() {
               type="button"
               className={cn(
                 "w-full rounded-lg border-l-[3px] border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors text-left px-5 py-3.5",
-                COLOR_BORDER[p.color] || "border-l-gray-500"
+                isBaseline ? "border-l-gray-500" : (COLOR_BORDER[p.color] || "border-l-gray-500")
               )}
               onClick={() => setSelectedPid(p.pid)}
             >
@@ -508,7 +541,7 @@ export default function DoctorPage() {
               <div className="flex items-center gap-2 pt-3 pb-1">
                 <div className="h-px flex-1 bg-gray-200" />
                 <span className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-wider">
-                  Other Patients in Beds
+                  {isBaseline ? "Patients in Beds" : "Other Patients in Beds"}
                 </span>
                 <div className="h-px flex-1 bg-gray-200" />
               </div>
@@ -518,7 +551,7 @@ export default function DoctorPage() {
                   type="button"
                   className={cn(
                     "w-full rounded-lg border-l-[3px] border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors text-left px-5 py-3.5",
-                    COLOR_BORDER[p.color] || "border-l-gray-500"
+                    isBaseline ? "border-l-gray-500" : (COLOR_BORDER[p.color] || "border-l-gray-500")
                   )}
                   onClick={() => setSelectedPid(p.pid)}
                 >
@@ -533,7 +566,7 @@ export default function DoctorPage() {
                       </span>
                     )}
                     <div className="flex-1" />
-                    {p.esi_score != null && (
+                    {!isBaseline && p.esi_score != null && (
                       <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
                         ESI {p.esi_score}
                       </Badge>
@@ -564,7 +597,8 @@ export default function DoctorPage() {
               <div className="flex items-center gap-3">
                 <div className={cn(
                   "w-3 h-3 rounded-full shrink-0",
-                  selectedPatient.color === "green" ? "bg-emerald-500"
+                  isBaseline ? "bg-gray-400"
+                    : selectedPatient.color === "green" ? "bg-emerald-500"
                     : selectedPatient.color === "red" ? "bg-red-500"
                     : selectedPatient.color === "yellow" ? "bg-yellow-500"
                     : "bg-gray-400"
@@ -641,7 +675,7 @@ export default function DoctorPage() {
                   {selectedPatient.lab_results && selectedPatient.lab_results.length > 0 ? (
                     <div className="space-y-1.5">
                       {selectedPatient.lab_results.map((lr) => {
-                        const flagged = lr.is_surprising && !lr.acknowledged;
+                        const flagged = !isBaseline && lr.is_surprising && !lr.acknowledged;
                         return (
                           <div
                             key={lr.test}
@@ -732,7 +766,7 @@ export default function DoctorPage() {
                   Review Discharge
                 </Button>
               )}
-              {selectedPatient.color === "red" && !selectedPatient.lab_acknowledged && (
+              {!isBaseline && selectedPatient.color === "red" && !selectedPatient.lab_acknowledged && (
                 <Button
                   className="font-mono text-sm bg-amber-600 hover:bg-amber-700 text-white px-5 h-9"
                   onClick={() => {
@@ -795,12 +829,14 @@ export default function DoctorPage() {
                     {multiline ? (
                       <textarea
                         className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-mono min-h-[80px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
+                        placeholder={isBaseline ? `Enter ${label.toLowerCase()}...` : undefined}
                         value={paperDrafts[reviewingPid]?.[key] ?? ""}
                         onChange={(e) => handlePaperFieldChange(reviewingPid, key, e.target.value)}
                       />
                     ) : (
                       <input
                         className="w-full bg-transparent border-b border-gray-300 text-sm text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
+                        placeholder={isBaseline ? `Enter ${label.toLowerCase()}...` : undefined}
                         value={paperDrafts[reviewingPid]?.[key] ?? ""}
                         onChange={(e) => handlePaperFieldChange(reviewingPid, key, e.target.value)}
                       />
@@ -813,8 +849,9 @@ export default function DoctorPage() {
             {/* Footer */}
             <div className="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white shrink-0">
               <Button
-                className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
+                className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9 disabled:opacity-40 disabled:cursor-not-allowed"
                 onClick={() => handleApproveDischarge(reviewingPid)}
+                disabled={!dischargeValid}
               >
                 Approve &amp; Discharge
               </Button>

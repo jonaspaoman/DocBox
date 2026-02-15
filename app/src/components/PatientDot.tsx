@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import { Patient, PatientColor } from "@/lib/types";
 import { ElapsedTime } from "@/components/ElapsedTime";
+import { usePatientContext } from "@/context/PatientContext";
 
 const COLOR_MAP: Record<PatientColor, string> = {
   grey: "#6B7280",
@@ -43,16 +44,19 @@ interface PatientDotProps {
 }
 
 export function PatientDot({ patient, onClick, showLabel = true, showEsi = false, waitSince, overdue = false }: PatientDotProps) {
-  const bg = COLOR_MAP[patient.color] || COLOR_MAP.grey;
-  const glow = GLOW_MAP[patient.color] || "";
+  const { appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
+  const effectiveColor = isBaseline ? "grey" : patient.color;
+  const bg = COLOR_MAP[effectiveColor] || COLOR_MAP.grey;
+  const glow = isBaseline ? "" : (GLOW_MAP[patient.color] || "");
   const initials = getInitials(patient.name);
-  const isRed = patient.color === "red";
+  const isRed = !isBaseline && patient.color === "red";
 
   const prevColorRef = useRef(patient.color);
   const shakeControls = useAnimationControls();
 
   useEffect(() => {
-    if (patient.color === "green" && prevColorRef.current !== "green") {
+    if (!isBaseline && patient.color === "green" && prevColorRef.current !== "green") {
       shakeControls.start({
         y: [0, -4, 4, -3, 3, -1, 1, 0],
         transition: { duration: 0.5, ease: "easeInOut" },
@@ -87,7 +91,7 @@ export function PatientDot({ patient, onClick, showLabel = true, showEsi = false
           <span className="text-sm font-mono text-foreground/80 truncate group-hover:text-foreground group-hover:font-semibold transition-all">
             {patient.name.split(" ")[0]}
           </span>
-          {overdue && (
+          {!isBaseline && overdue && (
             <span className="text-red-500 shrink-0 animate-pulse" title="Long wait time">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="8" cy="8" r="6.5" />

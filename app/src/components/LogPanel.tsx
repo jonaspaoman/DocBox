@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { LogEntry, LogEventType } from "@/lib/types";
+import { usePatientContext } from "@/context/PatientContext";
 
 const EVENT_LABELS: Record<LogEventType, string> = {
   called_in: "Called in",
@@ -44,6 +45,8 @@ interface LogPanelProps {
 }
 
 export function LogPanel({ entries }: LogPanelProps) {
+  const { appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export function LogPanel({ entries }: LogPanelProps) {
                   {entry.patientName}
                 </span>
                 <span className={`text-[9px] font-mono truncate ${EVENT_COLORS[entry.event]}`}>
-                  {EVENT_LABELS[entry.event]}
+                  {isBaseline && entry.event === "called_in" ? "Walked in" : EVENT_LABELS[entry.event]}
                 </span>
               </div>
             ))}
