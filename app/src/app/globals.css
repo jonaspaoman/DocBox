@@ -162,22 +162,24 @@
   filter: drop-shadow(0 0 4px #34d399);
 }
 
-/* Flowing dot animation for board arrows */
+/* Flowing chevron animation for board arrows */
 @keyframes flow-right {
-  0% { left: -6px; opacity: 0; }
-  5% { opacity: 0.9; }
-  85% { opacity: 0.9; }
-  100% { left: calc(100% + 6px); opacity: 0; }
+  0% { left: -10px; opacity: 0; }
+  15% { opacity: 0.8; }
+  75% { opacity: 0.8; }
+  100% { left: calc(100% - 4px); opacity: 0; }
 }
 
-.flow-dot {
-  animation: flow-right 1.8s ease-in-out infinite;
+.flow-chevron {
+  animation: flow-right 2.4s linear infinite;
 }
 
-.flow-dot-delay {
-  animation-delay: 0.6s;
+.flow-chevron-2 {
+  animation: flow-right 2.4s linear infinite;
+  animation-delay: 0.8s;
 }
 
-.flow-dot-delay-2 {
-  animation-delay: 1.2s;
+.flow-chevron-3 {
+  animation: flow-right 2.4s linear infinite;
+  animation-delay: 1.6s;
 }

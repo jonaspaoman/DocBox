@@ -39,12 +39,12 @@ function FlowArrow({ label, active }: { label: string; active: boolean }) {
       <div className="relative w-full h-5 flex items-center">
         {/* Track line */}
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gray-200 rounded-full" />
-        {/* Animated dots — only when running */}
+        {/* Animated chevrons — only when running */}
         {active && (
           <div className="absolute inset-x-0 top-0 bottom-0 overflow-hidden">
-            <div className="flow-dot absolute w-[6px] h-[6px] top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-            <div className="flow-dot flow-dot-delay absolute w-[6px] h-[6px] top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-            <div className="flow-dot flow-dot-delay-2 absolute w-[6px] h-[6px] top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
+            <svg className="flow-chevron absolute top-1/2 -translate-y-1/2 text-emerald-500" width="7" height="10" viewBox="0 0 7 10"><path d="M1 1l4.5 4L1 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg className="flow-chevron-2 absolute top-1/2 -translate-y-1/2 text-emerald-500" width="7" height="10" viewBox="0 0 7 10"><path d="M1 1l4.5 4L1 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg className="flow-chevron-3 absolute top-1/2 -translate-y-1/2 text-emerald-500" width="7" height="10" viewBox="0 0 7 10"><path d="M1 1l4.5 4L1 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
         )}
         {/* Arrow tip */}
