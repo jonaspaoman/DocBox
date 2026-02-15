@@ -22,6 +22,7 @@ export default function Home() {
     setSpeed,
     setMode,
     eventLog,
+    overdueWaitPids,
   } = usePatientContext();
 
   return (
@@ -38,6 +39,7 @@ export default function Home() {
             onDischarge={dischargePatient}
             onMarkDone={markDone}
             eventLog={eventLog}
+            overdueWaitPids={overdueWaitPids}
           />
         </div>
         <div className="hidden xl:flex w-[300px] shrink-0 flex-col border-l border-border/30 overflow-hidden min-h-0">

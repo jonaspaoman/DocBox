@@ -12,6 +12,7 @@ const EVENT_LABELS: Record<LogEventType, string> = {
   marked_done: "Marked done",
   lab_arrived: "Lab results arrived",
   turned_red: "Surprising lab result",
+  long_wait: "Long wait time",
 };
 
 const EVENT_COLORS: Record<LogEventType, string> = {
@@ -23,6 +24,7 @@ const EVENT_COLORS: Record<LogEventType, string> = {
   marked_done: "text-emerald-600",
   lab_arrived: "text-orange-600",
   turned_red: "text-red-600",
+  long_wait: "text-red-600",
 };
 
 interface EventLogProps {

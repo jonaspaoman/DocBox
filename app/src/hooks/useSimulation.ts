@@ -7,7 +7,7 @@ import * as api from "@/lib/api";
 const INITIAL_STATE: SimState = {
   current_tick: 0,
   speed_multiplier: 1.0,
-  mode: "semi-auto",
+  mode: "doctor-manual",
   is_running: false,
 };
 

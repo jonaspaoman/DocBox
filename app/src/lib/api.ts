@@ -96,7 +96,7 @@ export async function injectPatient(): Promise<{ patient: Patient }> {
   return { patient: getNextMockPatient() };
 }
 
-// Maps frontend 3-mode to backend 2-mode: semi-auto and full-auto both send "auto"
+// Maps frontend modes to backend: manual stays manual, everything else sends "auto"
 export async function setSimMode(mode: SimState["mode"]): Promise<{ mode: string }> {
   const backendMode = mode === "manual" ? "manual" : "auto";
   const res = await tryFetch(`${API_URL}/api/sim/mode`, {
@@ -114,7 +114,7 @@ export async function fetchSimState(): Promise<SimState> {
   return {
     current_tick: 0,
     speed_multiplier: 1.0,
-    mode: "semi-auto",
+    mode: "doctor-manual",
     is_running: false,
   };
 }

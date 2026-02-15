@@ -199,31 +199,34 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
                 <Section label="Discharge Blocked" value={patient.discharge_blocked_reason} highlight="red" />
               )}
 
-              {/* Lab Results */}
-              {patient.lab_results && patient.lab_results.length > 0 && (
+              {/* Lab Results — only show once patient is in er_bed or later */}
+              {patient.status !== "called_in" && patient.status !== "waiting_room" && patient.lab_results && patient.lab_results.length > 0 && (
                 <div className="rounded-md border border-gray-200 bg-gray-50 p-2.5">
                   <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
                     Lab Results
                   </span>
                   <div className="mt-1.5 space-y-1">
-                    {patient.lab_results.map((lr) => (
-                      <div
-                        key={lr.test}
-                        className={cn(
-                          "flex items-center gap-2 text-xs font-mono",
-                          lr.is_surprising ? "text-red-600" : "text-foreground/70"
-                        )}
-                      >
-                        <span className={cn(
-                          "shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[9px]",
-                          lr.is_surprising ? "bg-red-500/20" : "bg-emerald-500/15"
-                        )}>
-                          {lr.is_surprising ? "!" : "\u2713"}
-                        </span>
-                        <span className="text-muted-foreground/60">{lr.test}:</span>
-                        <span className={lr.is_surprising ? "font-medium" : ""}>{lr.result}</span>
-                      </div>
-                    ))}
+                    {patient.lab_results.map((lr) => {
+                      const flagged = lr.is_surprising && !lr.acknowledged;
+                      return (
+                        <div
+                          key={lr.test}
+                          className={cn(
+                            "flex items-center gap-2 text-xs font-mono",
+                            flagged ? "text-red-600" : "text-foreground/70"
+                          )}
+                        >
+                          <span className={cn(
+                            "shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[9px]",
+                            flagged ? "bg-red-500/20" : "bg-emerald-500/15"
+                          )}>
+                            {flagged ? "!" : "\u2713"}
+                          </span>
+                          <span className="text-muted-foreground/60">{lr.test}:</span>
+                          <span className={flagged ? "font-medium" : ""}>{lr.result}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}

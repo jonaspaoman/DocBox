@@ -138,8 +138,8 @@ export function PatientModal({
             <DataField label="Triage Notes" value={patient.triage_notes} muted />
           )}
 
-          {/* Lab Results */}
-          {patient.lab_results && patient.lab_results.length > 0 && (
+          {/* Lab Results — only show once patient is in er_bed or later */}
+          {patient.status !== "called_in" && patient.status !== "waiting_room" && patient.lab_results && patient.lab_results.length > 0 && (
             <div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-1.5">
                 Lab Results
@@ -151,11 +151,11 @@ export function PatientModal({
                     <div
                       key={i}
                       className={`flex items-start gap-2 text-xs font-mono ${
-                        lab.is_surprising && arrived ? "text-red-600 font-medium" : "text-foreground/80"
+                        lab.is_surprising && !lab.acknowledged && arrived ? "text-red-600 font-medium" : "text-foreground/80"
                       }`}
                     >
                       <span className="shrink-0 w-4 mt-0.5">
-                        {arrived ? (lab.is_surprising ? "⚠" : "✓") : "⏳"}
+                        {arrived ? (lab.is_surprising && !lab.acknowledged ? "⚠" : "✓") : "⏳"}
                       </span>
                       <span>
                         {lab.test}

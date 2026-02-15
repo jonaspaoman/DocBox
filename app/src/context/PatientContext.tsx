@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useCallback, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useCallback, useState, useMemo, ReactNode } from "react";
 import { Patient, SimState, LogEntry, LogEventType } from "@/lib/types";
 import { usePatients } from "@/hooks/usePatients";
 import { useSimulation } from "@/hooks/useSimulation";
@@ -29,6 +29,7 @@ interface PatientContextValue {
   dischargePatient: (pid: string) => Promise<void>;
   markDone: (pid: string) => Promise<void>;
   acknowledgeLab: (pid: string) => void;
+  overdueWaitPids: Set<string>;
   simState: SimState;
   setSimState: React.Dispatch<React.SetStateAction<SimState>>;
   start: () => Promise<void>;
@@ -81,6 +82,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   addLogEntryRef.current = addLogEntry;
 
   const dischargeTimers = useRef<Map<string, number>>(new Map());
+  const waitTimers = useRef<Map<string, number>>(new Map());
 
   const simTick = useCallback(() => {
     simHook.tick();
@@ -89,6 +91,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     const currentTick = tickRef.current + 1;
 
     const advanceable: { pid: string; action: () => void }[] = [];
+    const waitingCandidates: Patient[] = [];
 
     for (const p of current) {
       // Check for surprising lab results arriving this tick — turn patient red
@@ -104,29 +107,29 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Both semi-auto and full-auto: called_in → waiting_room → er_bed
-      if (p.status === "called_in") {
+      // called_in → waiting_room (auto in all modes except manual and nurse-manual)
+      const autoAccept = mode !== "manual" && mode !== "nurse-manual";
+      if (p.status === "called_in" && autoAccept) {
         advanceable.push({ pid: p.pid, action: () => {
           patientHook.acceptPatient(p.pid);
           addLogEntryRef.current(p.pid, p.name, "accepted", currentTick);
         }});
-      } else if (p.status === "waiting_room") {
-        const bed = findNextAvailableBed(current);
-        if (bed !== null) {
-          advanceable.push({
-            pid: p.pid,
-            action: () => {
-              patientHook.assignBed(p.pid, bed);
-              addLogEntryRef.current(p.pid, p.name, "assigned_bed", currentTick);
-            },
-          });
-        }
       }
 
-      // Semi-auto and full-auto: flag for discharge after a delay
-      // If time_to_discharge is set (from LLM rejection), use that; otherwise random
+      // Waiting room: track wait time for priority
+      if (p.status === "waiting_room") {
+        if (!waitTimers.current.has(p.pid)) {
+          const threshold = Math.floor(Math.random() * 8) + 18; // 18-25 ticks
+          waitTimers.current.set(p.pid, currentTick + threshold);
+        }
+        waitingCandidates.push(p);
+      } else {
+        waitTimers.current.delete(p.pid);
+      }
+
+      // Flag for discharge after a delay (auto in all modes except manual)
       // Block discharge flagging for red patients until lab is acknowledged
-      if (p.status === "er_bed" && p.color !== "green" && !(p.color === "red" && !p.lab_acknowledged)) {
+      if (mode !== "manual" && p.status === "er_bed" && p.color !== "green" && !(p.color === "red" && !p.lab_acknowledged)) {
         if (!dischargeTimers.current.has(p.pid)) {
           const delay = p.time_to_discharge
             ?? Math.floor(Math.random() * 9) + 4;
@@ -145,8 +148,9 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Full-auto only: green er_bed patients get discharged to done
-      if (mode === "full-auto") {
+      // Auto-discharge green patients + mark OR/ICU done (auto and nurse-manual)
+      const autoDischarge = mode === "auto" || mode === "nurse-manual";
+      if (autoDischarge) {
         if (p.status === "er_bed" && p.color === "green") {
           advanceable.push({
             pid: p.pid,
@@ -168,6 +172,27 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    // Assign beds: overdue patients first, then by ESI (lowest = most urgent)
+    if (waitingCandidates.length > 0) {
+      waitingCandidates.sort((a, b) => {
+        const aOverdue = (waitTimers.current.get(a.pid) ?? Infinity) <= currentTick ? 0 : 1;
+        const bOverdue = (waitTimers.current.get(b.pid) ?? Infinity) <= currentTick ? 0 : 1;
+        if (aOverdue !== bOverdue) return aOverdue - bOverdue;
+        return (a.esi_score ?? 5) - (b.esi_score ?? 5);
+      });
+      const top = waitingCandidates[0];
+      const bed = findNextAvailableBed(current);
+      if (bed !== null) {
+        advanceable.push({
+          pid: top.pid,
+          action: () => {
+            patientHook.assignBed(top.pid, bed);
+            addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
+          },
+        });
+      }
+    }
+
     if (advanceable.length > 0) {
       const pick = advanceable[Math.floor(Math.random() * advanceable.length)];
       pick.action();
@@ -182,9 +207,9 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     }
   }, [simHook.tick, patientHook]);
 
-  // Simulation interval — runs in semi-auto and full-auto, not manual
+  // Simulation interval — runs in all modes when simulation is active
   useEffect(() => {
-    if (!simHook.simState.is_running || simHook.simState.mode === "manual") return;
+    if (!simHook.simState.is_running) return;
 
     const intervalMs = 1500 / simHook.simState.speed_multiplier;
     const id = setInterval(simTick, intervalMs);
@@ -201,6 +226,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     });
     patientHook.setPatients([]);
     dischargeTimers.current.clear();
+    waitTimers.current.clear();
     setEventLog([]);
   }, [simHook, patientHook]);
 
@@ -230,7 +256,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     );
     patientHook.updatePatient(pid, {
       lab_acknowledged: true,
-      color: "grey",
+      color: p?.is_simulated === false ? "yellow" : "grey",
       ...(updatedLabs ? { lab_results: updatedLabs } : {}),
     });
     dischargeTimers.current.delete(pid);
@@ -254,11 +280,29 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [patientHook, addLogEntry]);
 
+  // Compute which waiting room patient is overdue (max 1)
+  const overdueWaitPids = useMemo(() => {
+    const tick = simHook.simState.current_tick;
+    let oldestPid: string | null = null;
+    let oldestThreshold = Infinity;
+    for (const [pid, threshold] of waitTimers.current.entries()) {
+      if (tick >= threshold && threshold < oldestThreshold) {
+        oldestPid = pid;
+        oldestThreshold = threshold;
+      }
+    }
+    const set = new Set<string>();
+    if (oldestPid) set.add(oldestPid);
+    return set;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [simHook.simState.current_tick, patientHook.patients]);
+
   const value: PatientContextValue = {
     ...patientHook,
     dischargePatient: dischargePatientWithLog,
     markDone: markDoneWithLog,
     acknowledgeLab,
+    overdueWaitPids,
     simState: simHook.simState,
     setSimState: simHook.setSimState,
     start: simHook.start,

@@ -326,6 +326,16 @@ export default function DoctorPage() {
     return items.filter((item) => item.patient.name.toLowerCase().includes(q) || item.subject.toLowerCase().includes(q));
   }, [patients, eventTimes, search]);
 
+  // Search results: er_bed patients not already in inbox (grey/yellow patients)
+  const searchResults = useMemo(() => {
+    if (!search.trim()) return [];
+    const q = search.toLowerCase();
+    const inboxPids = new Set(inboxItems.map((item) => item.patient.pid));
+    return patients.filter(
+      (p) => p.status === "er_bed" && !inboxPids.has(p.pid) && p.name.toLowerCase().includes(q)
+    );
+  }, [patients, search, inboxItems]);
+
   // --- Review Discharge ---
   const handleStartReview = (pid: string, patient: Patient) => {
     setReviewingPid(pid);
@@ -377,7 +387,7 @@ export default function DoctorPage() {
     const existingLabs = p.lab_results ?? [];
 
     const changes: Partial<Patient> = {
-      color: "grey" as const,
+      color: p.is_simulated ? "grey" as const : "yellow" as const,
       rejection_notes: [...existingNotes, note],
       time_to_discharge: llmResult.time_to_discharge,
       ...(llmResult.additional_labs.length > 0
@@ -537,24 +547,27 @@ export default function DoctorPage() {
                   </span>
                   {selectedPatient.lab_results && selectedPatient.lab_results.length > 0 ? (
                     <div className="space-y-1.5">
-                      {selectedPatient.lab_results.map((lr) => (
-                        <div
-                          key={lr.test}
-                          className={cn(
-                            "flex items-center gap-2.5 text-sm font-mono",
-                            lr.is_surprising ? "text-red-600" : "text-foreground/75"
-                          )}
-                        >
-                          <span className={cn(
-                            "shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px]",
-                            lr.is_surprising ? "bg-red-100" : "bg-emerald-100"
-                          )}>
-                            {lr.is_surprising ? "!" : "\u2713"}
-                          </span>
-                          <span className="text-muted-foreground/50">{lr.test}:</span>
-                          <span className={lr.is_surprising ? "font-medium" : ""}>{lr.result}</span>
-                        </div>
-                      ))}
+                      {selectedPatient.lab_results.map((lr) => {
+                        const flagged = lr.is_surprising && !lr.acknowledged;
+                        return (
+                          <div
+                            key={lr.test}
+                            className={cn(
+                              "flex items-center gap-2.5 text-sm font-mono",
+                              flagged ? "text-red-600" : "text-foreground/75"
+                            )}
+                          >
+                            <span className={cn(
+                              "shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px]",
+                              flagged ? "bg-red-100" : "bg-emerald-100"
+                            )}>
+                              {flagged ? "!" : "\u2713"}
+                            </span>
+                            <span className="text-muted-foreground/50">{lr.test}:</span>
+                            <span className={flagged ? "font-medium" : ""}>{lr.result}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground/25 italic">Pending</p>

@@ -58,7 +58,8 @@ export type LogEventType =
   | "discharged"
   | "marked_done"
   | "lab_arrived"
-  | "turned_red";
+  | "turned_red"
+  | "long_wait";
 
 export interface LogEntry {
   id: string;
@@ -72,7 +73,7 @@ export interface LogEntry {
 export interface SimState {
   current_tick: number;
   speed_multiplier: number;
-  mode: "manual" | "semi-auto" | "full-auto";
+  mode: "manual" | "nurse-manual" | "doctor-manual" | "auto";
   is_running: boolean;
 }
 

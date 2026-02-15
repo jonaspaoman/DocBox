@@ -16,6 +16,7 @@ interface BoardProps {
   onDischarge: (pid: string) => void;
   onMarkDone: (pid: string) => void;
   eventLog?: LogEntry[];
+  overdueWaitPids?: Set<string>;
 }
 
 function byStatus(patients: Patient[], ...statuses: PatientStatus[]) {
@@ -32,13 +33,13 @@ function findNextAvailableBed(patients: Patient[]): number | null {
 
 function FlowArrow({ label, active }: { label: string; active: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center w-20 shrink-0 select-none gap-1.5">
-      <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-widest whitespace-nowrap">
+    <div className="flex flex-col items-center justify-center w-24 shrink-0 select-none gap-2">
+      <span className="text-[11px] font-mono font-medium text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
-      <div className="relative w-full h-5 flex items-center">
+      <div className="relative w-full h-6 flex items-center">
         {/* Track line */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gray-200 rounded-full" />
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gray-300 rounded-full" />
         {/* Animated chevrons — only when running */}
         {active && (
           <div className="absolute inset-x-0 top-0 bottom-0 overflow-hidden">
@@ -94,6 +95,7 @@ export function Board({
   onDischarge,
   onMarkDone,
   eventLog = [],
+  overdueWaitPids,
 }: BoardProps) {
   const waitTimes = useMemo(() => {
     const map = new Map<string, Date>();
@@ -131,11 +133,11 @@ export function Board({
         <div className="w-full h-full flex items-center justify-center">
           <div
             ref={contentRef}
-            className="flex gap-2 items-center px-6 py-6 origin-center"
+            className="flex gap-4 items-center px-8 py-8 origin-center"
             style={{ transform: `scale(${scale})` }}
           >
             {/* Called In */}
-            <div className="w-[240px] shrink-0">
+            <div className="w-[260px] shrink-0">
               <Column
                 title="Called In"
                 patients={byStatus(patients, "called_in")}
@@ -148,7 +150,7 @@ export function Board({
             <FlowArrow label="Triage" active={isRunning} />
 
             {/* Waiting Room */}
-            <div className="w-[240px] shrink-0">
+            <div className="w-[260px] shrink-0">
               <Column
                 title="Waiting Room"
                 patients={byStatus(patients, "waiting_room")}
@@ -156,14 +158,15 @@ export function Board({
                 accentColor="border-l-amber-500/40"
                 waitTimes={waitTimes}
                 showEsi
+                overduePids={overdueWaitPids}
               />
             </div>
 
             <FlowArrow label="Assign" active={isRunning} />
 
             {/* Hospital boundary */}
-            <div className="relative bg-white rounded-lg p-3 border border-emerald-500/20 flex flex-col gap-3">
-              <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/60 bg-white border border-emerald-500/20 rounded">
+            <div className="relative bg-white rounded-xl p-4 border border-emerald-500/25 flex flex-col gap-4">
+              <div className="absolute -top-3 left-4 px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/70 bg-white border border-emerald-500/25 rounded-md">
                 Hospital
               </div>
               <BedGrid
@@ -173,7 +176,7 @@ export function Board({
               />
               {/* Disposition sub-lanes — side by side below beds */}
               <div className="flex flex-col gap-1.5">
-                <div className="text-[9px] font-mono font-medium text-muted-foreground/50 uppercase tracking-widest px-1">
+                <div className="text-[11px] font-mono font-medium text-muted-foreground/60 uppercase tracking-widest px-1">
                   Disposition
                 </div>
                 <div className="flex gap-2">
@@ -202,7 +205,7 @@ export function Board({
             <FlowArrow label="Discharge" active={isRunning} />
 
             {/* Done */}
-            <div className="w-[240px] shrink-0">
+            <div className="w-[260px] shrink-0">
               <Column
                 title="Done"
                 patients={byStatus(patients, "discharge", "done")}

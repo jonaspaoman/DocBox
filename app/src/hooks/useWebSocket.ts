@@ -42,7 +42,7 @@ export function useWebSocket({ addPatient, updatePatient, setSimState }: UseWebS
             setSimState({
               current_tick: msg.current_tick ?? 0,
               speed_multiplier: msg.speed_multiplier ?? 1,
-              mode: (msg.mode as SimState["mode"]) ?? "semi-auto",
+              mode: (msg.mode as SimState["mode"]) ?? "doctor-manual",
               is_running: msg.is_running ?? false,
             });
             break;
