@@ -64,7 +64,7 @@ export function PatientModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-md bg-[oklch(0.14_0_0)] border-border/40">
+      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto bg-[oklch(0.14_0_0)] border-border/40">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between pr-6">
             <span className="font-mono text-foreground flex items-center gap-2">
@@ -165,6 +165,42 @@ export function PatientModal({
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {/* Doctor Rejection Notes */}
+          {patient.rejection_notes && patient.rejection_notes.length > 0 && (
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-yellow-400/70 mb-1.5">
+                Doctor Rejection Notes
+              </div>
+              <div className="space-y-1.5 border border-yellow-500/20 rounded p-2.5 bg-yellow-500/5">
+                {patient.rejection_notes.map((note, i) => (
+                  <div key={i} className="flex gap-2 text-xs font-mono">
+                    <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
+                    <span className="text-foreground/70">{note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Discharge Papers */}
+          {patient.discharge_papers && Object.keys(patient.discharge_papers).length > 0 && (
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-400/70 mb-1.5">
+                Discharge Papers
+              </div>
+              <div className="space-y-2 border border-emerald-500/15 rounded p-2.5 bg-emerald-500/5">
+                {Object.entries(patient.discharge_papers).map(([key, val]) => (
+                  <div key={key}>
+                    <span className="text-[9px] font-mono font-semibold text-emerald-400/60 uppercase tracking-wider">
+                      {key.replace(/_/g, " ")}
+                    </span>
+                    <p className="text-xs font-mono text-foreground/75 whitespace-pre-wrap mt-0.5 leading-relaxed">{val}</p>
+                  </div>
+                ))}
               </div>
             </div>
           )}
