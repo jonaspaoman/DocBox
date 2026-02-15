@@ -40,7 +40,7 @@ export default function Home() {
             eventLog={eventLog}
           />
         </div>
-        <div className="w-[300px] shrink-0 flex flex-col border-l border-border/30 overflow-hidden min-h-0">
+        <div className="hidden xl:flex w-[300px] shrink-0 flex-col border-l border-border/30 overflow-hidden min-h-0">
           <MetricsBar patients={patients} eventLog={eventLog} currentTick={simState.current_tick} />
           <LogPanel entries={eventLog} />
         </div>

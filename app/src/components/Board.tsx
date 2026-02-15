@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { Patient, PatientStatus, LogEntry } from "@/lib/types";
 import { Column } from "./Column";
 import { BedGrid } from "./BedGrid";
@@ -56,6 +56,34 @@ function FlowArrow({ label, active }: { label: string; active: boolean }) {
   );
 }
 
+function useScaleToFit(containerRef: React.RefObject<HTMLDivElement | null>, contentRef: React.RefObject<HTMLDivElement | null>) {
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const content = contentRef.current;
+    if (!container || !content) return;
+
+    const compute = () => {
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const contentW = content.scrollWidth;
+      const contentH = content.scrollHeight;
+      if (contentW === 0 || contentH === 0) return;
+      const s = Math.min(cw / contentW, ch / contentH, 1);
+      setScale(s);
+    };
+
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(container);
+    ro.observe(content);
+    return () => ro.disconnect();
+  }, [containerRef, contentRef]);
+
+  return scale;
+}
+
 export function Board({
   patients,
   currentTick,
@@ -67,7 +95,6 @@ export function Board({
   onMarkDone,
   eventLog = [],
 }: BoardProps) {
-  // Build a map of pid → earliest arrival time from the event log
   const waitTimes = useMemo(() => {
     const map = new Map<string, Date>();
     for (const entry of eventLog) {
@@ -94,85 +121,97 @@ export function Board({
     [patients, onAssignBed]
   );
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scale = useScaleToFit(containerRef, contentRef);
+
   return (
     <>
-      <div className="flex gap-2 flex-1 px-6 py-6 overflow-auto items-center justify-center grid-bg">
-        {/* Called In */}
-        <div className="w-[240px] shrink-0">
-          <Column
-            title="Called In"
-            patients={byStatus(patients, "called_in")}
-            onPatientClick={handlePatientClick}
-            accentColor="border-l-gray-500/30"
-            waitTimes={waitTimes}
-          />
-        </div>
-
-        <FlowArrow label="Triage" active={isRunning} />
-
-        {/* Waiting Room */}
-        <div className="w-[240px] shrink-0">
-          <Column
-            title="Waiting Room"
-            patients={byStatus(patients, "waiting_room")}
-            onPatientClick={handlePatientClick}
-            accentColor="border-l-amber-500/40"
-            waitTimes={waitTimes}
-            showEsi
-          />
-        </div>
-
-        <FlowArrow label="Assign" active={isRunning} />
-
-        {/* Hospital boundary */}
-        <div className="relative bg-white rounded-lg p-3 border border-emerald-500/20 flex flex-col gap-3">
-          <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/60 bg-white border border-emerald-500/20 rounded">
-            Hospital
-          </div>
-          <BedGrid
-            patients={byStatus(patients, "er_bed")}
-            onPatientClick={handlePatientClick}
-            waitTimes={waitTimes}
-          />
-          {/* Disposition sub-lanes — side by side below beds */}
-          <div className="flex flex-col gap-1.5">
-            <div className="text-[9px] font-mono font-medium text-muted-foreground/50 uppercase tracking-widest px-1">
-              Disposition
-            </div>
-            <div className="flex gap-2">
+      <div ref={containerRef} className="flex-1 overflow-hidden grid-bg">
+        <div className="w-full h-full flex items-center justify-center">
+          <div
+            ref={contentRef}
+            className="flex gap-2 items-center px-6 py-6 origin-center"
+            style={{ transform: `scale(${scale})` }}
+          >
+            {/* Called In */}
+            <div className="w-[240px] shrink-0">
               <Column
-                title="OR"
-                patients={byStatus(patients, "or")}
+                title="Called In"
+                patients={byStatus(patients, "called_in")}
                 onPatientClick={handlePatientClick}
-                accentColor="border-l-orange-500/40"
-                className="flex-1"
-                compact
-                waitTimes={waitTimes}
-              />
-              <Column
-                title="ICU"
-                patients={byStatus(patients, "icu")}
-                onPatientClick={handlePatientClick}
-                accentColor="border-l-purple-500/40"
-                className="flex-1"
-                compact
+                accentColor="border-l-gray-500/30"
                 waitTimes={waitTimes}
               />
             </div>
+
+            <FlowArrow label="Triage" active={isRunning} />
+
+            {/* Waiting Room */}
+            <div className="w-[240px] shrink-0">
+              <Column
+                title="Waiting Room"
+                patients={byStatus(patients, "waiting_room")}
+                onPatientClick={handlePatientClick}
+                accentColor="border-l-amber-500/40"
+                waitTimes={waitTimes}
+                showEsi
+              />
+            </div>
+
+            <FlowArrow label="Assign" active={isRunning} />
+
+            {/* Hospital boundary */}
+            <div className="relative bg-white rounded-lg p-3 border border-emerald-500/20 flex flex-col gap-3">
+              <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/60 bg-white border border-emerald-500/20 rounded">
+                Hospital
+              </div>
+              <BedGrid
+                patients={byStatus(patients, "er_bed")}
+                onPatientClick={handlePatientClick}
+                waitTimes={waitTimes}
+              />
+              {/* Disposition sub-lanes — side by side below beds */}
+              <div className="flex flex-col gap-1.5">
+                <div className="text-[9px] font-mono font-medium text-muted-foreground/50 uppercase tracking-widest px-1">
+                  Disposition
+                </div>
+                <div className="flex gap-2">
+                  <Column
+                    title="OR"
+                    patients={byStatus(patients, "or")}
+                    onPatientClick={handlePatientClick}
+                    accentColor="border-l-orange-500/40"
+                    className="flex-1"
+                    compact
+                    waitTimes={waitTimes}
+                  />
+                  <Column
+                    title="ICU"
+                    patients={byStatus(patients, "icu")}
+                    onPatientClick={handlePatientClick}
+                    accentColor="border-l-purple-500/40"
+                    className="flex-1"
+                    compact
+                    waitTimes={waitTimes}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <FlowArrow label="Discharge" active={isRunning} />
+
+            {/* Done */}
+            <div className="w-[240px] shrink-0">
+              <Column
+                title="Done"
+                patients={byStatus(patients, "discharge", "done")}
+                onPatientClick={handlePatientClick}
+                accentColor="border-l-emerald-500/40"
+                waitTimes={waitTimes}
+              />
+            </div>
           </div>
-        </div>
-
-        <FlowArrow label="Discharge" active={isRunning} />
-
-        {/* Done */}
-        <div className="w-[240px] shrink-0">
-          <Column
-            title="Done"
-            patients={byStatus(patients, "discharge", "done")}
-            onPatientClick={handlePatientClick}
-            accentColor="border-l-emerald-500/40"
-            waitTimes={waitTimes}
-          />
         </div>
       </div>
 
