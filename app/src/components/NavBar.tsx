@@ -60,7 +60,7 @@ export function NavBar() {
   const { simState } = usePatientContext();
 
   return (
-    <header className="bg-[oklch(0.1_0_0)] header-glow px-6 py-3 flex items-center justify-between">
+    <header className="bg-white header-glow px-6 py-3 flex items-center justify-between">
       <Link href="/" className="flex items-center gap-2.5">
         <HeartbeatMonitor active={simState.is_running} />
         <h1 className="text-sm font-mono font-bold tracking-widest text-foreground/90 uppercase">

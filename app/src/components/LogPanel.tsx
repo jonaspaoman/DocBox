@@ -15,25 +15,25 @@ const EVENT_LABELS: Record<LogEventType, string> = {
 };
 
 const EVENT_COLORS: Record<LogEventType, string> = {
-  called_in: "text-yellow-400",
-  accepted: "text-blue-400",
-  assigned_bed: "text-blue-400",
-  flagged_discharge: "text-emerald-400",
-  discharged: "text-emerald-400",
-  marked_done: "text-emerald-400",
-  lab_arrived: "text-orange-400",
-  turned_red: "text-red-400",
+  called_in: "text-yellow-600",
+  accepted: "text-blue-600",
+  assigned_bed: "text-blue-600",
+  flagged_discharge: "text-emerald-600",
+  discharged: "text-emerald-600",
+  marked_done: "text-emerald-600",
+  lab_arrived: "text-orange-600",
+  turned_red: "text-red-600",
 };
 
 const EVENT_DOTS: Record<LogEventType, string> = {
-  called_in: "bg-yellow-400",
-  accepted: "bg-blue-400",
-  assigned_bed: "bg-blue-400",
-  flagged_discharge: "bg-emerald-400",
-  discharged: "bg-emerald-400",
-  marked_done: "bg-emerald-400",
-  lab_arrived: "bg-orange-400",
-  turned_red: "bg-red-400",
+  called_in: "bg-yellow-500",
+  accepted: "bg-blue-500",
+  assigned_bed: "bg-blue-500",
+  flagged_discharge: "bg-emerald-500",
+  discharged: "bg-emerald-500",
+  marked_done: "bg-emerald-500",
+  lab_arrived: "bg-orange-500",
+  turned_red: "bg-red-500",
 };
 
 interface LogPanelProps {
@@ -50,7 +50,7 @@ export function LogPanel({ entries }: LogPanelProps) {
   }, [entries.length]);
 
   return (
-    <div className="flex flex-col h-full bg-[oklch(0.12_0_0)]">
+    <div className="flex flex-col h-full bg-white">
       <div className="px-3 py-2.5 border-y border-border/30 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -58,7 +58,7 @@ export function LogPanel({ entries }: LogPanelProps) {
             Live Log
           </span>
         </div>
-        <span className="text-[10px] font-mono text-muted-foreground/60 tabular-nums bg-white/[0.06] px-1.5 py-0.5 rounded">
+        <span className="text-[10px] font-mono text-muted-foreground/60 tabular-nums bg-black/[0.04] px-1.5 py-0.5 rounded">
           {entries.length}
         </span>
       </div>
@@ -72,7 +72,7 @@ export function LogPanel({ entries }: LogPanelProps) {
             {[...entries].reverse().map((entry) => (
               <div
                 key={entry.id}
-                className="flex items-start gap-2 px-3 py-1.5 hover:bg-white/[0.04] transition-colors"
+                className="flex items-start gap-2 px-3 py-1.5 hover:bg-gray-100 transition-colors"
               >
                 <div className={`w-1.5 h-1.5 rounded-full mt-[5px] shrink-0 ${EVENT_DOTS[entry.event]}`} />
                 <div className="min-w-0 flex-1">

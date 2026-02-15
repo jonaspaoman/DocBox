@@ -98,9 +98,9 @@ export function MetricsBar({ patients, eventLog, currentTick }: MetricsBarProps)
   ];
 
   return (
-    <div className="bg-[oklch(0.12_0_0)] px-3 pt-3 pb-3 shrink-0">
+    <div className="bg-white px-3 pt-3 pb-3 shrink-0">
       <div className="flex items-center gap-2 mb-2.5">
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" className="text-emerald-400" strokeWidth="1.5" strokeLinecap="round">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" className="text-emerald-600" strokeWidth="1.5" strokeLinecap="round">
           <rect x="1" y="8" width="3" height="7" rx="0.5" />
           <rect x="6.5" y="4" width="3" height="11" rx="0.5" />
           <rect x="12" y="1" width="3" height="14" rx="0.5" />
@@ -120,12 +120,12 @@ export function MetricsBar({ patients, eventLog, currentTick }: MetricsBarProps)
             <span className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider leading-none mb-1">
               {c.label}
             </span>
-            <span className="text-[14px] font-mono tabular-nums font-bold text-emerald-400 leading-none">
+            <span className="text-[14px] font-mono tabular-nums font-bold text-emerald-600 leading-none">
               {c.value}
             </span>
             {hoveredCard === c.label && METHODOLOGY[c.label] && (
-              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 w-56 px-3 py-2 rounded-md border border-white/[0.08] bg-[oklch(0.16_0_0)] text-[10px] font-mono text-foreground/70 leading-relaxed z-50 shadow-lg pointer-events-none">
-                <span className="font-bold text-emerald-400">{c.label}:</span>{" "}
+              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 w-56 px-3 py-2 rounded-md border border-gray-200 bg-white text-[10px] font-mono text-foreground/70 leading-relaxed z-50 shadow-lg pointer-events-none">
+                <span className="font-bold text-emerald-600">{c.label}:</span>{" "}
                 {METHODOLOGY[c.label]}
               </div>
             )}

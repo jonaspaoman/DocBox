@@ -36,11 +36,11 @@ export function ControlPanel({
   const [logOpen, setLogOpen] = useState(false);
 
   return (
-    <div className="border-t border-border/50 bg-[oklch(0.1_0_0)] px-6 py-2.5 flex items-center gap-6 flex-wrap">
+    <div className="border-t border-border/50 bg-white px-6 py-2.5 flex items-center gap-6 flex-wrap">
       {/* Start / Pause / Resume / Reset / Add Patient */}
       <div className="flex gap-1.5">
         {simState.is_running ? (
-          <Button variant="outline" size="sm" className="font-mono text-xs h-7 border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10 gap-1.5" onClick={onStop}>
+          <Button variant="outline" size="sm" className="font-mono text-xs h-7 border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 gap-1.5" onClick={onStop}>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
             PAUSE
           </Button>
@@ -76,7 +76,7 @@ export function ControlPanel({
           onValueChange={([v]) => onSpeedChange(v)}
           className="flex-1"
         />
-        <span className="text-xs font-mono tabular-nums text-emerald-400 w-8 text-right">
+        <span className="text-xs font-mono tabular-nums text-emerald-600 w-8 text-right">
           {simState.speed_multiplier}x
         </span>
       </div>
@@ -125,7 +125,7 @@ export function ControlPanel({
         ) : null}
         <div className="flex items-center gap-1.5 bg-muted/20 px-2.5 py-1 rounded border border-border/30">
           <span className="text-[9px] font-mono text-muted-foreground/50 uppercase">Tick</span>
-          <span className="text-sm font-mono tabular-nums text-emerald-400 font-bold">
+          <span className="text-sm font-mono tabular-nums text-emerald-600 font-bold">
             {String(simState.current_tick).padStart(4, "0")}
           </span>
         </div>
