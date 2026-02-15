@@ -1,0 +1,590 @@
+[
+  {
+    "demographics": {
+      "name": "Maria Santos",
+      "sex": "F",
+      "dob": "1992-05-18",
+      "address": "2415 W Fullerton Ave, Chicago, IL 60647"
+    },
+    "medical_history": "No significant past medical history. No prior surgeries. No known drug allergies. No family history of note. Review of systems otherwise negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "34-year-old female presenting with acute-onset right lower quadrant abdominal pain for 6 hours rated 8/10, radiating to the back. Associated nausea and one episode of vomiting. Guarding noted on exam with concern for appendicitis.",
+        "hpi_narrative": "34 Y/O female with no significant past medical history presents with acute onset right lower quadrant abdominal pain beginning approximately 6 hours prior to arrival. Pain is rated 8 out of 10 in severity and radiates to the back. She reports associated nausea with one episode of non-bloody, non-bilious vomiting. She denies fever, diarrhea, constipation, or urinary symptoms. Last menstrual period was 2 weeks ago and she denies any possibility of pregnancy.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T06:42:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient confirms acute onset of sharp, constant RLQ pain starting this morning. She describes the pain as initially periumbilical before migrating to the right lower quadrant. Nausea persists, vomited once — non-bloody. She has not eaten since symptom onset. Denies dysuria, vaginal discharge, or recent illness. No prior abdominal surgeries.",
+        "objective": "T 99.1 HR 92 BP 128/78 RR 18. Tenderness RLQ with guarding. Positive McBurney's point. No rebound.",
+        "assessment": "Acute appendicitis. Clinical presentation with migratory RLQ pain, nausea/vomiting, low-grade fever, and localized tenderness with guarding at McBurney's point is classic for acute appendicitis. Elevated WBC and CT findings of inflamed appendix without perforation confirm the diagnosis.",
+        "plan": "Surgical consult, IV antibiotics, NPO, admit for appendectomy."
+      },
+      "labs": [
+        {"test": "CBC", "result": "WBC 14.2k (elevated)", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "CMP", "result": "Normal", "is_surprising": false, "arrives_at_tick": 10},
+        {"test": "CT Abdomen", "result": "Inflamed appendix, no perforation", "is_surprising": false, "arrives_at_tick": 15}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "James Walker",
+      "sex": "M",
+      "dob": "1963-11-03",
+      "address": "831 E 63rd St, Chicago, IL 60637"
+    },
+    "medical_history": "Past medical history significant for hypertension, hyperlipidemia, and type 2 diabetes mellitus. No prior cardiac history, no prior cardiac catheterizations or stenting. Thirty pack-year smoking history, currently active smoker. No known drug allergies. Family history not obtained at this time. Review of systems positive for chronic exertional dyspnea attributed to deconditioning.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "62-year-old male presenting with substernal chest pressure radiating to the left arm for 2 hours, onset at rest. Associated diaphoresis and nausea. Multiple cardiac risk factors including hypertension, hyperlipidemia, diabetes, and significant smoking history.",
+        "hpi_narrative": "62 Y/O male with a history of hypertension, hyperlipidemia, type 2 diabetes, and 30 pack-year smoking history presents with substernal chest pressure that began approximately 2 hours prior to arrival while sitting at rest. The pressure radiates to his left arm and is associated with profuse diaphoresis and nausea. He denies prior episodes of chest pain, shortness of breath, palpitations, or syncope. He has no history of prior cardiac workup or catheterization. He takes medications for blood pressure and cholesterol but is unable to recall specific names.",
+        "esi_score": 2,
+        "time_admitted": "2026-02-14T07:15:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient describes a heavy, squeezing sensation across his chest that woke him from sleep approximately 2 hours ago. Pain is constant, non-pleuritic, and radiates down his left arm to the wrist. He has been sweating profusely and felt nauseated, with one episode of dry heaving. He rates the pain 8/10. Denies recent illness, cocaine use, or prior similar episodes. He confirms poorly controlled diabetes and acknowledges medication non-compliance.",
+        "objective": "T 98.6 HR 98 BP 158/92 RR 20 SpO2 96%. Diaphoretic. Heart RRR, no murmurs. Lungs clear.",
+        "assessment": "Acute coronary syndrome. Presentation with substernal chest pressure at rest with left arm radiation, diaphoresis, and nausea in the setting of multiple cardiac risk factors (HTN, HLD, DM2, smoking) is highly concerning for ACS. Initial troponin elevated at 0.08 ng/mL supports myocardial injury. ECG and serial troponins pending for further risk stratification.",
+        "plan": "Serial troponins, 12-lead ECG, aspirin 325mg, nitroglycerin PRN, cardiology consult."
+      },
+      "labs": [
+        {"test": "Troponin", "result": "0.08 ng/mL (elevated)", "is_surprising": true, "arrives_at_tick": 6},
+        {"test": "CBC", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "BMP", "result": "Glucose 198, otherwise normal", "is_surprising": false, "arrives_at_tick": 8}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Ashley Chen",
+      "sex": "F",
+      "dob": "1997-09-22",
+      "address": "1520 N Damen Ave, Apt 3F, Chicago, IL 60622"
+    },
+    "medical_history": "No significant past medical history. No prior surgeries. No known drug allergies. No chronic medications. Family history non-contributory. Review of systems negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "28-year-old female presenting with a 4 cm laceration to the left volar forearm sustained from broken glass while washing dishes. Bleeding controlled with direct pressure. No numbness, weakness, or tendon involvement noted.",
+        "hpi_narrative": "28 Y/O female with no significant past medical history presents after cutting her left forearm on a piece of broken glass while washing dishes at home approximately 45 minutes prior to arrival. She applied direct pressure with a clean towel and the bleeding slowed. She denies any numbness, tingling, or weakness in the left hand or fingers. She is able to flex and extend all digits without difficulty. Tetanus immunization is up to date. She denies any allergies to medications or latex.",
+        "esi_score": 5,
+        "time_admitted": "2026-02-14T14:30:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient reports she was washing a glass that broke in her hand, resulting in a cut to her inner left forearm. Pain is 4/10 at the wound site. She can move all fingers normally and denies any change in sensation. No other injuries sustained. She did not lose consciousness or fall. No blood-thinning medications.",
+        "objective": "T 98.4 HR 72 BP 118/70 RR 14. 4cm linear laceration left volar forearm, clean edges, no tendon/nerve involvement. Intact sensation and motor distally.",
+        "assessment": "Simple laceration, left forearm. Clean 4 cm linear wound with well-defined edges. No foreign body, no tendon or nerve involvement. Neurovascular status intact distally. Low risk for complications.",
+        "plan": "Wound irrigation, primary closure with sutures, tetanus booster if needed, wound care instructions."
+      },
+      "labs": [],
+      "discharge_papers": {
+        "disposition": "Discharged home in stable condition",
+        "diagnosis": "Simple laceration, left volar forearm (4 cm)",
+        "discharge_justification": "Wound successfully closed with 6 interrupted nylon sutures. Hemostasis achieved. Neurovascular exam intact. Patient demonstrates understanding of wound care instructions. No signs of infection. Tetanus immunization current.",
+        "admitting_attending": "Dr. Rachel Okonkwo, MD — Emergency Medicine",
+        "follow_up": "Primary care or urgent care in 10-14 days for suture removal",
+        "follow_up_instructions": "Follow up with your primary care provider or an urgent care clinic in 10 to 14 days for suture removal. Return to the ED sooner if you develop increasing redness, swelling, warmth, drainage, red streaking, fever, or worsening pain at the wound site.",
+        "warning_instructions": "Return to the emergency department immediately if you experience: increasing pain, redness, or swelling around the wound; pus or foul-smelling drainage; fever above 100.4F; red streaks extending from the wound; numbness or inability to move fingers; or reopening of the wound.",
+        "soap_note": "S: 28F with no PMH presents with left forearm laceration from broken glass ~45 min ago. Bleeding controlled with pressure. Denies numbness, weakness, tingling. Tetanus UTD. NKDA.\nO: VS stable. 4 cm linear laceration left volar forearm with clean edges. No FB visualized. No tendon or nerve involvement. Sensation intact to light touch in median, ulnar, and radial distributions. Full ROM all digits with intact grip strength. Cap refill <2s.\nA: Simple laceration, left volar forearm.\nP: Wound irrigated with 500 mL NS. Primary closure with 6 interrupted 4-0 nylon sutures. Wound dressed with bacitracin and non-adherent dressing. Wound care instructions provided. Follow up PCP/urgent care 10-14 days for suture removal. Return precautions reviewed. Patient verbalized understanding.",
+        "avs": "AFTER VISIT SUMMARY — Ashley Chen — DOB 09/22/1997\nDate of Visit: 02/14/2026\nDiagnosis: Laceration, left forearm\nTreatment: Your wound was cleaned and closed with 6 stitches.\nWound Care: Keep the wound clean and dry for 24 hours. After 24 hours you may gently wash with soap and water and pat dry. Apply a thin layer of antibiotic ointment (bacitracin or Neosporin) and cover with a clean bandage daily. Do not submerge the wound in water (no baths, pools, or hot tubs) until sutures are removed. Do not pick at or pull the stitches.\nPain Management: Take ibuprofen (Advil) 400-600 mg every 6-8 hours as needed for pain. You may alternate with acetaminophen (Tylenol) 500 mg every 6 hours if needed.\nActivity: Avoid heavy lifting or strenuous use of the left arm for 5-7 days.\nFollow-Up: See your primary care doctor or visit urgent care in 10-14 days for suture removal.\nWhen to Return: Increasing pain, redness, swelling, pus, fever, red streaks, numbness, or wound reopening.",
+        "work_school_form": "WORK/SCHOOL EXCUSE — Patient: Ashley Chen — DOB: 09/22/1997\nDate of Visit: 02/14/2026\nThis patient was seen in the Emergency Department on the above date for treatment of a left forearm laceration. Patient may return to work/school on 02/15/2026 with the following restrictions: Avoid heavy lifting (>10 lbs) with the left arm and avoid submerging the wound in water for 10-14 days until sutures are removed. No restrictions on attendance.\nProvider: Dr. Rachel Okonkwo, MD — Emergency Medicine"
+      }
+    }
+  },
+  {
+    "demographics": {
+      "name": "Robert Mitchell",
+      "sex": "M",
+      "dob": "1980-08-11",
+      "address": "3844 N Southport Ave, Chicago, IL 60613"
+    },
+    "medical_history": "Past medical history significant for moderate persistent asthma diagnosed in childhood, and seasonal allergies. Uses fluticasone/salmeterol (Advair) daily as maintenance therapy and albuterol inhaler as needed for rescue. No prior intubations or ICU admissions for asthma. No known drug allergies. Family history notable for asthma in mother. Review of systems otherwise unremarkable.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "45-year-old male with known asthma presenting with progressive shortness of breath and wheezing over 12 hours. Home albuterol inhaler used 6 times without relief. Triggered by upper respiratory infection 3 days ago. SpO2 91% on room air with accessory muscle use.",
+        "hpi_narrative": "45 Y/O male with a history of moderate persistent asthma presents with progressive dyspnea and audible wheezing for approximately 12 hours. He reports onset of an upper respiratory infection 3 days ago with rhinorrhea and mild cough, which precipitated worsening of his asthma symptoms. He has used his albuterol metered-dose inhaler 6 times over the past 12 hours with minimal and transient relief. He takes fluticasone/salmeterol daily as prescribed. He is speaking in short sentences due to breathlessness and reports chest tightness. He denies fever, hemoptysis, chest pain, or recent travel.",
+        "esi_score": 2,
+        "time_admitted": "2026-02-14T05:20:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient reports worsening shortness of breath since yesterday evening. He caught a cold 3 days ago and his breathing has gotten progressively worse despite frequent albuterol use. He is unable to lie flat comfortably and has not slept. He denies any new exposures, pets, or environmental triggers. He confirms adherence to his daily controller medication. He feels his current episode is worse than his usual flares and states 'I can't catch my breath.'",
+        "objective": "T 99.0 HR 110 BP 138/82 RR 28 SpO2 91% on RA. Diffuse expiratory wheezes bilaterally. Accessory muscle use. Speaking in short sentences.",
+        "assessment": "Acute asthma exacerbation, moderate-severe. Patient with known moderate persistent asthma presenting with significant bronchospasm triggered by upper respiratory infection. Hypoxia with SpO2 91%, tachycardia, tachypnea, and accessory muscle use indicate moderate-severe exacerbation. ABG shows borderline CO2 retention, which is concerning for impending fatigue. Chest X-ray reassuringly shows no pneumonia or pneumothorax.",
+        "plan": "Continuous nebulized albuterol, ipratropium, IV methylprednisolone 125mg, supplemental O2, reassess in 1 hour."
+      },
+      "labs": [
+        {"test": "ABG", "result": "pH 7.38, pCO2 42, pO2 68", "is_surprising": false, "arrives_at_tick": 7},
+        {"test": "Chest X-ray", "result": "Hyperinflation, no infiltrates or pneumothorax", "is_surprising": false, "arrives_at_tick": 10}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Linda Okafor",
+      "sex": "F",
+      "dob": "1954-03-27",
+      "address": "7621 S Jeffery Blvd, Chicago, IL 60649"
+    },
+    "medical_history": "Past medical history significant for atrial fibrillation on warfarin 5 mg daily, osteoporosis, and hypertension. No prior fractures. Medications include warfarin 5 mg daily, lisinopril, and alendronate weekly. No known drug allergies. Family history notable for osteoporosis in mother and sister. Review of systems positive for chronic joint stiffness, otherwise negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "71-year-old female who tripped on a rug at home and fell onto her right side. Unable to bear weight on the right leg. Currently on warfarin for atrial fibrillation. Right leg appears shortened and externally rotated on exam.",
+        "hpi_narrative": "71 Y/O female with a history of atrial fibrillation on warfarin, osteoporosis, and hypertension presents after a mechanical fall at home approximately 2 hours prior to arrival. She tripped on the edge of an area rug in her living room and fell directly onto her right side. She experienced immediate sharp pain in her right hip and has been unable to bear weight on the right leg since the fall. She denies striking her head, losing consciousness, or experiencing dizziness or palpitations prior to the fall. She denies chest pain, shortness of breath, or any prodromal symptoms. She took her warfarin this morning as usual.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T09:50:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient recounts tripping on a rug and falling onto her right hip. She heard no pop or crack but the pain was immediate and severe. She was unable to stand and her husband called 911. She denies head strike, vision changes, dizziness, or pre-syncopal symptoms before the fall. She confirms taking warfarin daily and took her dose this morning. She has not had any recent bleeding or bruising. She is anxious about surgery and being on a blood thinner.",
+        "objective": "T 98.2 HR 88 (irregular) BP 142/78 RR 16. Right leg shortened and externally rotated. TTP right hip. Neurovascularly intact distally.",
+        "assessment": "Right femoral neck fracture, displaced. Imaging confirms displaced femoral neck fracture in the setting of osteoporosis, consistent with fragility fracture from mechanical fall. INR supratherapeutic at 3.8, which increases perioperative bleeding risk and requires correction prior to surgical fixation. Orthopedic surgery will determine approach — likely hemiarthroplasty given displacement and patient age.",
+        "plan": "X-ray hip, check INR, orthopedic consult, pain management with IV acetaminophen, hold warfarin."
+      },
+      "labs": [
+        {"test": "X-ray Hip", "result": "Displaced femoral neck fracture", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "INR", "result": "3.8 (supratherapeutic)", "is_surprising": true, "arrives_at_tick": 6},
+        {"test": "CBC", "result": "Hgb 11.2, otherwise normal", "is_surprising": false, "arrives_at_tick": 7}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "David Park",
+      "sex": "M",
+      "dob": "2006-12-09",
+      "address": "4312 W Lawrence Ave, Chicago, IL 60630"
+    },
+    "medical_history": "Past medical history significant for migraine with aura, diagnosed at age 14. Typical aura consists of visual scintillations lasting 15-20 minutes followed by unilateral throbbing headache. Average 2-3 migraines per month. Uses sumatriptan as abortive therapy. No other chronic conditions. No known drug allergies. Family history of migraines in mother.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "19-year-old male with a history of migraine with aura presenting with a severe left-sided throbbing headache for 8 hours unresponsive to sumatriptan. Associated photophobia and nausea. No fever, neck stiffness, or focal neurological deficits.",
+        "hpi_narrative": "19 Y/O male with a known history of migraine with aura diagnosed at age 14 presents with severe left-sided throbbing headache that began approximately 8 hours ago. The headache was preceded by his typical visual aura lasting about 20 minutes. Pain is rated 9/10 and is localized to the left temporal and frontal regions. He reports significant photophobia and nausea but no vomiting. He took sumatriptan 100 mg orally at onset without relief. He denies fever, neck stiffness, vision changes beyond his typical aura, weakness, numbness, or speech difficulty. He denies recent head trauma or new medications.",
+        "esi_score": 4,
+        "time_admitted": "2026-02-14T16:05:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient describes this headache as consistent with his typical migraine pattern — visual aura followed by left-sided throbbing pain — but more severe and prolonged than usual. He has tried sumatriptan, ibuprofen, and lying in a dark room without improvement. He is a college student and has an exam tomorrow, which he notes has increased his stress. Sleep has been poor this week. He denies any 'worst headache of my life' quality, sudden thunderclap onset, or new neurological symptoms.",
+        "objective": "T 98.6 HR 68 BP 122/74 RR 14. Alert, photophobic, no focal neuro deficits. Neck supple. Kernig/Brudzinski negative.",
+        "assessment": "Migraine headache, intractable. Presentation is consistent with the patient's known migraine pattern with aura, now refractory to oral sumatriptan. No red flags for secondary headache — no thunderclap onset, no meningismus, no focal deficits, no papilledema. Status migrainosus requiring IV abortive therapy.",
+        "plan": "IV metoclopramide 10mg + diphenhydramine 25mg, IV ketorolac 30mg, dark quiet room, reassess in 45 min."
+      },
+      "labs": [],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Patricia Gomez",
+      "sex": "F",
+      "dob": "1970-07-14",
+      "address": "2658 S Kedzie Ave, Chicago, IL 60623"
+    },
+    "medical_history": "Past medical history significant for recurrent urinary tract infections (3-4 per year), type 2 diabetes mellitus with most recent hemoglobin A1c of 7.8%, and hypertension. Medications include metformin 1000 mg twice daily, lisinopril 10 mg daily, and she uses trimethoprim-sulfamethoxazole as needed for UTIs. No known drug allergies. Family history of diabetes in both parents. Review of systems positive for chronic polyuria and nocturia attributed to diabetes.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "55-year-old female presenting with burning urination, urinary frequency, and right flank pain for 3 days. Fever to 101.5 this morning. Known history of recurrent UTIs and diabetes. Concern for ascending urinary tract infection.",
+        "hpi_narrative": "55 Y/O female with a history of recurrent UTIs, type 2 diabetes, and hypertension presents with dysuria, urinary frequency, and urgency for 3 days. Symptoms began with typical lower urinary tract symptoms but she developed right-sided flank pain yesterday and a fever to 101.5 degrees Fahrenheit this morning. She has been taking ibuprofen for pain. She denies vaginal discharge, hematuria, nausea, or vomiting. She has not started any antibiotics. She reports her last UTI was approximately 4 months ago, treated with trimethoprim-sulfamethoxazole.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T08:30:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient states she initially thought this was another UTI like her usual ones but became concerned when she developed flank pain and fever. She reports chills since this morning. She has had adequate oral intake but feels fatigued. She has been checking her blood sugars at home and notes they have been running higher than usual at 180-220 over the past two days. She denies vaginal symptoms and her last menstrual period was 3 years ago (postmenopausal). She has no history of kidney stones.",
+        "objective": "T 101.8 HR 96 BP 132/78 RR 18. Right CVA tenderness. Suprapubic tenderness. No peritoneal signs.",
+        "assessment": "Acute pyelonephritis. Clinical presentation of dysuria progressing to flank pain and fever in a diabetic patient with recurrent UTI history is consistent with ascending pyelonephritis. Urinalysis confirms pyuria and bacteriuria. Elevated WBC and acute kidney injury (creatinine 1.4, baseline 0.9) suggest systemic involvement. Diabetes is a risk factor for complicated UTI and needs close monitoring.",
+        "plan": "UA with culture, blood cultures, BMP, CBC. IV ceftriaxone 1g, IV fluids, reassess for admission vs outpatient antibiotics."
+      },
+      "labs": [
+        {"test": "Urinalysis", "result": "Positive nitrites, WBC >50, bacteria", "is_surprising": false, "arrives_at_tick": 5},
+        {"test": "CBC", "result": "WBC 16.8k", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "BMP", "result": "Creatinine 1.4 (baseline 0.9)", "is_surprising": false, "arrives_at_tick": 8}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Kevin Brooks",
+      "sex": "M",
+      "dob": "2017-10-30",
+      "address": "1185 W Madison St, Apt 2, Chicago, IL 60607"
+    },
+    "medical_history": "No significant past medical history. Up to date on immunizations. No prior fractures or surgeries. No known drug allergies. No chronic medications. Family history non-contributory. Review of systems negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "8-year-old male who fell from monkey bars at school and landed on his outstretched right hand. Immediate pain and swelling at the right wrist with visible deformity. Fingers are moving but he is guarding the wrist. No open wound.",
+        "hpi_narrative": "8 Y/O male with no significant past medical history is brought in by his mother after falling from monkey bars during recess at school approximately 1.5 hours prior to arrival. He landed on his outstretched right hand. He experienced immediate pain and swelling at the right wrist. His teacher applied ice and called his mother. He has been guarding the wrist and crying intermittently. His mother notes visible swelling and deformity at the wrist. There is no open wound or skin break. He can wiggle all fingers but refuses to move his wrist. He denies numbness or tingling. No head strike or loss of consciousness during the fall. No prior fractures.",
+        "esi_score": 4,
+        "time_admitted": "2026-02-14T13:15:00"
+      },
+      "doctor_notes": {
+        "subjective": "Spoke with patient and mother. Kevin says he was swinging on the monkey bars, his hands slipped, and he fell about 4 feet onto the ground, landing on his right hand. He is tearful but cooperative. He says the pain is 'really bad' and points to the top of his wrist. He can move his fingers when asked but will not rotate his wrist. Mom confirms no prior injuries and says he is otherwise healthy. He had lunch at school and last ate about 2 hours ago.",
+        "objective": "T 98.4 HR 92 BP 108/68 RR 18. Swelling and deformity distal right forearm/wrist. TTP dorsal wrist. Intact radial pulse, cap refill <2s, moves all fingers.",
+        "assessment": "Distal radius buckle fracture confirmed on X-ray. Non-displaced, stable fracture pattern consistent with mechanism of fall on outstretched hand (FOOSH). Neurovascular status intact. No growth plate involvement apparent on imaging. Appropriate for conservative management with immobilization.",
+        "plan": "X-ray wrist, splint, ibuprofen for pain, orthopedic follow-up in 1 week."
+      },
+      "labs": [
+        {"test": "X-ray Wrist", "result": "Buckle fracture distal radius, no displacement", "is_surprising": false, "arrives_at_tick": 7}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Susan Williams",
+      "sex": "F",
+      "dob": "1983-04-06",
+      "address": "945 W Armitage Ave, Chicago, IL 60614"
+    },
+    "medical_history": "Past medical history significant for known shellfish allergy (prior urticarial reactions, never anaphylaxis) and seasonal allergies managed with cetirizine as needed. She carries an epinephrine auto-injector (EpiPen) but did not use it today. No other chronic conditions. No known drug allergies aside from shellfish. Family history of atopy (brother has asthma). Review of systems otherwise negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "42-year-old female presenting with diffuse hives that developed 1 hour after unknowingly eating shrimp at a restaurant. Known shellfish allergy. Denies lip or tongue swelling, difficulty breathing, or throat tightness. No signs of anaphylaxis on initial assessment.",
+        "hpi_narrative": "42 Y/O female with a known shellfish allergy presents with diffuse urticaria that developed approximately 1 hour after eating at a restaurant. She ordered a pasta dish and did not realize it contained shrimp until after she had eaten several bites. Within 30-40 minutes she noticed itchy, raised welts developing on her arms, which then spread to her trunk and legs. She denies lip swelling, tongue swelling, difficulty breathing, throat tightness, voice changes, abdominal pain, or dizziness. She carries an EpiPen but did not use it because she was unsure if the reaction was severe enough to warrant it. Her husband drove her to the ED.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T19:45:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient is visibly uncomfortable with widespread itchy hives. She reiterates that she did not realize the dish had shellfish. She has had two prior urticarial reactions to shellfish, both resolved with oral diphenhydramine alone. She denies any sensation of throat tightness, tongue swelling, difficulty swallowing, wheezing, or feeling faint. She took 25 mg of oral diphenhydramine at home before coming in, approximately 30 minutes ago, with no improvement. She is anxious about the possibility of the reaction worsening.",
+        "objective": "T 98.6 HR 84 BP 124/76 RR 16 SpO2 99%. Diffuse urticarial rash trunk and extremities. No angioedema. No wheezing or stridor. Oropharynx clear.",
+        "assessment": "Acute urticaria secondary to allergic reaction to shellfish (shrimp). No features of anaphylaxis at this time — hemodynamically stable, no airway compromise, no angioedema, no GI or respiratory symptoms. Given known severe allergen exposure and potential for biphasic reaction, prophylactic epinephrine administered and patient will be observed for 4 hours.",
+        "plan": "IM epinephrine 0.3mg (given prophylactically), IV diphenhydramine 50mg, IV famotidine 20mg, IV methylprednisolone 125mg. Monitor 4 hours for biphasic reaction."
+      },
+      "labs": [],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Thomas Anderson",
+      "sex": "M",
+      "dob": "1987-06-20",
+      "address": "510 N Michigan Ave, Unit 1204, Chicago, IL 60611"
+    },
+    "medical_history": "No significant past medical history. No chronic medications. Social drinker, 2-3 drinks per week. Non-smoker. No known drug allergies. Family history non-contributory. Review of systems negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "38-year-old male brought in after a witnessed syncopal episode at work. He was standing in a meeting, felt lightheaded, and collapsed with loss of consciousness for approximately 10 seconds. Rapid recovery with no seizure activity. He skipped breakfast and only had coffee this morning.",
+        "hpi_narrative": "38 Y/O male with no significant past medical history presents after a witnessed syncopal episode at work approximately 1 hour prior to arrival. He was standing during a morning meeting when he felt lightheaded and 'things started going gray.' Coworkers witnessed him slump and fall to the ground. Loss of consciousness lasted approximately 10 seconds per bystanders, with no tonic-clonic activity, tongue biting, or urinary incontinence. He regained full orientation rapidly and was able to sit up within 30 seconds. He reports skipping breakfast this morning and only drinking two cups of black coffee. He denies chest pain, palpitations, shortness of breath, or headache before or after the event. No prior syncopal episodes.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T10:20:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient recalls feeling warm and lightheaded just before the event. He had been standing for about 15 minutes during a presentation. He remembers his vision narrowing and then waking up on the floor with colleagues around him. He felt normal within a minute. He confirms no breakfast, only coffee, and he stayed up late last night working. He denies palpitations, racing heart, chest discomfort, or family history of sudden cardiac death or arrhythmias. He is mildly embarrassed but otherwise feels well.",
+        "objective": "T 98.4 HR 64 BP 118/72 RR 14 SpO2 100%. Alert, oriented. Orthostatics negative. Cardiac exam normal. Neuro exam nonfocal.",
+        "assessment": "Vasovagal syncope. Clinical history strongly suggests a vasovagal mechanism — prodromal lightheadedness and visual changes, brief LOC during prolonged standing, rapid recovery, in the setting of poor oral intake and sleep deprivation. ECG with normal sinus rhythm and no concerning intervals. Negative orthostatics and normal metabolic panel make cardiac and metabolic etiologies unlikely.",
+        "plan": "ECG, orthostatic vitals, BMP, CBC. If workup negative, discharge with PCP follow-up."
+      },
+      "labs": [
+        {"test": "ECG", "result": "Normal sinus rhythm, no ST changes", "is_surprising": false, "arrives_at_tick": 5},
+        {"test": "BMP", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "CBC", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Fatima Al-Hassan",
+      "sex": "F",
+      "dob": "1958-01-15",
+      "address": "6230 N Broadway, Apt 5C, Chicago, IL 60660"
+    },
+    "medical_history": "Past medical history significant for congestive heart failure with reduced ejection fraction (EF 35%), hypertension, type 2 diabetes mellitus, and chronic kidney disease stage 3 (baseline creatinine 1.3). Medications include furosemide 40 mg daily, lisinopril 20 mg, carvedilol 25 mg twice daily, metformin 500 mg twice daily, and aspirin 81 mg. Patient reports running out of furosemide 4 days ago and has not been able to refill it. No known drug allergies. Family history of coronary artery disease in father (MI at age 60). Review of systems positive for chronic fatigue and bilateral lower extremity swelling at baseline (trace edema).",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "67-year-old female with a history of CHF (EF 35%) presenting with progressively worsening shortness of breath and orthopnea over 2 days. Five-pound weight gain this week. Ran out of furosemide 4 days ago. Bilateral leg swelling. SpO2 92% on room air.",
+        "hpi_narrative": "67 Y/O female with a history of CHF with reduced ejection fraction of 35%, hypertension, type 2 diabetes, and CKD stage 3 presents with progressive dyspnea on exertion and orthopnea worsening over the past 2 days. She reports a 5-pound weight gain over the past week and notes that her bilateral lower extremity edema has worsened significantly. She ran out of her furosemide 4 days ago and has been unable to refill it due to a lapsed prescription. She experienced paroxysmal nocturnal dyspnea last night, waking gasping for air after lying flat for 2 hours. She now sleeps propped up on 3 pillows. She denies chest pain, palpitations, fever, or cough productive of sputum.",
+        "esi_score": 2,
+        "time_admitted": "2026-02-14T04:10:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient reports being progressively more short of breath since running out of her water pill 4 days ago. She has noticed her ankles and legs swelling more than usual and she feels bloated. Last night she woke up suddenly unable to breathe and had to sit at the edge of her bed. She has been able to eat small amounts but reports decreased appetite. She weighs herself daily and notes going from 168 lbs to 173 lbs over the past week. She is frustrated she could not get her prescription refilled. She denies chest pain, fevers, chills, or productive cough.",
+        "objective": "T 98.2 HR 102 BP 168/94 RR 24 SpO2 92% on RA. JVD present. Bibasilar crackles. 2+ bilateral lower extremity edema.",
+        "assessment": "Acute decompensated heart failure secondary to medication non-compliance (furosemide held for 4 days). Clinical exam with volume overload — JVD, bibasilar crackles, bilateral edema, and weight gain. Markedly elevated BNP at 1850 pg/mL. Chest X-ray confirms bilateral pleural effusions and pulmonary edema. Hyperkalemia (5.2) and worsening renal function (Cr 1.8 from baseline 1.3) likely reflect cardiorenal syndrome. Requires aggressive diuresis and monitoring.",
+        "plan": "IV furosemide 40mg, supplemental O2, BNP, BMP, chest X-ray, daily weights, cardiology consult."
+      },
+      "labs": [
+        {"test": "BNP", "result": "1850 pg/mL (markedly elevated)", "is_surprising": false, "arrives_at_tick": 7},
+        {"test": "BMP", "result": "K 5.2, Cr 1.8", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "Chest X-ray", "result": "Bilateral pleural effusions, pulmonary edema", "is_surprising": false, "arrives_at_tick": 10}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Marcus Johnson",
+      "sex": "M",
+      "dob": "2000-08-02",
+      "address": "3350 S King Dr, Apt 6A, Chicago, IL 60616"
+    },
+    "medical_history": "No significant past medical history. No prior injuries or surgeries. No known drug allergies. No chronic medications. Active lifestyle, plays recreational basketball regularly. Family history non-contributory. Review of systems negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "25-year-old male who rolled his right ankle during a basketball game 3 hours ago. Immediate swelling and pain with inability to bear weight. No pop or crack heard. Has been icing intermittently.",
+        "hpi_narrative": "25 Y/O male with no significant past medical history presents after sustaining a right ankle inversion injury during a recreational basketball game approximately 3 hours prior to arrival. He was going up for a rebound and landed on another player's foot, rolling his right ankle inward. He experienced immediate sharp pain on the outside of his ankle and was unable to continue playing. Swelling developed within minutes. He did not hear a pop or crack. He has been applying ice intermittently and elevating the ankle. He attempted to walk to the car but was unable to bear weight due to pain. He denies prior ankle injuries or sprains.",
+        "esi_score": 5,
+        "time_admitted": "2026-02-14T15:00:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient describes landing on another player's foot and his ankle rolling inward. He felt immediate pain on the outer aspect of his right ankle. Pain is currently 6/10, worsened by any attempt at weight bearing. He can move his toes and foot up and down but it hurts with any side-to-side motion. He denies numbness, tingling, or any injury to other body parts. He would like to know if it is broken and when he can return to playing basketball.",
+        "objective": "T 98.6 HR 74 BP 126/78 RR 14. Swelling and ecchymosis right lateral ankle. TTP anterior talofibular ligament. Negative squeeze test. Negative Ottawa rules but X-ray ordered given inability to bear weight.",
+        "assessment": "Right ankle sprain, grade 2. X-ray negative for fracture. Clinical exam with swelling, ecchymosis, and tenderness over the ATFL consistent with lateral ankle sprain. Negative squeeze test rules out syndesmotic injury. Patient unable to bear weight, suggesting grade 2 (moderate) sprain with partial ligament tear.",
+        "plan": "X-ray ankle to rule out fracture, RICE protocol, ACE wrap, crutches, ibuprofen, ortho follow-up if not improving in 1 week."
+      },
+      "labs": [
+        {"test": "X-ray Ankle", "result": "No fracture. Soft tissue swelling laterally.", "is_surprising": false, "arrives_at_tick": 7}
+      ],
+      "discharge_papers": {
+        "disposition": "Discharged home in stable condition with crutches",
+        "diagnosis": "Right ankle sprain, grade 2 (lateral ankle — anterior talofibular ligament)",
+        "discharge_justification": "X-ray negative for fracture. Neurovascular exam intact. Patient ambulating with crutches. Pain controlled with oral ibuprofen. Patient educated on RICE protocol and given clear return precautions. Orthopedic follow-up arranged if symptoms do not improve within one week.",
+        "admitting_attending": "Dr. Samuel Nguyen, MD — Emergency Medicine",
+        "follow_up": "Orthopedics or primary care in 1 week if not improving",
+        "follow_up_instructions": "Follow up with an orthopedic specialist or your primary care doctor in 1 week if your symptoms are not improving. If swelling and pain resolve and you are bearing weight comfortably, formal follow-up may not be necessary. Begin gentle range-of-motion exercises once pain allows.",
+        "warning_instructions": "Return to the emergency department immediately if you experience: inability to feel or move your toes; the foot becomes cold, blue, or numb; significantly increased swelling despite elevation and ice; severe pain uncontrolled by ibuprofen; inability to bear any weight after 72 hours; or fever.",
+        "soap_note": "S: 25M with no PMH presents with right ankle inversion injury sustained 3 hours ago during basketball. Landed on another player's foot. Immediate pain and swelling, unable to bear weight. No pop/crack heard. Icing intermittently. Denies numbness or tingling. No prior ankle injuries. NKDA.\nO: VS stable. Right lateral ankle with moderate swelling and early ecchymosis. TTP over ATFL. Negative squeeze test. Negative anterior drawer. Intact dorsalis pedis and posterior tibial pulses. Sensation intact. Motor intact — can dorsiflex and plantarflex with pain. X-ray: No fracture, soft tissue swelling laterally.\nA: Right ankle sprain, grade 2 — lateral ankle complex.\nP: RICE protocol (rest, ice 20 min q2h, compression with ACE wrap, elevation above heart). Ibuprofen 600 mg PO q6h PRN with food for 5-7 days. Crutches for non-weight-bearing x 48-72 hours, then weight-bear as tolerated. Ortho follow-up in 1 week if not improving. Return precautions reviewed. Patient verbalized understanding.",
+        "avs": "AFTER VISIT SUMMARY — Marcus Johnson — DOB 08/02/2000\nDate of Visit: 02/14/2026\nDiagnosis: Right ankle sprain (grade 2)\nTreatment: Your ankle was examined and X-rayed. No fracture was found. You have a moderate ankle sprain.\nRICE Protocol:\n  - Rest: Stay off the ankle. Use crutches for 2-3 days, then gradually bear weight as pain allows.\n  - Ice: Apply ice wrapped in a towel to the ankle for 20 minutes every 2-3 hours for the first 48-72 hours.\n  - Compression: Keep the ACE wrap on snugly but not so tight that your toes tingle or turn blue. Rewrap as needed.\n  - Elevation: Keep your ankle raised above the level of your heart as much as possible for the first 48 hours.\nPain Management: Take ibuprofen (Advil) 600 mg every 6 hours with food as needed. Do not exceed 2400 mg in 24 hours. You may alternate with acetaminophen (Tylenol) 500 mg if needed.\nActivity: No running, jumping, or sports for at least 2 weeks. Begin gentle ankle circles and alphabet exercises once pain allows. Gradually return to activity.\nFollow-Up: See an orthopedic doctor or your primary care doctor in 1 week if your ankle is not improving.\nWhen to Return: Numbness or coldness in toes, blue discoloration, worsening swelling, severe uncontrolled pain, inability to bear any weight after 3 days, or fever.",
+        "work_school_form": "WORK/SCHOOL EXCUSE — Patient: Marcus Johnson — DOB: 08/02/2000\nDate of Visit: 02/14/2026\nThis patient was seen in the Emergency Department on the above date for a right ankle sprain. Patient may return to work/school on 02/15/2026 with the following restrictions: No prolonged standing or walking. Crutches required for 48-72 hours. No physical labor, running, or sports for a minimum of 2 weeks. Desk/sedentary duties only until cleared by orthopedics or primary care.\nProvider: Dr. Samuel Nguyen, MD — Emergency Medicine"
+      }
+    }
+  },
+  {
+    "demographics": {
+      "name": "Dorothy Chen",
+      "sex": "F",
+      "dob": "1947-09-14",
+      "address": "5540 N Sheridan Rd, Apt 12B, Chicago, IL 60640"
+    },
+    "medical_history": "Past medical history significant for hypertension, osteoarthritis affecting bilateral knees, and mild cognitive impairment diagnosed 2 years ago (baseline: independent in ADLs, oriented, manages own medications). Medications include lisinopril 10 mg daily and acetaminophen 500 mg as needed for joint pain. No known drug allergies. Family history of dementia (mother). Review of systems positive for chronic bilateral knee pain, otherwise negative at baseline per daughter.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "78-year-old female brought in by her daughter with increasing confusion over 24 hours, fever to 102, and decreased oral intake. Baseline is independent and sharp. Daughter notes foul-smelling urine. The patient is hypotensive on arrival.",
+        "hpi_narrative": "78 Y/O female with a history of hypertension, osteoarthritis, and mild cognitive impairment at baseline is brought to the ED by her daughter who reports that her mother has become increasingly confused over the past 24 hours. At baseline, the patient is independent, manages her own finances, cooks, and is oriented to person, place, and time. Yesterday the daughter noticed her mother was repeating questions and seemed disoriented. This morning she found her mother unable to identify the day or where she was. The daughter measured a temperature of 102 degrees at home. Oral intake has been poor for 2 days. The daughter also noted foul-smelling urine when helping her mother to the bathroom. No cough, no falls, no new medications, no recent travel.",
+        "esi_score": 2,
+        "time_admitted": "2026-02-14T07:55:00"
+      },
+      "doctor_notes": {
+        "subjective": "Unable to obtain reliable history from patient due to altered mental status. Daughter at bedside provides collateral. She states her mother was completely normal two days ago — cooking dinner and watching TV. Yesterday she was 'not herself,' forgetting mid-sentence and wandering the house. This morning she could not state the year or her daughter's name (normally knows both). Daughter denies witnessing falls, seizure-like activity, or head trauma. Daughter notes decreased fluid intake and her mother has been incontinent of urine, which is new. No recent medication changes. No prior UTIs to daughter's knowledge.",
+        "objective": "T 102.4 HR 104 BP 98/58 RR 20 SpO2 97%. Confused, oriented to person only. Dry mucous membranes. Suprapubic tenderness. No nuchal rigidity.",
+        "assessment": "Urinary tract infection with sepsis. Acute altered mental status from baseline in the setting of fever, pyuria, and bacteriuria in an elderly patient. Meeting sepsis criteria with temperature >101.3, heart rate >90, and systolic BP <100. Lactate of 4.2 mmol/L indicates tissue hypoperfusion consistent with severe sepsis. Urosepsis is the most likely diagnosis. Elevated WBC with bandemia supports significant bacterial infection. Broad-spectrum antibiotics initiated and aggressive fluid resuscitation underway.",
+        "plan": "Blood cultures x2, UA with culture, CBC, BMP, lactate. IV NS bolus 1L, IV ceftriaxone 1g. Reassess mental status after fluids."
+      },
+      "labs": [
+        {"test": "Lactate", "result": "4.2 mmol/L (elevated)", "is_surprising": true, "arrives_at_tick": 5},
+        {"test": "UA", "result": "Positive nitrites, WBC >100, bacteria", "is_surprising": false, "arrives_at_tick": 6},
+        {"test": "CBC", "result": "WBC 22k, bands 15%", "is_surprising": false, "arrives_at_tick": 8}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Ryan O'Brien",
+      "sex": "M",
+      "dob": "1993-02-25",
+      "address": "1842 W Division St, Chicago, IL 60622"
+    },
+    "medical_history": "Past medical history significant for one prior calcium oxalate kidney stone 2 years ago, passed spontaneously without intervention. No chronic conditions. No regular medications. No known drug allergies. Family history of kidney stones in father. Review of systems otherwise negative. Patient reports low daily water intake.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "32-year-old male presenting with sudden onset severe left flank pain radiating to the groin for 4 hours. Pain is colicky and rated 10/10. Associated nausea, vomiting, and hematuria. History of a prior kidney stone 2 years ago.",
+        "hpi_narrative": "32 Y/O male with a history of one prior calcium oxalate kidney stone presents with sudden onset severe left flank pain that began approximately 4 hours prior to arrival. The pain is colicky, comes in waves, rated 10/10 at its worst, and radiates from the left flank down to the left groin. He reports associated nausea with two episodes of vomiting. He noticed blood in his urine earlier today. He has been unable to find a comfortable position and has been pacing and writhing. He experienced a similar episode 2 years ago that was diagnosed as a kidney stone and passed spontaneously. He admits to low daily water intake, primarily drinking coffee and soda.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T11:30:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient is in significant distress, writhing on the stretcher. He says the pain feels identical to his kidney stone episode 2 years ago, only this time it is on the left side (previous was right). He rates the current pain 10/10 during spasms and 6/10 between spasms. He has vomited twice since onset and feels persistently nauseated. He reports seeing 'pink-red' urine. He took two ibuprofen at home without relief. He has been unable to keep any food or fluids down. He is requesting pain medication urgently.",
+        "objective": "T 98.8 HR 102 BP 148/88 RR 20. Writhing in pain. Left CVA tenderness. Abdomen soft, nondistended. No peritoneal signs.",
+        "assessment": "Acute nephrolithiasis. Presentation with acute colicky flank pain radiating to groin, hematuria, nausea/vomiting, and history of prior calcium oxalate stone is classic for ureteral colic. CT confirms a 4 mm left ureteral stone at the ureterovesical junction with mild hydronephrosis. Stone size (<6 mm) suggests high likelihood of spontaneous passage. No signs of infection or complete obstruction.",
+        "plan": "IV ketorolac 30mg, IV ondansetron 4mg, CT abdomen/pelvis without contrast, UA, BMP. Urology consult if stone >6mm or signs of obstruction."
+      },
+      "labs": [
+        {"test": "UA", "result": "Hematuria, no infection", "is_surprising": false, "arrives_at_tick": 5},
+        {"test": "CT Abdomen", "result": "4mm left ureteral stone at UVJ, mild hydronephrosis", "is_surprising": false, "arrives_at_tick": 12}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Emily Torres",
+      "sex": "F",
+      "dob": "2009-11-08",
+      "address": "2920 N Milwaukee Ave, Chicago, IL 60618"
+    },
+    "medical_history": "No significant past medical history. No prior hospitalizations or surgeries. No chronic medications. No known drug allergies. Family history of type 2 diabetes in maternal grandmother. Review of systems positive for polyuria, polydipsia, and unintentional weight loss of 8 pounds over recent weeks — symptoms that are new and were not previously evaluated.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "16-year-old female presenting with 2 days of diffuse abdominal pain, nausea, and vomiting. Unable to keep anything down. Reports increased thirst and urination for 2 weeks with an 8-pound weight loss. Kussmaul breathing and fruity breath odor noted on exam, raising concern for diabetic ketoacidosis.",
+        "hpi_narrative": "16 Y/O female with no known past medical history presents with 2 days of diffuse abdominal pain, nausea, and vomiting. She has been unable to keep any food or fluids down for the past 24 hours. On further questioning, she reports 2 weeks of increased thirst (drinking 3-4 liters of water daily), increased urination (waking 3-4 times per night), and an unintentional weight loss of approximately 8 pounds. She has felt increasingly fatigued and weak. She denies fever, diarrhea, or recent illness. She denies any possibility of pregnancy. She is accompanied by her mother who confirms the progressive symptoms and is concerned about the weight loss. No family history of type 1 diabetes. No prior blood sugar testing performed.",
+        "esi_score": 2,
+        "time_admitted": "2026-02-14T06:00:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient is a 16-year-old girl who appears tired but is alert and answering questions. She states she has felt 'really sick' for two days with constant nausea, vomiting (4-5 times), and stomach pain. She describes feeling extremely thirsty for the past two weeks — 'I can't stop drinking water' — and urinating much more frequently than normal. She noticed her clothes fitting more loosely and her mother weighed her, confirming an 8-pound loss. She denies dieting or restricting food. She denies drug use, recent travel, or sick contacts. She reports her last period was 3 weeks ago and denies sexual activity. Mother is visibly worried.",
+        "objective": "T 98.0 HR 118 BP 108/62 RR 26 (Kussmaul). Fruity breath odor. Diffuse abdominal tenderness without guarding. Dry mucous membranes. Alert but fatigued.",
+        "assessment": "Diabetic ketoacidosis, new-onset type 1 diabetes mellitus. Classic presentation with polyuria, polydipsia, weight loss, progressing to nausea/vomiting and abdominal pain. POC glucose critically elevated at 486 mg/dL. Metabolic panel confirms severe metabolic acidosis with pH 7.18, bicarbonate 8, and anion gap of 28. Kussmaul respirations represent respiratory compensation. Requires ICU admission for insulin drip and close electrolyte monitoring — potassium will shift during correction.",
+        "plan": "IV NS bolus, insulin drip per DKA protocol, BMP q2h, POC glucose q1h, endocrinology consult, ICU admission."
+      },
+      "labs": [
+        {"test": "POC Glucose", "result": "486 mg/dL", "is_surprising": false, "arrives_at_tick": 3},
+        {"test": "BMP", "result": "Glucose 486, K 5.8, bicarb 8, AG 28", "is_surprising": false, "arrives_at_tick": 7},
+        {"test": "VBG", "result": "pH 7.18, pCO2 18", "is_surprising": false, "arrives_at_tick": 7}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "George Harris",
+      "sex": "M",
+      "dob": "1971-12-28",
+      "address": "4455 S Archer Ave, Chicago, IL 60632"
+    },
+    "medical_history": "Past medical history significant for coronary artery disease status post percutaneous coronary intervention with drug-eluting stent 6 months ago, hypertension, and hyperlipidemia. Currently on dual antiplatelet therapy with aspirin 81 mg daily and clopidogrel 75 mg daily. Also takes atorvastatin 40 mg and lisinopril 20 mg. No known drug allergies. Former smoker, quit after stent placement. Family history of coronary artery disease in father. Review of systems otherwise negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "54-year-old male presenting with anterior nosebleed that has persisted for 1 hour despite 20 minutes of direct pressure at home. He is on dual antiplatelet therapy (aspirin and clopidogrel) following coronary stenting 6 months ago. No history of nosebleeds.",
+        "hpi_narrative": "54 Y/O male with a history of CAD status post PCI with drug-eluting stent 6 months ago, hypertension, and hyperlipidemia presents with anterior epistaxis from the left nostril that began spontaneously approximately 1 hour ago. He attempted direct pressure with pinching the nose for 20 minutes at home without success. Bleeding has been continuous but not profuse. He is on aspirin 81 mg and clopidogrel 75 mg daily as part of his post-stent regimen. He denies trauma, nose picking, or recent upper respiratory infection. He denies bleeding from gums, hematuria, melena, or easy bruising elsewhere. He has not had a nosebleed before. He took all of his medications this morning as usual.",
+        "esi_score": 4,
+        "time_admitted": "2026-02-14T17:40:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient is seated upright with gauze held to his nose. He reports the nosebleed started while he was sitting watching television — no trigger that he can identify. He has been pinching and holding pressure but the bleeding keeps returning when he releases. He is concerned because he is on blood thinners and wonders if he should stop them. He feels otherwise well — no lightheadedness, no chest pain, and he has not swallowed significant blood. He confirms his stent was placed 6 months ago and was told not to stop his clopidogrel for at least 12 months.",
+        "objective": "T 98.6 HR 82 BP 158/92 RR 16. Active bleeding from left anterior nasal septum. No posterior bleeding visualized. Oropharynx clear of blood.",
+        "assessment": "Anterior epistaxis. Active bleeding identified at left anterior nasal septum (Kiesselbach's plexus), likely exacerbated by dual antiplatelet therapy and uncontrolled hypertension (158/92). CBC and coagulation studies reassuringly normal — platelets adequate, INR normal. Anterior packing placed with good hemostasis achieved. Holding aspirin should be discussed with cardiology given the need for ongoing DAPT post-stent.",
+        "plan": "Anterior nasal packing with Merocel, oxymetazoline spray, CBC, INR/PT. Hold aspirin discussion with cardiology. ENT follow-up 48-72 hours for packing removal."
+      },
+      "labs": [
+        {"test": "CBC", "result": "Hgb 13.8, platelets 188k, normal", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "INR", "result": "1.1 (normal)", "is_surprising": false, "arrives_at_tick": 7}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Carmen Reyes",
+      "sex": "F",
+      "dob": "1985-10-17",
+      "address": "1730 W 47th St, Chicago, IL 60609"
+    },
+    "medical_history": "Past medical history significant for obesity with BMI 34. No prior back problems, injuries, or surgeries. No chronic medications. No known drug allergies. Family history non-contributory. Review of systems positive for occasional knee pain attributed to weight, otherwise negative.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "40-year-old female presenting with acute onset lower back pain after lifting a heavy box at work 6 hours ago. Pain is 7/10, localized to the lumbar region, radiating to the left buttock but not past the knee. No red flag symptoms — no saddle anesthesia, no bowel or bladder changes, no leg weakness.",
+        "hpi_narrative": "40 Y/O female with a history of obesity and no prior back problems presents with acute onset lower back pain that began 6 hours ago while lifting a heavy box at work. She estimates the box weighed approximately 40 pounds and she felt a sudden sharp twinge in her lower back upon lifting. The pain is localized to the lumbar midline and left paraspinal area, rated 7/10, and radiates into her left buttock. The pain does not extend below the knee. She describes the pain as a constant aching with intermittent sharp spasms. She denies saddle anesthesia, urinary or fecal incontinence, urinary retention, bilateral leg weakness, or numbness in the legs. She took two acetaminophen at home with minimal relief.",
+        "esi_score": 4,
+        "time_admitted": "2026-02-14T18:15:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient is sitting on the stretcher in mild discomfort, guarding her lower back. She describes the lifting incident at work and states the pain has been constant since. She has difficulty bending forward and twisting. She was able to walk into the ED without assistance but is moving slowly. She denies any numbness, tingling, or weakness in her legs. She denies prior episodes of back pain. She works as a warehouse supervisor and does occasional manual lifting. She is concerned about missing work and asks whether she needs imaging.",
+        "objective": "T 98.6 HR 76 BP 130/82 RR 16. Paravertebral muscle spasm L4-L5. Negative SLR bilaterally. Intact strength and sensation bilateral lower extremities. Normal gait (antalgic).",
+        "assessment": "Acute lumbar strain. Mechanical low back pain with paraspinal muscle spasm following a lifting injury. No neurological deficits, no red flags for cauda equina syndrome (no saddle anesthesia, no bowel/bladder dysfunction, no bilateral weakness). Negative straight leg raise bilaterally argues against radiculopathy. Imaging is not indicated at this time per clinical guidelines.",
+        "plan": "Ibuprofen 600mg TID, cyclobenzaprine 10mg at bedtime, activity as tolerated, ice/heat, return if weakness or bladder symptoms develop."
+      },
+      "labs": [],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Harold Washington",
+      "sex": "M",
+      "dob": "1955-06-05",
+      "address": "8215 S Cottage Grove Ave, Chicago, IL 60619"
+    },
+    "medical_history": "Past medical history significant for hypertension, prior transient ischemic attack (2 years ago, no residual deficits), and benign prostatic hyperplasia. On aspirin 81 mg for secondary stroke prevention and tamsulosin for BPH. No prior GI bleeding, colonoscopies, or GI procedures. No known drug allergies. Family history of colon cancer in brother at age 65. Review of systems positive for chronic urinary frequency/nocturia attributed to BPH.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "70-year-old male presenting with bright red blood per rectum, two episodes today totaling approximately 1 cup. Associated lightheadedness on standing. On aspirin for stroke prevention. Orthostatic hypotension noted on exam.",
+        "hpi_narrative": "70 Y/O male with a history of hypertension, prior TIA, and BPH presents with two episodes of bright red blood per rectum starting this morning. He estimates approximately 1 cup of total blood output across the two episodes. The blood is bright red, mixed with stool, and associated with his usual bowel movement. He reports no abdominal pain, cramping, or rectal pain. He noticed lightheadedness when standing from a seated position. He denies melena, hematemesis, nausea, vomiting, or recent changes in bowel habits. He is on aspirin 81 mg daily for secondary prevention after a TIA 2 years ago. He has never had a colonoscopy and has no history of hemorrhoids, diverticular disease, or inflammatory bowel disease.",
+        "esi_score": 3,
+        "time_admitted": "2026-02-14T09:05:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient reports that his first bowel movement this morning contained a large amount of bright red blood mixed with stool. He was startled and had a second smaller episode about an hour later. He felt dizzy when he stood up afterward and almost fell. His wife insisted he come to the ED. He feels somewhat lightheaded while lying flat but denies active dizziness. He denies abdominal pain, weight loss, change in stool caliber, or prior similar episodes. He acknowledges never having a colonoscopy despite being over 50. He is most concerned about 'what's causing the bleeding.'",
+        "objective": "T 98.4 HR 96 BP 118/68 (orthostatic drop 20 mmHg systolic on standing) RR 16. Pale conjunctivae. Abdomen soft, nontender. Rectal: bright red blood, no masses.",
+        "assessment": "Lower GI bleed, likely diverticular. Acute hematochezia with orthostatic hypotension and anemia (Hgb 9.2) in a 70-year-old on aspirin with no prior colonoscopy. Most likely diverticular bleed given age, acuity, and painless bright red blood. Elevated BUN-to-creatinine ratio (BUN 32, Cr 1.1) suggests upper GI source less likely but not excluded. GI consult for colonoscopy is appropriate for definitive diagnosis and potential therapeutic intervention. Type and screen obtained in case transfusion needed.",
+        "plan": "Two large bore IVs, type and screen, CBC, BMP, coags. IV NS bolus. GI consult for colonoscopy. Transfuse if Hgb <7."
+      },
+      "labs": [
+        {"test": "CBC", "result": "Hgb 9.2 (low), platelets normal", "is_surprising": false, "arrives_at_tick": 7},
+        {"test": "BMP", "result": "BUN 32 (elevated), Cr 1.1", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "Type and Screen", "result": "O positive, antibody screen negative", "is_surprising": false, "arrives_at_tick": 10}
+      ],
+      "discharge_papers": null
+    }
+  },
+  {
+    "demographics": {
+      "name": "Sophia Kim",
+      "sex": "F",
+      "dob": "2002-04-12",
+      "address": "1025 W Belmont Ave, Apt 2R, Chicago, IL 60657"
+    },
+    "medical_history": "No significant past medical history. No chronic medications. No known drug allergies. No prior hospitalizations or surgeries. Family history non-contributory. Review of systems negative aside from current illness.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "23-year-old female presenting with sore throat, fever to 102, and difficulty swallowing for 3 days. Roommate recently diagnosed with strep throat. Tonsillar exudates and tender anterior cervical lymphadenopathy noted on exam.",
+        "hpi_narrative": "23 Y/O female with no significant past medical history presents with a sore throat that has been worsening over the past 3 days. She reports fever up to 102 degrees Fahrenheit, pain with swallowing (both solids and liquids), and anterior neck soreness. She denies cough, rhinorrhea, or congestion. Her roommate was diagnosed with streptococcal pharyngitis last week and was started on antibiotics. She has been taking ibuprofen 400 mg every 6 hours with minimal relief of symptoms. She is able to tolerate liquids but has had difficulty eating solid food due to throat pain. She denies rash, joint pain, or difficulty breathing.",
+        "esi_score": 5,
+        "time_admitted": "2026-02-14T12:20:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient appears mildly uncomfortable but in no distress. She reports her throat pain started 3 days ago on the left side and has since become bilateral. She rates the pain as 7/10, worst with swallowing. She has had subjective fevers and chills for 2 days. She denies any voice changes, drooling, trismus, or sensation of a lump in her throat. She denies cough, which she notes is different from when she has a cold. She was exposed to her roommate who tested positive for strep one week ago. She is a graduate student and is anxious about missing class.",
+        "objective": "T 101.6 HR 88 BP 116/72 RR 16. Pharyngeal erythema with bilateral tonsillar exudates. Tender anterior cervical lymphadenopathy. No trismus or uvular deviation. Lungs clear.",
+        "assessment": "Acute streptococcal pharyngitis confirmed by positive rapid strep test. Classic presentation with sore throat, fever, tonsillar exudates, and anterior cervical lymphadenopathy (Centor score 4) in the setting of known strep contact. No peritonsillar abscess — no trismus, uvula midline, no unilateral swelling. Appropriate for outpatient antibiotic therapy.",
+        "plan": "Rapid strep test, if positive start amoxicillin 500mg TID x 10 days. Supportive care. Return if worsening or difficulty breathing."
+      },
+      "labs": [
+        {"test": "Rapid Strep", "result": "Positive", "is_surprising": false, "arrives_at_tick": 4}
+      ],
+      "discharge_papers": {
+        "disposition": "Discharged home in stable condition",
+        "diagnosis": "Acute streptococcal pharyngitis (strep throat)",
+        "discharge_justification": "Rapid strep test positive. Patient able to tolerate oral fluids and medications. No signs of peritonsillar abscess or airway compromise. Afebrile after ibuprofen in the ED. Prescription for amoxicillin provided. Patient understands the importance of completing the full antibiotic course and return precautions.",
+        "admitting_attending": "Dr. Michelle Patel, MD — Emergency Medicine",
+        "follow_up": "Primary care in 7-10 days or sooner if symptoms worsen",
+        "follow_up_instructions": "Follow up with your primary care doctor in 7 to 10 days if symptoms have not fully resolved. You should start feeling better within 48-72 hours of starting the antibiotic. If you are not improving after 48 hours of antibiotics, contact your doctor. You are contagious until you have been on antibiotics for at least 24 hours — avoid close contact with others during this time.",
+        "warning_instructions": "Return to the emergency department immediately if you experience: difficulty breathing or swallowing; drooling or inability to swallow your own saliva; severe neck swelling; difficulty opening your mouth; worsening throat pain despite antibiotics; high fever (>103F) not responding to ibuprofen or acetaminophen; rash; or signs of dehydration (no urine for 8+ hours, dizziness, extreme thirst).",
+        "soap_note": "S: 23F with no PMH presents with 3-day history of sore throat, fever to 102, and odynophagia. Roommate diagnosed with strep pharyngitis last week. Taking ibuprofen with minimal relief. Denies cough, rhinorrhea, rash. Able to tolerate liquids. NKDA.\nO: T 101.6 HR 88 BP 116/72 RR 16 SpO2 99%. Bilateral pharyngeal erythema with tonsillar exudates. Tender bilateral anterior cervical lymphadenopathy. No trismus. Uvula midline. No peritonsillar bulging. Lungs CTA bilaterally. Rapid strep: Positive.\nA: Acute streptococcal pharyngitis.\nP: Amoxicillin 500 mg PO TID x 10 days (prescription provided). Ibuprofen 400-600 mg PO q6h PRN for pain and fever. Encourage oral hydration. Contagion precautions for 24 hours after starting antibiotics. Return precautions reviewed, including signs of peritonsillar abscess and dehydration. Patient verbalized understanding. Follow up PCP 7-10 days.",
+        "avs": "AFTER VISIT SUMMARY — Sophia Kim — DOB 04/12/2002\nDate of Visit: 02/14/2026\nDiagnosis: Strep throat (streptococcal pharyngitis)\nTreatment: Your rapid strep test was positive. You have been prescribed an antibiotic.\nMedication: Amoxicillin 500 mg — take one capsule by mouth three times daily (every 8 hours) for 10 days. Take with or without food. IMPORTANT: Complete the entire 10-day course even if you feel better sooner.\nPain & Fever: Continue ibuprofen (Advil) 400-600 mg every 6 hours as needed. You may also use acetaminophen (Tylenol) 500 mg every 6 hours as needed. Warm salt water gargles, throat lozenges, and warm tea with honey may help soothe your throat.\nHydration: Drink plenty of fluids. Cold fluids, popsicles, and smoothies may be easier to swallow.\nContagion: You are contagious until you have been on antibiotics for at least 24 hours. Avoid sharing utensils, cups, or close contact. Wash hands frequently.\nActivity: Rest as needed. You may return to school/work after 24 hours on antibiotics if feeling well enough.\nFollow-Up: See your primary care doctor in 7-10 days if symptoms have not resolved, or sooner if worsening.\nWhen to Return: Difficulty breathing or swallowing, inability to swallow saliva, severe neck swelling, inability to open mouth, worsening pain on antibiotics, high fever >103F, rash, or signs of dehydration.",
+        "work_school_form": "WORK/SCHOOL EXCUSE — Patient: Sophia Kim — DOB: 04/12/2002\nDate of Visit: 02/14/2026\nThis patient was seen in the Emergency Department on the above date for streptococcal pharyngitis (strep throat). Patient should remain home from school/work for 24 hours after initiating antibiotic therapy. Patient may return to school/work on 02/15/2026 (afternoon or evening) or 02/16/2026 if still symptomatic. No activity restrictions.\nProvider: Dr. Michelle Patel, MD — Emergency Medicine"
+      }
+    }
+  },
+  {
+    "demographics": {
+      "name": "William Davis",
+      "sex": "M",
+      "dob": "1967-07-21",
+      "address": "3102 N Halsted St, Chicago, IL 60657"
+    },
+    "medical_history": "Past medical history significant for hypertension (poorly controlled, admits non-compliance with lisinopril 20 mg). Active smoker, approximately half a pack per day. Social alcohol use. No other chronic conditions. No prior neurological events. No known drug allergies. Family history of hypertension and stroke in father. Review of systems positive for occasional headaches, previously attributed to tension headaches, self-treated with ibuprofen.",
+    "ed_session": {
+      "triage": {
+        "chief_complaint_summary": "58-year-old male presenting with sudden onset 'worst headache of my life' that began while straining at the gym. Pain is 10/10, global, with onset within seconds. Associated neck stiffness and photophobia. Meningismus present on exam. Severely hypertensive at 192/108. Concern for subarachnoid hemorrhage.",
+        "hpi_narrative": "58 Y/O male with a history of poorly controlled hypertension and active smoking presents with sudden onset severe headache described as the 'worst headache of my life.' The headache began abruptly, reaching maximal intensity within seconds, while he was performing a heavy deadlift at the gym approximately 1 hour prior to arrival. The pain is global, throbbing, rated 10/10. He reports neck stiffness that developed shortly after onset and photophobia. He vomited once at the gym. He denies any focal weakness, numbness, vision loss, speech difficulty, or seizure activity. He has no history of prior similar headaches. He denies recent trauma. He admits to taking his blood pressure medication inconsistently.",
+        "esi_score": 2,
+        "time_admitted": "2026-02-14T08:00:00"
+      },
+      "doctor_notes": {
+        "subjective": "Patient is lying in a darkened room, visibly distressed, holding his head. He describes the headache as a 'bomb going off' in his head — sudden and explosive. He was mid-lift at the gym when it struck. He has never had a headache like this before. His usual headaches are mild, frontal, and resolve with ibuprofen — this is completely different. He reports stiffness in his neck and pain worsened by light. He vomited once at the gym and has felt nauseated since. He denies any arm or leg weakness, difficulty speaking, visual changes, or confusion. He is frightened and repeatedly asks 'am I having a stroke?'",
+        "objective": "T 98.8 HR 88 BP 192/108 RR 18. Alert but in distress. Neck stiffness present. Photophobic. Kernig positive. No focal neurological deficits. GCS 15.",
+        "assessment": "Subarachnoid hemorrhage confirmed on CT head. Thunderclap headache with meningismus (neck stiffness, positive Kernig sign, photophobia) in a 58-year-old hypertensive smoker during Valsalva maneuver is classic for aneurysmal subarachnoid hemorrhage. CT head demonstrates SAH in the basal cisterns. Patient is neurologically intact (GCS 15, no focal deficits) — Hunt-Hess grade 2. Severely hypertensive requiring controlled blood pressure reduction. Neurosurgery consulted emergently for angiography to identify and secure the aneurysm.",
+        "plan": "Stat CT head without contrast. If negative, lumbar puncture. Neurosurgery on standby. IV labetalol for BP control. Strict bedrest."
+      },
+      "labs": [
+        {"test": "CT Head", "result": "Subarachnoid hemorrhage in basal cisterns", "is_surprising": false, "arrives_at_tick": 6},
+        {"test": "CBC", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8},
+        {"test": "BMP/Coags", "result": "Normal", "is_surprising": false, "arrives_at_tick": 8}
+      ],
+      "discharge_papers": null
+    }
+  }
+]
