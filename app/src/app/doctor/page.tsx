@@ -286,6 +286,10 @@ export default function DoctorPage() {
   const [rejectionNote, setRejectionNote] = useState("");
   const [rejectLoading, setRejectLoading] = useState(false);
 
+  // Note mode (simple note, no rejection)
+  const [notingPid, setNotingPid] = useState<string | null>(null);
+  const [doctorNote, setDoctorNote] = useState("");
+
   const eventTimes = useMemo(() => {
     const dischargeTimes = new Map<string, Date>();
     const redTimes = new Map<string, Date>();
@@ -326,13 +330,17 @@ export default function DoctorPage() {
     return items.filter((item) => item.patient.name.toLowerCase().includes(q) || item.subject.toLowerCase().includes(q));
   }, [patients, eventTimes, search]);
 
-  // Search results: er_bed patients not already in inbox (grey/yellow patients)
+  // Search results: all er_bed patients not already in inbox
   const searchResults = useMemo(() => {
     if (!search.trim()) return [];
     const q = search.toLowerCase();
     const inboxPids = new Set(inboxItems.map((item) => item.patient.pid));
     return patients.filter(
-      (p) => p.status === "er_bed" && !inboxPids.has(p.pid) && p.name.toLowerCase().includes(q)
+      (p) => p.status === "er_bed" && !inboxPids.has(p.pid) && (
+        p.name.toLowerCase().includes(q) ||
+        (p.chief_complaint ?? "").toLowerCase().includes(q) ||
+        String(p.bed_number ?? "").includes(q)
+      )
     );
   }, [patients, search, inboxItems]);
 
@@ -365,10 +373,36 @@ export default function DoctorPage() {
     setSelectedPid(null);
   };
 
+  // --- Add Note ---
+  const handleStartNote = (pid: string) => {
+    setNotingPid(pid);
+    setReviewingPid(null);
+    setRejectingPid(null);
+    setDoctorNote("");
+  };
+
+  const handleConfirmNote = (pid: string) => {
+    const p = patients.find((pt) => pt.pid === pid);
+    if (!p) return;
+    const note = doctorNote.trim();
+    if (!note) return;
+
+    const existingNotes = p.doctor_notes ?? [];
+    const changes: Partial<Patient> = {
+      doctor_notes: [...existingNotes, note],
+    };
+
+    api.updatePatient(pid, changes);
+    updatePatient(pid, changes);
+    setNotingPid(null);
+    setDoctorNote("");
+  };
+
   // --- Reject & Note ---
   const handleStartReject = (pid: string) => {
     setRejectingPid(pid);
     setReviewingPid(null);
+    setNotingPid(null);
     setRejectionNote("");
   };
 
@@ -404,12 +438,15 @@ export default function DoctorPage() {
   };
 
   const selectedItem = selectedPid ? inboxItems.find((item) => item.patient.pid === selectedPid) : null;
-  const selectedPatient = selectedItem?.patient ?? null;
+  const selectedPatient = selectedItem?.patient
+    ?? searchResults.find((p) => p.pid === selectedPid)
+    ?? patients.find((p) => p.pid === selectedPid)
+    ?? null;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
+    <div className="flex flex-col min-h-[calc(100vh-44px)] grid-bg">
       {/* Sticky header */}
-      <div className="sticky top-[52px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
+      <div className="sticky top-[44px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Doctor Inbox</h1>
@@ -418,7 +455,7 @@ export default function DoctorPage() {
             </span>
           </div>
           <Input
-            placeholder="Search inbox..."
+            placeholder="Search patients..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-9 text-sm font-mono border border-gray-200 rounded-lg bg-gray-50 placeholder:text-muted-foreground/30"
@@ -464,12 +501,59 @@ export default function DoctorPage() {
               </div>
             </button>
           ))}
+
+          {/* Search results: patients in beds but not in inbox */}
+          {searchResults.length > 0 && (
+            <>
+              <div className="flex items-center gap-2 pt-3 pb-1">
+                <div className="h-px flex-1 bg-gray-200" />
+                <span className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-wider">
+                  Other Patients in Beds
+                </span>
+                <div className="h-px flex-1 bg-gray-200" />
+              </div>
+              {searchResults.map((p) => (
+                <button
+                  key={p.pid}
+                  type="button"
+                  className={cn(
+                    "w-full rounded-lg border-l-[3px] border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors text-left px-5 py-3.5",
+                    COLOR_BORDER[p.color] || "border-l-gray-500"
+                  )}
+                  onClick={() => setSelectedPid(p.pid)}
+                >
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground/50">
+                    Bed #{p.bed_number ?? "—"}
+                  </span>
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <span className="font-medium font-mono text-[15px] truncate text-foreground/90">{p.name}</span>
+                    {p.age != null && p.sex && (
+                      <span className="text-muted-foreground/50 text-sm font-mono shrink-0">
+                        {p.age} {p.sex.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                    <div className="flex-1" />
+                    {p.esi_score != null && (
+                      <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
+                        ESI {p.esi_score}
+                      </Badge>
+                    )}
+                    {p.chief_complaint && (
+                      <span className="text-muted-foreground/40 text-[11px] font-mono shrink-0 truncate max-w-[120px]">
+                        {p.chief_complaint}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </>
+          )}
         </div>
       </div>
 
 
       {/* ===== Patient Detail Modal ===== */}
-      {selectedPid && selectedPatient && !reviewingPid && !rejectingPid && (
+      {selectedPid && selectedPatient && !reviewingPid && !rejectingPid && !notingPid && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setSelectedPid(null)}>
           <div
             className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border border-gray-200 bg-white shadow-xl"
@@ -480,15 +564,24 @@ export default function DoctorPage() {
               <div className="flex items-center gap-3">
                 <div className={cn(
                   "w-3 h-3 rounded-full shrink-0",
-                  selectedPatient.color === "green" ? "bg-emerald-500" : "bg-red-500"
+                  selectedPatient.color === "green" ? "bg-emerald-500"
+                    : selectedPatient.color === "red" ? "bg-red-500"
+                    : selectedPatient.color === "yellow" ? "bg-yellow-500"
+                    : "bg-gray-400"
                 )} />
                 <span className="text-base font-mono font-bold text-gray-900">{selectedPatient.name}</span>
-                <span className={cn(
-                  "text-[11px] font-mono uppercase tracking-wider",
-                  selectedItem?.subjectColor
-                )}>
-                  {selectedItem?.subject}
-                </span>
+                {selectedItem ? (
+                  <span className={cn(
+                    "text-[11px] font-mono uppercase tracking-wider",
+                    selectedItem.subjectColor
+                  )}>
+                    {selectedItem.subject}
+                  </span>
+                ) : selectedPatient.bed_number != null ? (
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground/50">
+                    Bed #{selectedPatient.bed_number}
+                  </span>
+                ) : null}
               </div>
               <button onClick={() => setSelectedPid(null)} className="text-muted-foreground/40 hover:text-gray-900 transition-colors p-1.5 -mr-1.5">
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -591,6 +684,23 @@ export default function DoctorPage() {
                   </div>
                 )}
 
+                {/* Doctor Notes */}
+                {selectedPatient.doctor_notes && selectedPatient.doctor_notes.length > 0 && (
+                  <div className="rounded-lg border border-blue-300 bg-blue-50 p-4">
+                    <span className="text-[11px] font-mono font-semibold text-blue-600 uppercase tracking-wider block mb-2">
+                      Doctor Notes
+                    </span>
+                    <div className="space-y-2">
+                      {selectedPatient.doctor_notes.map((note, i) => (
+                        <div key={i} className="flex gap-2.5 text-sm font-mono">
+                          <span className="text-blue-500 shrink-0">#{i + 1}</span>
+                          <span className="text-foreground/75">{note}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Discharge Papers */}
                 <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4">
                   <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-2">
@@ -614,7 +724,7 @@ export default function DoctorPage() {
 
             {/* Footer */}
             <div className="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white shrink-0">
-              {selectedPatient.color === "green" && (
+              {selectedPatient.status === "er_bed" && (
                 <Button
                   className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
                   onClick={() => handleStartReview(selectedPid!, selectedPatient)}
@@ -633,13 +743,15 @@ export default function DoctorPage() {
                   Acknowledge Lab
                 </Button>
               )}
-              <Button
-                variant="outline"
-                className="font-mono text-sm border-red-500/30 text-red-600 hover:bg-red-500/10 hover:text-red-700 h-9"
-                onClick={() => handleStartReject(selectedPid!)}
-              >
-                Reject &amp; Note
-              </Button>
+              {selectedPatient.status === "er_bed" && (
+                <Button
+                  variant="outline"
+                  className="font-mono text-sm border-gray-300 text-foreground/70 hover:bg-gray-100 hover:text-foreground h-9"
+                  onClick={() => handleStartNote(selectedPid!)}
+                >
+                  Note
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="font-mono text-sm border-gray-200 text-muted-foreground hover:text-foreground h-9"
@@ -710,6 +822,78 @@ export default function DoctorPage() {
                 variant="outline"
                 className="font-mono text-sm border-gray-200 text-muted-foreground hover:text-foreground h-9"
                 onClick={() => setReviewingPid(null)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Add Note Modal ===== */}
+      {notingPid && selectedPatient && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/30 backdrop-blur-sm" onClick={() => { setNotingPid(null); setDoctorNote(""); }}>
+          <div
+            className="mt-24 w-full max-w-lg rounded-xl border border-blue-500/20 bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-blue-500/15">
+              <div className="flex items-center gap-3">
+                <span className="text-base font-mono font-bold text-gray-900">{selectedPatient.name}</span>
+                <span className="text-[11px] font-mono text-blue-600/80 uppercase tracking-wider">Add Note</span>
+              </div>
+              <button onClick={() => { setNotingPid(null); setDoctorNote(""); }} className="text-muted-foreground/40 hover:text-gray-900 transition-colors p-1.5 -mr-1.5">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Previous notes */}
+            {selectedPatient.doctor_notes && selectedPatient.doctor_notes.length > 0 && (
+              <div className="mx-6 mt-5 rounded-lg border border-blue-300 bg-blue-50 p-4">
+                <span className="text-[11px] font-mono font-semibold text-blue-600 uppercase tracking-wider block mb-2">
+                  Previous Notes
+                </span>
+                <div className="space-y-2">
+                  {selectedPatient.doctor_notes.map((note, i) => (
+                    <div key={i} className="flex gap-2.5 text-sm font-mono">
+                      <span className="text-blue-500 shrink-0">#{i + 1}</span>
+                      <span className="text-foreground/75">{note}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Body */}
+            <div className="px-6 py-5 space-y-3">
+              <label className="text-[11px] font-mono font-semibold text-blue-600/70 uppercase tracking-wider">
+                Note
+              </label>
+              <textarea
+                autoFocus
+                className="w-full rounded-md border border-blue-500/30 bg-blue-50 px-3 py-2.5 text-sm font-mono min-h-[120px] resize-y text-foreground/90 outline-none focus:border-blue-500/50 placeholder:text-muted-foreground/30 leading-relaxed"
+                placeholder="Add a note to this patient's file..."
+                value={doctorNote}
+                onChange={(e) => setDoctorNote(e.target.value)}
+              />
+            </div>
+
+            {/* Footer */}
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
+              <Button
+                className="font-mono text-sm h-9 bg-blue-600 hover:bg-blue-700 text-white px-5"
+                disabled={!doctorNote.trim()}
+                onClick={() => handleConfirmNote(notingPid)}
+              >
+                Save Note
+              </Button>
+              <Button
+                variant="outline"
+                className="font-mono text-sm border-gray-200 text-muted-foreground hover:text-foreground h-9"
+                onClick={() => { setNotingPid(null); setDoctorNote(""); }}
               >
                 Cancel
               </Button>

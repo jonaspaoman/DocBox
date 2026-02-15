@@ -71,27 +71,22 @@ export function LogPanel({ entries }: LogPanelProps) {
             Waiting for events...
           </p>
         ) : (
-          <div className="py-1">
+          <div className="py-0.5">
             {[...entries].reverse().map((entry) => (
               <div
                 key={entry.id}
-                className="flex items-start gap-2 px-3 py-1.5 hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-1.5 px-2 py-[3px] hover:bg-gray-50 transition-colors"
               >
-                <div className={`w-1.5 h-1.5 rounded-full mt-[5px] shrink-0 ${EVENT_DOTS[entry.event]}`} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-[11px] font-mono text-foreground/80 truncate max-w-[100px]">
-                      {entry.patientName}
-                    </span>
-                    <span className={`text-[11px] font-mono truncate ${EVENT_COLORS[entry.event]}`}>
-                      {EVENT_LABELS[entry.event]}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground/30">
-                    <span>{entry.timestamp.toLocaleTimeString("en-US", { hour12: false })}</span>
-                    <span>tick #{String(entry.tick).padStart(4, "0")}</span>
-                  </div>
-                </div>
+                <div className={`w-1 h-1 rounded-full shrink-0 ${EVENT_DOTS[entry.event]}`} />
+                <span className="text-[9px] font-mono text-muted-foreground/30 shrink-0 tabular-nums">
+                  {entry.timestamp.toLocaleTimeString("en-US", { hour12: false })}
+                </span>
+                <span className="text-[9px] font-mono text-foreground/70 truncate max-w-[70px]">
+                  {entry.patientName}
+                </span>
+                <span className={`text-[9px] font-mono truncate ${EVENT_COLORS[entry.event]}`}>
+                  {EVENT_LABELS[entry.event]}
+                </span>
               </div>
             ))}
           </div>

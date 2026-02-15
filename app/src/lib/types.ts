@@ -44,6 +44,7 @@ export interface Patient {
   discharge_blocked_reason?: string;
   lab_acknowledged?: boolean;
   rejection_notes?: string[];
+  doctor_notes?: string[];
   discharge_papers?: Record<string, string>;
   entered_current_status_tick?: number;
   created_at?: string;

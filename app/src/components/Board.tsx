@@ -33,25 +33,141 @@ function findNextAvailableBed(patients: Patient[]): number | null {
 
 function FlowArrow({ label, active }: { label: string; active: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center w-24 shrink-0 select-none gap-2">
-      <span className="text-[11px] font-mono font-medium text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap">
+    <div className="flex flex-col items-center justify-center w-14 shrink-0 select-none gap-1">
+      <span className="text-[9px] font-mono font-medium text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
-      <div className="relative w-full h-6 flex items-center">
-        {/* Track line */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gray-300 rounded-full" />
-        {/* Animated chevrons — only when running */}
+      <svg width="56" height="12" viewBox="0 0 56 12" fill="none" className="overflow-visible">
+        {/* Static base line */}
+        <line x1="0" y1="6" x2="48" y2="6" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Animated marching dots */}
         {active && (
-          <div className="absolute inset-x-0 top-0 bottom-0 overflow-hidden">
-            <svg className="flow-chevron absolute top-1/2 -translate-y-1/2 text-emerald-500" width="7" height="10" viewBox="0 0 7 10"><path d="M1 1l4.5 4L1 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <svg className="flow-chevron-2 absolute top-1/2 -translate-y-1/2 text-emerald-500" width="7" height="10" viewBox="0 0 7 10"><path d="M1 1l4.5 4L1 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <svg className="flow-chevron-3 absolute top-1/2 -translate-y-1/2 text-emerald-500" width="7" height="10" viewBox="0 0 7 10"><path d="M1 1l4.5 4L1 9" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </div>
+          <line
+            x1="0" y1="6" x2="48" y2="6"
+            stroke="#34d399"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeDasharray="3 8"
+            className="flow-march"
+          />
         )}
-        {/* Arrow tip */}
-        <svg className={`absolute -right-1 top-1/2 -translate-y-1/2 ${active ? "text-emerald-400" : "text-gray-300"}`} width="10" height="12" viewBox="0 0 10 12">
-          <path d="M2 2l5 4-5 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Arrowhead */}
+        <path d="M46 2l6 4-6 4" stroke={active ? "#34d399" : "#d1d5db"} strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
+}
+
+function HospitalBoundary({ children, isRunning }: { children: React.ReactNode; isRunning: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pathD, setPathD] = useState("");
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  const [labelPos, setLabelPos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const compute = () => {
+      const c = containerRef.current;
+      if (!c) return;
+
+      const left = c.querySelector<HTMLElement>("[data-wing='left']");
+      const right = c.querySelector<HTMLElement>("[data-wing='right']");
+      if (!left || !right) return;
+
+      const cRect = c.getBoundingClientRect();
+      const lRect = left.getBoundingClientRect();
+      const rRect = right.getBoundingClientRect();
+
+      const W = cRect.width;
+      const H = cRect.height;
+      setSize({ w: W, h: H });
+
+      const R = 12;
+
+      // Left wing bounds (relative to container)
+      const lT = lRect.top - cRect.top;
+      const lB = lRect.bottom - cRect.top;
+      const lL = 0;
+      const lR = lRect.right - cRect.left;
+
+      // Right wing bounds
+      const rT = 0;
+      const rB = H;
+      const rR = W;
+
+      // Junction x where wings meet
+      const jx = lR;
+
+      setLabelPos({ x: lL + 16, y: lT - 2 });
+
+      // Draw single L-shape path clockwise from top-left of left wing
+      const d = [
+        `M ${lL + R} ${lT}`,
+        // Top of left wing → junction
+        `L ${jx - R} ${lT}`,
+        // Concave corner: turn up toward right wing top
+        `Q ${jx} ${lT} ${jx} ${lT - R}`,
+        `L ${jx} ${rT + R}`,
+        // Top-left corner of right wing (convex)
+        `Q ${jx} ${rT} ${jx + R} ${rT}`,
+        // Top edge of right wing
+        `L ${rR - R} ${rT}`,
+        // Top-right corner
+        `Q ${rR} ${rT} ${rR} ${rT + R}`,
+        // Right edge
+        `L ${rR} ${rB - R}`,
+        // Bottom-right corner
+        `Q ${rR} ${rB} ${rR - R} ${rB}`,
+        // Bottom of right wing → junction
+        `L ${jx + R} ${rB}`,
+        // Bottom-left corner of right wing (convex)
+        `Q ${jx} ${rB} ${jx} ${rB - R}`,
+        // Concave corner: turn left toward left wing bottom
+        `L ${jx} ${lB + R}`,
+        `Q ${jx} ${lB} ${jx - R} ${lB}`,
+        // Bottom of left wing
+        `L ${lL + R} ${lB}`,
+        // Bottom-left corner
+        `Q ${lL} ${lB} ${lL} ${lB - R}`,
+        // Left edge
+        `L ${lL} ${lT + R}`,
+        // Back to start
+        `Q ${lL} ${lT} ${lL + R} ${lT}`,
+        "Z",
+      ].join(" ");
+
+      setPathD(d);
+    };
+
+    compute();
+    const ro = new ResizeObserver(compute);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative flex items-center">
+      {/* SVG border */}
+      {pathD && (
+        <svg
+          className="absolute inset-0 pointer-events-none z-0"
+          width={size.w}
+          height={size.h}
+          fill="white"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d={pathD} fill="white" stroke="rgba(16,185,129,0.25)" strokeWidth="1" />
         </svg>
+      )}
+      {/* Hospital label */}
+      <div
+        className="absolute px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/70 bg-white border border-emerald-500/25 rounded z-20"
+        style={{ left: labelPos.x, top: labelPos.y, transform: "translateY(-50%)" }}
+      >
+        Hospital
+      </div>
+      {/* Content */}
+      <div className="relative z-10 flex items-center">
+        {children}
       </div>
     </div>
   );
@@ -100,7 +216,7 @@ export function Board({
   const waitTimes = useMemo(() => {
     const map = new Map<string, Date>();
     for (const entry of eventLog) {
-      if (entry.event === "called_in" && !map.has(entry.pid)) {
+      if (!map.has(entry.pid)) {
         map.set(entry.pid, entry.timestamp);
       }
     }
@@ -129,89 +245,101 @@ export function Board({
 
   return (
     <>
-      <div ref={containerRef} className="flex-1 overflow-hidden grid-bg">
+      <div ref={containerRef} className="w-full h-full overflow-hidden grid-bg">
         <div className="w-full h-full flex items-center justify-center">
           <div
             ref={contentRef}
-            className="flex gap-4 items-center px-8 py-8 origin-center"
+            className="flex gap-3 items-center px-4 py-4 origin-center"
             style={{ transform: `scale(${scale})` }}
           >
             {/* Called In */}
-            <div className="w-[260px] shrink-0">
+            <div className="w-[230px] shrink-0">
               <Column
                 title="Called In"
                 patients={byStatus(patients, "called_in")}
                 onPatientClick={handlePatientClick}
                 accentColor="border-l-gray-500/30"
                 waitTimes={waitTimes}
+                titleColor="text-slate-500"
+                icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>}
               />
             </div>
 
             <FlowArrow label="Triage" active={isRunning} />
 
-            {/* Waiting Room */}
-            <div className="w-[260px] shrink-0">
-              <Column
-                title="Waiting Room"
-                patients={byStatus(patients, "waiting_room")}
-                onPatientClick={handlePatientClick}
-                accentColor="border-l-amber-500/40"
-                waitTimes={waitTimes}
-                showEsi
-                overduePids={overdueWaitPids}
-              />
-            </div>
-
-            <FlowArrow label="Assign" active={isRunning} />
-
-            {/* Hospital boundary */}
-            <div className="relative bg-white rounded-xl p-4 border border-emerald-500/25 flex flex-col gap-4">
-              <div className="absolute -top-3 left-4 px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/70 bg-white border border-emerald-500/25 rounded-md">
-                Hospital
-              </div>
-              <BedGrid
-                patients={byStatus(patients, "er_bed")}
-                onPatientClick={handlePatientClick}
-                waitTimes={waitTimes}
-              />
-              {/* Disposition sub-lanes — side by side below beds */}
-              <div className="flex flex-col gap-1.5">
-                <div className="text-[11px] font-mono font-medium text-muted-foreground/60 uppercase tracking-widest px-1">
-                  Disposition
-                </div>
-                <div className="flex gap-2">
+            {/* Hospital boundary — single irregular SVG border */}
+            <HospitalBoundary isRunning={isRunning}>
+              {/* Left wing — Waiting Room */}
+              <div data-wing="left" className="pt-5 pb-3 px-4">
+                <div className="w-[230px] shrink-0">
                   <Column
-                    title="OR"
-                    patients={byStatus(patients, "or")}
+                    title="Waiting Room"
+                    patients={byStatus(patients, "waiting_room")}
                     onPatientClick={handlePatientClick}
-                    accentColor="border-l-orange-500/40"
-                    className="flex-1"
-                    compact
+                    accentColor="border-l-amber-500/40"
                     waitTimes={waitTimes}
-                  />
-                  <Column
-                    title="ICU"
-                    patients={byStatus(patients, "icu")}
-                    onPatientClick={handlePatientClick}
-                    accentColor="border-l-purple-500/40"
-                    className="flex-1"
-                    compact
-                    waitTimes={waitTimes}
+                    showEsi
+                    overduePids={overdueWaitPids}
+                    titleColor="text-amber-600"
+                    icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>}
                   />
                 </div>
               </div>
-            </div>
+
+              {/* Right wing — Beds + Disposition */}
+              <div data-wing="right" className="pt-5 pb-3 pr-4 pl-2 flex items-center gap-3">
+                <FlowArrow label="Assign" active={isRunning} />
+
+                <div className="flex flex-col gap-2">
+                  <BedGrid
+                    patients={byStatus(patients, "er_bed")}
+                    onPatientClick={handlePatientClick}
+                    waitTimes={waitTimes}
+                  />
+                  {/* Disposition sub-lanes */}
+                  <div className="flex flex-col gap-0.5">
+                    <div className="text-[9px] font-mono font-medium text-muted-foreground/60 uppercase tracking-widest px-1">
+                      Disposition
+                    </div>
+                    <div className="flex gap-1">
+                      <Column
+                        title="OR"
+                        patients={byStatus(patients, "or")}
+                        onPatientClick={handlePatientClick}
+                        accentColor="border-l-orange-500/40"
+                        titleColor="text-orange-600"
+                        className="flex-1"
+                        compact
+                        waitTimes={waitTimes}
+                      />
+                      <Column
+                        title="ICU"
+                        patients={byStatus(patients, "icu")}
+                        onPatientClick={handlePatientClick}
+                        accentColor="border-l-purple-500/40"
+                        titleColor="text-purple-600"
+                        className="flex-1"
+                        compact
+                        waitTimes={waitTimes}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </HospitalBoundary>
 
             <FlowArrow label="Discharge" active={isRunning} />
 
             {/* Done */}
-            <div className="w-[260px] shrink-0">
+            <div className="w-[230px] shrink-0">
               <Column
                 title="Done"
                 patients={byStatus(patients, "discharge", "done")}
                 onPatientClick={handlePatientClick}
                 accentColor="border-l-emerald-500/40"
                 waitTimes={waitTimes}
+                titleColor="text-emerald-600"
+                icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
               />
             </div>
           </div>

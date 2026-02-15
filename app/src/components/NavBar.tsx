@@ -60,7 +60,7 @@ export function NavBar() {
   const { simState } = usePatientContext();
 
   return (
-    <header className="bg-white header-glow px-6 py-3.5 flex items-center justify-between">
+    <header className="bg-white header-glow px-6 py-2 flex items-center justify-between shrink-0">
       <Link href="/" className="flex items-center gap-3">
         <HeartbeatMonitor active={simState.is_running} />
         <h1 className="text-base font-mono font-bold tracking-widest text-foreground/90 uppercase">
@@ -74,7 +74,7 @@ export function NavBar() {
             <Link
               key={href}
               href={href}
-              className={`rounded-md px-4 py-2 text-sm font-mono font-medium transition-colors ${
+              className={`rounded-md px-3.5 py-1.5 text-sm font-mono font-medium transition-colors ${
                 isActive
                   ? "bg-emerald-600 text-white"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"

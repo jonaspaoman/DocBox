@@ -58,9 +58,9 @@ export default function NursePage() {
   const selectedPatient = selectedPid ? patients.find((p) => p.pid === selectedPid) : null;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
+    <div className="flex flex-col min-h-[calc(100vh-44px)] grid-bg">
       {/* Sticky header */}
-      <div className="sticky top-[52px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
+      <div className="sticky top-[44px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Nurse Inbox</h1>

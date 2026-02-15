@@ -26,10 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased h-screen overflow-hidden flex flex-col`}>
         <PatientProvider>
           <NavBar />
-          {children}
+          <div className="flex-1 min-h-0">
+            {children}
+          </div>
         </PatientProvider>
       </body>
     </html>

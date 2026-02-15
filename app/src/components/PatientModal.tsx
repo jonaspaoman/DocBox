@@ -186,6 +186,23 @@ export function PatientModal({
             </div>
           )}
 
+          {/* Doctor Notes */}
+          {patient.doctor_notes && patient.doctor_notes.length > 0 && (
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-1.5">
+                Doctor Notes
+              </div>
+              <div className="space-y-1.5 border border-blue-500/30 rounded p-2.5 bg-blue-500/10">
+                {patient.doctor_notes.map((note, i) => (
+                  <div key={i} className="flex gap-2 text-xs font-mono">
+                    <span className="text-blue-500 shrink-0">#{i + 1}</span>
+                    <span className="text-foreground/70">{note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Discharge Papers */}
           {patient.discharge_papers && Object.keys(patient.discharge_papers).length > 0 && (
             <div>

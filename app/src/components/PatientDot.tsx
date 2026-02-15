@@ -66,24 +66,25 @@ export function PatientDot({ patient, onClick, showLabel = true, showEsi = false
       className="flex items-center gap-2.5 cursor-pointer group py-0.5"
       onClick={onClick}
       animate={shakeControls}
+      whileHover={{ scale: 1.04 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
     >
-      <div
-        className={`relative rounded-full shrink-0 flex items-center justify-center z-10 ${glow}`}
+      <motion.div
+        className={`relative rounded-full shrink-0 flex items-center justify-center z-10 ${glow} transition-shadow group-hover:shadow-md`}
         style={{
-          width: 34,
-          height: 34,
+          width: 30,
+          height: 30,
           backgroundColor: bg,
           boxShadow: isRed ? "0 0 10px rgba(239,68,68,0.5)" : undefined,
         }}
-        title={`${patient.name} — ESI ${patient.esi_score ?? "?"} — ${patient.chief_complaint ?? ""}`}
       >
-        <span className="text-[11px] font-mono font-bold text-white/90 leading-none select-none">
+        <span className="text-[10px] font-mono font-bold text-white/90 leading-none select-none">
           {initials}
         </span>
-      </div>
+      </motion.div>
       {showLabel && (
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-sm font-mono text-foreground/80 truncate max-w-[130px] group-hover:text-foreground transition-colors">
+          <span className="text-sm font-mono text-foreground/80 truncate group-hover:text-foreground group-hover:font-semibold transition-all">
             {patient.name.split(" ")[0]}
           </span>
           {overdue && (

@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react";
 
+// 1 real second = 5 simulated minutes
+const SIM_MINUTES_PER_REAL_SEC = 5;
+
 function formatElapsed(ms: number): string {
-  const totalSec = Math.floor(ms / 1000);
-  if (totalSec < 60) return `${totalSec}s`;
-  const min = Math.floor(totalSec / 60);
-  const sec = totalSec % 60;
-  return `${min}m ${sec.toString().padStart(2, "0")}s`;
+  const realSec = ms / 1000;
+  const simMinutes = Math.floor(realSec * SIM_MINUTES_PER_REAL_SEC);
+  if (simMinutes < 60) return `${simMinutes}m`;
+  const hrs = Math.floor(simMinutes / 60);
+  const mins = simMinutes % 60;
+  return `${hrs}h ${mins.toString().padStart(2, "0")}m`;
 }
 
 interface ElapsedTimeProps {

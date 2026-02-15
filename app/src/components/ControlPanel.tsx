@@ -37,38 +37,38 @@ export function ControlPanel({
   const [logOpen, setLogOpen] = useState(false);
 
   return (
-    <div className="border-t border-border/50 bg-white px-6 py-3 flex items-center gap-6 flex-wrap">
+    <div className="border-t border-border/50 bg-white px-5 py-2.5 flex items-center gap-5 shrink-0 overflow-x-auto">
       {/* Start / Pause / Resume / Reset / Add Patient */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 shrink-0">
         {simState.is_running ? (
-          <Button variant="outline" size="sm" className="font-mono text-sm h-9 border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 gap-2" onClick={onStop}>
-            <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
+          <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 gap-2 px-3.5" onClick={onStop}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><rect x="1" y="1" width="3" height="8" rx="0.5" /><rect x="6" y="1" width="3" height="8" rx="0.5" /></svg>
             PAUSE
           </Button>
         ) : simState.current_tick > 0 ? (
-          <Button size="sm" className="font-mono text-sm h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2" onClick={onStart}>
-            <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
+          <Button size="sm" className="font-mono text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-3.5" onClick={onStart}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
             RESUME
           </Button>
         ) : (
-          <Button size="sm" className="font-mono text-sm h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2" onClick={onStart}>
-            <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
+          <Button size="sm" className="font-mono text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-3.5" onClick={onStart}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9" /></svg>
             START
           </Button>
         )}
-        <Button variant="outline" size="sm" className="font-mono text-sm h-9 border-border/50 gap-2" onClick={onReset}>
-          <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M1 3.5A4 4 0 0 1 8.5 3M9 6.5A4 4 0 0 1 1.5 7" /><polyline points="1,1 1,4 4,4" /><polyline points="9,9 9,6 6,6" /></svg>
+        <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-border/50 gap-2 px-3.5" onClick={onReset}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M1 3.5A4 4 0 0 1 8.5 3M9 6.5A4 4 0 0 1 1.5 7" /><polyline points="1,1 1,4 4,4" /><polyline points="9,9 9,6 6,6" /></svg>
           RESET
         </Button>
-        <Button variant="outline" size="sm" className="font-mono text-sm h-9 border-border/50 gap-2" onClick={onInject}>
-          <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="5" y1="1" x2="5" y2="9" /><line x1="1" y1="5" x2="9" y2="5" /></svg>
-          PATIENT
+        <Button variant="outline" size="sm" className="font-mono text-xs h-9 border-border/50 gap-2 px-3" onClick={onInject}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="5" y1="1" x2="5" y2="9" /><line x1="1" y1="5" x2="9" y2="5" /></svg>
+          Patient
         </Button>
       </div>
 
       {/* Speed */}
-      <div className="flex items-center gap-2.5 min-w-[180px]">
-        <span className="text-xs font-mono font-medium text-muted-foreground/60 uppercase tracking-wider">Spd</span>
+      <div className="flex items-center gap-2.5 min-w-[150px] shrink-0">
+        <span className="text-[10px] font-mono font-medium text-muted-foreground/60 uppercase tracking-wider">Spd</span>
         <Slider
           value={[simState.speed_multiplier]}
           min={0.5}
@@ -77,29 +77,22 @@ export function ControlPanel({
           onValueChange={([v]) => onSpeedChange(v)}
           className="flex-1"
         />
-        <span className="text-sm font-mono font-semibold tabular-nums text-emerald-600 w-8 text-right">
+        <span className="text-xs font-mono font-semibold tabular-nums text-emerald-600 w-7 text-right">
           {simState.speed_multiplier}x
         </span>
       </div>
 
       {/* Mode Selector — segmented control with sliding highlight */}
-      <div className="relative grid grid-cols-4 rounded-lg border border-border/40 bg-muted/20 p-0.5" style={{ width: 420 }}>
-        <div
-          className="absolute top-0.5 bottom-0.5 rounded-md bg-emerald-600 transition-all duration-200 ease-in-out"
-          style={{
-            width: `calc(${100 / MODES.length}% - 2px)`,
-            transform: `translateX(calc(${MODES.findIndex((m) => m.value === simState.mode)} * 100% + 1px))`,
-          }}
-        />
+      <div className="flex rounded-lg border border-border/40 bg-muted/20 p-1 gap-1 shrink-0">
         {MODES.map((m) => (
           <button
             key={m.value}
             onClick={() => onSetMode(m.value)}
             title={m.tooltip}
-            className={`relative z-10 py-1.5 text-xs font-mono font-medium rounded-md transition-colors text-center ${
+            className={`py-1.5 px-4 text-[11px] font-mono font-medium rounded-md transition-colors text-center whitespace-nowrap ${
               simState.mode === m.value
-                ? "text-white"
-                : "text-muted-foreground/60 hover:text-foreground"
+                ? "bg-emerald-600 text-white"
+                : "text-muted-foreground/60 hover:text-foreground hover:bg-black/[0.04]"
             }`}
           >
             {m.label}
@@ -108,26 +101,26 @@ export function ControlPanel({
       </div>
 
       {/* Live indicator + Tick + Log */}
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-4 shrink-0">
         <EventLog entries={eventLog} open={logOpen} onToggle={() => setLogOpen(!logOpen)} />
         {simState.is_running ? (
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-emerald-500 uppercase tracking-widest">
+            <span className="text-[11px] font-mono font-bold text-emerald-500 uppercase tracking-widest">
               Live
             </span>
           </div>
         ) : simState.current_tick > 0 ? (
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-yellow-500" />
-            <span className="text-xs font-mono font-bold text-yellow-500 uppercase tracking-widest">
+            <span className="text-[11px] font-mono font-bold text-yellow-500 uppercase tracking-widest">
               Paused
             </span>
           </div>
         ) : null}
         <div className="flex items-center gap-2 bg-muted/20 px-3 py-1.5 rounded-md border border-border/30">
-          <span className="text-xs font-mono font-medium text-muted-foreground/50 uppercase">Tick</span>
-          <span className="text-base font-mono tabular-nums text-emerald-600 font-bold">
+          <span className="text-[10px] font-mono font-medium text-muted-foreground/50 uppercase">Tick</span>
+          <span className="text-sm font-mono tabular-nums text-emerald-600 font-bold">
             {String(simState.current_tick).padStart(4, "0")}
           </span>
         </div>

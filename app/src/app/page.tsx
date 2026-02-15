@@ -3,7 +3,7 @@
 import { Board } from "@/components/Board";
 import { ControlPanel } from "@/components/ControlPanel";
 import { MetricsBar } from "@/components/MetricsBar";
-import { LogPanel } from "@/components/LogPanel";
+import { SidebarPanel } from "@/components/SidebarPanel";
 import { usePatientContext } from "@/context/PatientContext";
 
 export default function Home() {
@@ -26,9 +26,9 @@ export default function Home() {
   } = usePatientContext();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-52px)]">
-      <div className="flex flex-1 min-h-0">
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+    <div className="flex flex-col h-full">
+      <div className="relative flex flex-1 min-h-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
           <Board
             patients={patients}
             currentTick={simState.current_tick}
@@ -42,9 +42,12 @@ export default function Home() {
             overdueWaitPids={overdueWaitPids}
           />
         </div>
-        <div className="hidden xl:flex w-[300px] shrink-0 flex-col border-l border-border/30 overflow-hidden min-h-0">
+        {/* Floating metrics box */}
+        <div className="absolute top-5 left-5 z-30">
           <MetricsBar patients={patients} eventLog={eventLog} currentTick={simState.current_tick} />
-          <LogPanel entries={eventLog} />
+        </div>
+        <div className="hidden xl:flex w-[420px] shrink-0 flex-col border-l border-border/30 overflow-hidden min-h-0">
+          <SidebarPanel entries={eventLog} />
         </div>
       </div>
       <ControlPanel
