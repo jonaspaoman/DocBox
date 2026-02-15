@@ -1,249 +1,169 @@
-// ⚠️ MOCK DATA — FOR TESTING ONLY. Remove when backend is connected.
+// Patient data sourced from backend/data/patients.json
+// Transforms nested backend schema into flat frontend Patient type
 
-import { Patient } from "./types";
+import { Patient, PatientColor, PatientStatus } from "./types";
+import rawPatients from "./patients.json";
 
-export const MOCK_PATIENTS: Patient[] = [
-  {
-    pid: "p1",
-    name: "James Wilson",
-    sex: "M",
-    age: 58,
-    chief_complaint: "Chest pain radiating to left arm",
-    triage_notes: "58M, substernal chest pain 7/10, onset 2h ago. Diaphoretic. PMH: HTN, hyperlipidemia.",
-    hpi: "58-year-old male with history of HTN and hyperlipidemia presents with 2 hours of substernal chest pressure 7/10 radiating to left arm. Associated diaphoresis and mild nausea. No prior cardiac history. Takes lisinopril 10mg and atorvastatin 40mg daily.",
-    objective: "T 98.4 HR 96 BP 158/92 RR 20 SpO2 97%. Diaphoretic. Heart: regular rate, no murmurs. Lungs clear. No JVD or peripheral edema.",
-    esi_score: 2,
-    color: "grey",
-    status: "called_in",
-    is_simulated: true,
-    version: 1,
-    entered_current_status_tick: 0,
-  },
-  {
-    pid: "p2",
-    name: "Maria Santos",
-    sex: "F",
-    age: 34,
-    chief_complaint: "Severe abdominal pain, 6 hours",
-    triage_notes: "34F, acute RLQ pain 8/10, nausea, low-grade fever 100.4F. Guarding on exam.",
-    hpi: "34-year-old female with no significant PMH presents with 6 hours of acute-onset RLQ abdominal pain. Pain began periumbilically and migrated to RLQ. Associated nausea, one episode of vomiting, and low-grade fever. Last menstrual period 2 weeks ago, regular. Denies vaginal bleeding or discharge.",
-    objective: "T 100.4 HR 92 BP 128/78 RR 18 SpO2 99%. Abdomen: tenderness RLQ with voluntary guarding. Positive McBurney's point. No rebound. Bowel sounds present.",
-    esi_score: 3,
-    color: "yellow",
-    status: "er_bed",
-    bed_number: 5,
-    is_simulated: false,
-    version: 3,
-    entered_current_status_tick: 5,
-    lab_results: [
-      { test: "CBC", result: "WBC 14.2k (elevated)", is_surprising: false, arrives_at_tick: 8 },
-      { test: "CMP", result: "Normal", is_surprising: false, arrives_at_tick: 8 },
-      { test: "CT Abdomen", result: "", is_surprising: false, arrives_at_tick: 25 },
-    ],
-  },
-  {
-    pid: "p3",
-    name: "Robert Chen",
-    sex: "M",
-    age: 72,
-    chief_complaint: "Fall with hip pain",
-    triage_notes: "72M, mechanical fall at home, unable to bear weight on right leg. No LOC.",
-    hpi: "72-year-old male tripped over a rug at home and fell onto right side. Unable to bear weight on right leg since the fall. Denies LOC, head strike, or anticoagulant use. PMH: osteoarthritis, type 2 DM.",
-    objective: "T 98.0 HR 88 BP 148/82 RR 16 SpO2 97%. Right hip: shortened and externally rotated. Tenderness over greater trochanter. Unable to perform SLR. Distal pulses intact, sensation normal.",
-    esi_score: 3,
-    color: "grey",
-    status: "waiting_room",
-    is_simulated: true,
-    version: 2,
-    entered_current_status_tick: 3,
-  },
-  {
-    pid: "p4",
-    name: "Sarah Johnson",
-    sex: "F",
-    age: 28,
-    chief_complaint: "Migraine with visual changes",
-    triage_notes: "28F, worst headache of life, photophobia, visual scotoma. No fever, no neck stiffness.",
-    hpi: "28-year-old female with known migraine history presents with severe headache 9/10, describes it as 'worst headache of life.' Associated photophobia and right-sided visual scotoma lasting 20 minutes prior to headache onset. No fever, neck stiffness, or recent trauma. Last migraine was 3 months ago.",
-    objective: "T 98.2 HR 76 BP 122/74 RR 14 SpO2 100%. Alert, photophobic. PERRL. No papilledema. Neck supple, negative Kernig and Brudzinski. Neuro exam intact.",
-    esi_score: 3,
-    color: "grey",
-    status: "er_bed",
-    bed_number: 2,
-    is_simulated: true,
-    version: 2,
-    entered_current_status_tick: 4,
-    lab_results: [
-      { test: "CT Head", result: "No acute intracranial pathology", is_surprising: false, arrives_at_tick: 10 },
-    ],
-  },
-  {
-    pid: "p5",
-    name: "David Park",
-    sex: "M",
-    age: 45,
-    chief_complaint: "Laceration to right forearm",
-    triage_notes: "45M, 6cm laceration right forearm from kitchen knife. Bleeding controlled. Neurovascularly intact.",
-    hpi: "45-year-old male sustained a 6cm laceration to the volar aspect of right forearm while cutting vegetables. Bleeding controlled with direct pressure. No numbness or weakness in hand. Right-hand dominant. Tetanus booster 3 years ago.",
-    objective: "T 98.6 HR 74 BP 130/80 RR 14 SpO2 99%. 6cm linear laceration volar right forearm, clean edges, subcutaneous depth. No tendon involvement. Radial pulse 2+, sensation intact to light touch in median/ulnar/radial distributions. Full ROM digits.",
-    esi_score: 4,
-    color: "green",
-    status: "er_bed",
-    bed_number: 8,
-    is_simulated: true,
-    version: 4,
-    entered_current_status_tick: 12,
-    lab_results: [
-      { test: "Tetanus status", result: "Up to date", is_surprising: false, arrives_at_tick: 6 },
-    ],
-  },
-  {
-    pid: "p6",
-    name: "Emily Rodriguez",
-    sex: "F",
-    age: 61,
-    chief_complaint: "Shortness of breath, worsening",
-    triage_notes: "61F, progressive dyspnea x3 days, SpO2 89% on RA, bilateral crackles. PMH: CHF.",
-    hpi: "61-year-old female with CHF (EF 35%) presents with 3 days of worsening dyspnea at rest and orthopnea. Gained 8 lbs in the past week. Has been non-compliant with fluid restriction and missed furosemide doses. Denies chest pain or fever. PMH: CHF, HTN, DM2.",
-    objective: "T 98.8 HR 110 BP 168/94 RR 28 SpO2 89% on RA → 94% on 4L NC. JVP elevated. Lungs: bilateral crackles to mid-lung fields. Heart: S3 gallop. 2+ pitting edema bilateral LE.",
-    esi_score: 2,
-    color: "red",
-    status: "er_bed",
-    bed_number: 1,
-    is_simulated: true,
-    version: 3,
-    entered_current_status_tick: 2,
-    lab_results: [
-      { test: "BNP", result: "2,450 pg/mL (critically elevated)", is_surprising: true, arrives_at_tick: 7 },
-      { test: "Troponin", result: "0.89 ng/mL (elevated)", is_surprising: true, arrives_at_tick: 7 },
-      { test: "Chest X-ray", result: "Bilateral pulmonary edema", is_surprising: false, arrives_at_tick: 5 },
-    ],
-  },
-  {
-    pid: "p7",
-    name: "Michael Brown",
-    sex: "M",
-    age: 19,
-    chief_complaint: "Ankle sprain during basketball",
-    triage_notes: "19M, inversion injury left ankle playing basketball. Swelling, able to bear weight with pain.",
-    hpi: "19-year-old male inverted left ankle while landing from a jump during basketball game. Immediate swelling and pain over lateral malleolus. Able to bear weight with difficulty. No prior ankle injuries. No pop or crack heard.",
-    objective: "T 98.6 HR 68 BP 118/72 RR 14 SpO2 100%. Left ankle: swelling and ecchymosis over lateral malleolus. TTP over ATFL. Negative squeeze test. Able to bear weight 4 steps with limp. Anterior drawer mildly positive.",
-    esi_score: 5,
-    color: "grey",
-    status: "waiting_room",
-    is_simulated: true,
-    version: 1,
-    entered_current_status_tick: 6,
-  },
-  {
-    pid: "p8",
-    name: "Linda Thompson",
-    sex: "F",
-    age: 55,
-    chief_complaint: "Syncopal episode",
-    triage_notes: "55F, witnessed syncope at grocery store. LOC ~30s, now alert. PMH: none known.",
-    hpi: "55-year-old female with no known PMH had a witnessed syncopal episode while standing in line at the grocery store. LOC approximately 30 seconds, no seizure-like activity. Felt lightheaded and nauseated prior. Now alert and oriented. Denies chest pain, palpitations, or recent illness. Has been eating and drinking normally.",
-    objective: "T 98.4 HR 78 BP 110/68 (supine), 98/60 (standing) RR 16 SpO2 98%. Alert, well-appearing. Heart: RRR, no murmurs. Lungs clear. Neuro intact. No tongue bite or incontinence.",
-    esi_score: 3,
-    color: "grey",
-    status: "er_bed",
-    bed_number: 11,
-    is_simulated: true,
-    version: 2,
-    entered_current_status_tick: 8,
-    lab_results: [
-      { test: "ECG", result: "", is_surprising: false, arrives_at_tick: 20 },
-      { test: "CBC", result: "Hgb 8.2 (low)", is_surprising: true, arrives_at_tick: 12 },
-    ],
-  },
-  {
-    pid: "p9",
-    name: "Thomas Wright",
-    sex: "M",
-    age: 40,
-    chief_complaint: "Allergic reaction — facial swelling",
-    triage_notes: "40M, lip and tongue swelling after eating shellfish. No stridor. Given epi by EMS.",
-    hpi: "40-year-old male developed lip and tongue swelling within 30 minutes of eating shrimp at a restaurant. Also noted diffuse hives and throat tightness. EMS administered epinephrine 0.3mg IM en route. Symptoms improving on arrival. Known shellfish allergy but thought dish was shellfish-free. No prior anaphylaxis episodes. No current medications.",
-    objective: "T 98.6 HR 102 BP 108/70 RR 18 SpO2 98%. Mild lip edema (improving). No stridor or hoarseness. Diffuse urticaria fading. Lungs clear, no wheezing. Oropharynx: mild uvular edema.",
-    esi_score: 2,
-    color: "grey",
-    status: "er_bed",
-    bed_number: 14,
-    is_simulated: true,
-    version: 5,
-    entered_current_status_tick: 10,
-  },
-  {
-    pid: "p10",
-    name: "Karen Lee",
-    sex: "F",
-    age: 38,
-    chief_complaint: "Wrist pain after fall",
-    triage_notes: "38F, FOOSH injury, tenderness over distal radius. Neurovascularly intact.",
-    hpi: "38-year-old female fell forward onto outstretched right hand while jogging. Immediate wrist pain and swelling. Pain 6/10 with movement. Right-hand dominant. No prior fractures. Denies numbness or tingling in fingers.",
-    objective: "T 98.6 HR 72 BP 120/76 RR 14 SpO2 100%. Right wrist: swelling and tenderness over distal radius dorsally. No gross deformity. Radial pulse 2+, capillary refill <2s. Sensation intact. Limited ROM due to pain.",
-    esi_score: 4,
-    color: "green",
-    status: "done",
-    is_simulated: true,
-    version: 6,
-    entered_current_status_tick: 18,
-  },
+interface RawPatient {
+  demographics: { name: string; sex: string; dob: string; address?: string };
+  medical_history: string;
+  ed_session: {
+    triage: {
+      chief_complaint_summary: string;
+      hpi_narrative: string;
+      esi_score: number;
+      time_admitted: string;
+    };
+    doctor_notes: {
+      subjective: string;
+      objective: string;
+      assessment: string;
+      plan: string;
+    };
+    labs: { test: string; result: string; is_surprising: boolean; arrives_at_tick: number }[];
+    discharge_papers: Record<string, string> | null;
+  };
+}
+
+function ageFromDob(dob: string): number {
+  const birth = new Date(dob);
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const monthDiff = now.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function transformPatient(
+  raw: RawPatient,
+  index: number,
+  override: {
+    status: PatientStatus;
+    color: PatientColor;
+    bed_number?: number;
+    entered_current_status_tick: number;
+    version: number;
+    is_simulated: boolean;
+  }
+): Patient {
+  const t = raw.ed_session.triage;
+  const d = raw.ed_session.doctor_notes;
+  return {
+    pid: `p${index + 1}`,
+    name: raw.demographics.name,
+    sex: raw.demographics.sex,
+    dob: raw.demographics.dob,
+    age: ageFromDob(raw.demographics.dob),
+    chief_complaint: t.chief_complaint_summary,
+    hpi: t.hpi_narrative,
+    triage_notes: t.chief_complaint_summary,
+    pmh: raw.medical_history,
+    objective: d.objective,
+    primary_diagnoses: d.assessment,
+    justification: d.assessment,
+    plan: d.plan,
+    review_of_systems: raw.medical_history,
+    esi_score: t.esi_score,
+    color: override.color,
+    status: override.status,
+    bed_number: override.bed_number,
+    is_simulated: override.is_simulated,
+    version: override.version,
+    entered_current_status_tick: override.entered_current_status_tick,
+    lab_results: raw.ed_session.labs.length > 0 ? raw.ed_session.labs : undefined,
+    discharge_papers: raw.ed_session.discharge_papers ?? undefined,
+  };
+}
+
+// Initial board state: spread patients across statuses for a realistic starting board
+// Index maps to rawPatients array (0-indexed)
+const INITIAL_OVERRIDES: {
+  status: PatientStatus;
+  color: PatientColor;
+  bed_number?: number;
+  entered_current_status_tick: number;
+  version: number;
+  is_simulated: boolean;
+}[] = [
+  // 0: Maria Santos — ER bed, yellow (real caller feel)
+  { status: "er_bed", color: "yellow", bed_number: 5, entered_current_status_tick: 5, version: 3, is_simulated: false },
+  // 1: James Walker — called in (chest pain, ESI 2)
+  { status: "called_in", color: "grey", entered_current_status_tick: 0, version: 1, is_simulated: true },
+  // 2: Ashley Chen — done (laceration, has discharge papers)
+  { status: "done", color: "green", entered_current_status_tick: 18, version: 6, is_simulated: true },
+  // 3: Robert Mitchell — ER bed (asthma exacerbation, ESI 2)
+  { status: "er_bed", color: "grey", bed_number: 3, entered_current_status_tick: 4, version: 2, is_simulated: true },
+  // 4: Linda Okafor — ER bed, red (surprising INR)
+  { status: "er_bed", color: "red", bed_number: 1, entered_current_status_tick: 2, version: 3, is_simulated: true },
+  // 5: David Park — waiting room (migraine)
+  { status: "waiting_room", color: "grey", entered_current_status_tick: 3, version: 2, is_simulated: true },
+  // 6: Patricia Gomez — ER bed (pyelonephritis)
+  { status: "er_bed", color: "grey", bed_number: 7, entered_current_status_tick: 6, version: 2, is_simulated: true },
+  // 7: Kevin Brooks — ER bed, green (wrist fracture, ready to discharge)
+  { status: "er_bed", color: "green", bed_number: 8, entered_current_status_tick: 12, version: 4, is_simulated: true },
+  // 8: Susan Williams — ER bed (allergic reaction, observation)
+  { status: "er_bed", color: "grey", bed_number: 14, entered_current_status_tick: 10, version: 3, is_simulated: true },
+  // 9: Thomas Anderson — ER bed (syncope)
+  { status: "er_bed", color: "grey", bed_number: 11, entered_current_status_tick: 8, version: 2, is_simulated: true },
+  // 10: Fatima Al-Hassan — ER bed, red (CHF decompensation)
+  { status: "er_bed", color: "red", bed_number: 2, entered_current_status_tick: 2, version: 3, is_simulated: true },
+  // 11: Marcus Johnson — done (ankle sprain, has discharge papers)
+  { status: "done", color: "green", entered_current_status_tick: 20, version: 6, is_simulated: true },
+  // 12: Dorothy Chen — called in (confusion/sepsis, ESI 2)
+  { status: "called_in", color: "grey", entered_current_status_tick: 0, version: 1, is_simulated: true },
+  // 13: Ryan O'Brien — waiting room (kidney stone)
+  { status: "waiting_room", color: "grey", entered_current_status_tick: 4, version: 2, is_simulated: true },
+  // 14: Emily Torres — ER bed (DKA, ESI 2)
+  { status: "er_bed", color: "grey", bed_number: 4, entered_current_status_tick: 3, version: 2, is_simulated: true },
+  // 15: George Harris — ER bed, green (nosebleed, ready to discharge)
+  { status: "er_bed", color: "green", bed_number: 9, entered_current_status_tick: 14, version: 4, is_simulated: true },
+  // 16: Carmen Reyes — waiting room (back pain)
+  { status: "waiting_room", color: "grey", entered_current_status_tick: 5, version: 1, is_simulated: true },
+  // 17: Harold Washington — ER bed (GI bleed)
+  { status: "er_bed", color: "grey", bed_number: 6, entered_current_status_tick: 7, version: 2, is_simulated: true },
+  // 18: Sophia Kim — done (strep throat, has discharge papers)
+  { status: "done", color: "green", entered_current_status_tick: 16, version: 6, is_simulated: true },
+  // 19: William Davis — called in (thunderclap headache/SAH, ESI 2)
+  { status: "called_in", color: "grey", entered_current_status_tick: 0, version: 1, is_simulated: true },
 ];
 
-let nextMockId = 11;
+const typed = rawPatients as RawPatient[];
 
-const MOCK_TEMPLATES = [
-  {
-    name: "Alex Turner", complaint: "Fever and cough x3 days",
-    triage: "45M, productive cough ×3 days, fever 101.8F, SpO2 96% on RA. No travel history. PMH: asthma.",
-    hpi: "Patient reports 3 days of worsening productive cough with yellow-green sputum, subjective fevers, and mild dyspnea on exertion. Denies hemoptysis, chest pain, or sick contacts. Uses albuterol inhaler PRN.",
-    objective: "T 101.8 HR 98 BP 132/80 RR 20 SpO2 96%. Lungs: decreased breath sounds RLL with crackles. No wheezing. Pharynx clear.",
-  },
-  {
-    name: "Nina Patel", complaint: "Nausea and vomiting",
-    triage: "29F, nausea/vomiting ×12 hrs, unable to keep liquids down. Mild epigastric tenderness. No fever.",
-    hpi: "Patient with 12 hours of persistent nausea and non-bloody, non-bilious vomiting (6 episodes). Ate leftover takeout last night. Mild cramping abdominal pain. Last BM this morning, normal. Denies diarrhea, fever, or recent travel.",
-    objective: "T 98.6 HR 104 BP 108/68 RR 16 SpO2 99%. Abdomen: soft, mild epigastric tenderness, no guarding or rebound. Mucous membranes dry.",
-  },
-  {
-    name: "Oscar Mendez", complaint: "Lower back pain",
-    triage: "52M, acute lower back pain after lifting heavy box. No radiation to legs. No bowel/bladder changes.",
-    hpi: "Patient was lifting a heavy box at work 6 hours ago and felt sudden sharp pain in the lower back. Pain is 7/10, worse with movement, better lying flat. No leg weakness, numbness, or tingling. No bowel or bladder dysfunction. No prior back surgeries.",
-    objective: "T 98.4 HR 82 BP 140/88 RR 16 SpO2 99%. Lumbar paraspinal tenderness bilaterally. No midline tenderness. SLR negative bilaterally. Strength 5/5 LE. Sensation intact. Rectal tone normal.",
-  },
-  {
-    name: "Grace Kim", complaint: "Skin rash spreading",
-    triage: "33F, diffuse urticarial rash ×6 hrs, started on trunk now spreading to extremities. No SOB or throat tightness. Started new laundry detergent yesterday.",
-    hpi: "Patient noticed itchy raised welts on torso 6 hours ago, now spread to arms and legs. Recently switched laundry detergent. Denies new medications, foods, or insect bites. No lip/tongue swelling, difficulty breathing, or voice changes. No prior similar episodes.",
-    objective: "T 98.6 HR 78 BP 118/72 RR 14 SpO2 100%. Diffuse urticarial plaques on trunk and extremities. No angioedema. Oropharynx clear. Lungs clear bilaterally.",
-  },
-  {
-    name: "Felix Dubois", complaint: "Dizziness and lightheadedness",
-    triage: "67M, episodic dizziness ×2 days, worse with head turning. One near-fall. PMH: HTN, BPH.",
-    hpi: "Patient reports 2 days of intermittent room-spinning dizziness triggered by head movements, particularly rolling over in bed and looking up. Associated nausea, no vomiting. One near-fall yesterday. Denies hearing changes, tinnitus, headache, or focal weakness. Medications: lisinopril, tamsulosin.",
-    objective: "T 98.2 HR 72 BP 138/82 RR 14 SpO2 98%. Dix-Hallpike positive on right with rotatory nystagmus and reproduction of vertigo. Neurological exam otherwise normal. Gait steady with Romberg negative.",
-  },
-];
+export const MOCK_PATIENTS: Patient[] = typed.map((raw, i) =>
+  transformPatient(raw, i, INITIAL_OVERRIDES[i])
+);
+
+// --- New patient injection ---
+// Cycles through backend patients as "new" arrivals
+
+let nextMockIdx = 0;
 
 export function getNextMockPatient(): Patient {
-  const i = (nextMockId - 11) % MOCK_TEMPLATES.length;
-  const t = MOCK_TEMPLATES[i];
-  const patient: Patient = {
-    pid: `p${nextMockId++}`,
-    name: t.name,
-    sex: Math.random() > 0.5 ? "M" : "F",
-    age: Math.floor(Math.random() * 60) + 18,
-    chief_complaint: t.complaint,
-    triage_notes: t.triage,
-    hpi: t.hpi,
-    objective: t.objective,
-    esi_score: Math.floor(Math.random() * 4) + 2,
+  const raw = typed[nextMockIdx % typed.length];
+  const pid = `p${100 + nextMockIdx}`;
+  nextMockIdx++;
+
+  return {
+    pid,
+    name: raw.demographics.name,
+    sex: raw.demographics.sex,
+    dob: raw.demographics.dob,
+    age: ageFromDob(raw.demographics.dob),
+    chief_complaint: raw.ed_session.triage.chief_complaint_summary,
+    hpi: raw.ed_session.triage.hpi_narrative,
+    triage_notes: raw.ed_session.triage.chief_complaint_summary,
+    pmh: raw.medical_history,
+    objective: raw.ed_session.doctor_notes.objective,
+    primary_diagnoses: raw.ed_session.doctor_notes.assessment,
+    plan: raw.ed_session.doctor_notes.plan,
+    esi_score: raw.ed_session.triage.esi_score,
     color: "grey",
     status: "called_in",
     is_simulated: true,
     version: 1,
     entered_current_status_tick: 0,
+    lab_results: raw.ed_session.labs.length > 0 ? raw.ed_session.labs : undefined,
   };
-  return patient;
 }
