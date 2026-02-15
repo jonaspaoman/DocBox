@@ -262,7 +262,7 @@ function DocboxModalBody({
           </div>
         )}
 
-        {patient.discharge_papers && Object.keys(patient.discharge_papers).length > 0 && (
+        {patient.discharge_papers && Object.keys(patient.discharge_papers).length > 0 && (patient.status === "discharge" || patient.status === "done") && (
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1.5">Discharge Papers</div>
             <div className="space-y-2 border border-emerald-500/30 rounded p-2.5 bg-emerald-500/10">

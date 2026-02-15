@@ -375,11 +375,15 @@ export function SidebarDoctor() {
     if (!p) return;
     const note = doctorNote.trim();
     if (!note) return;
-    const changes: Partial<Patient> = { doctor_notes: [...(p.doctor_notes ?? []), note] };
+    const changes: Partial<Patient> = {
+      doctor_notes: [...(p.doctor_notes ?? []), note],
+      color: p.is_simulated === false ? "yellow" as const : "grey" as const,
+    };
     api.updatePatient(pid, changes);
     updatePatient(pid, changes);
     setDoctorNote("");
-    setView("detail");
+    setSelectedPid(null);
+    setView("list");
   };
 
   const handleConfirmReject = async (pid: string) => {

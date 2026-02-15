@@ -351,6 +351,19 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       all.push(patient);
     }
 
+    // Ensure all patients have discharge papers for sidebar reference
+    for (const p of all) {
+      if (!p.discharge_papers || Object.keys(p.discharge_papers).length === 0) {
+        p.discharge_papers = {
+          disposition: "Discharged home in stable condition",
+          diagnosis: p.primary_diagnoses || p.chief_complaint || "See clinical notes",
+          discharge_justification: p.plan || "Patient stable for discharge. Symptoms improved. No acute findings requiring admission.",
+          admitting_attending: `Dr. ${p.name?.split(" ")[1] || "Smith"}, MD — Emergency Medicine`,
+          follow_up: "Primary care in 7-10 days or sooner if symptoms worsen",
+        };
+      }
+    }
+
     // Save ground truth for all 5 (before any user edits)
     const truth = new Map<string, Patient>();
     for (const p of all) truth.set(p.pid, { ...p });
