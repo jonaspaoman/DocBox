@@ -172,7 +172,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // Assign beds: overdue patients first, then by ESI (lowest = most urgent)
+    // Assign beds: overdue patients get immediate priority (guaranteed), others go in the random pool
     if (waitingCandidates.length > 0) {
       waitingCandidates.sort((a, b) => {
         const aOverdue = (waitTimers.current.get(a.pid) ?? Infinity) <= currentTick ? 0 : 1;
@@ -181,15 +181,22 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         return (a.esi_score ?? 5) - (b.esi_score ?? 5);
       });
       const top = waitingCandidates[0];
+      const isOverdue = (waitTimers.current.get(top.pid) ?? Infinity) <= currentTick;
       const bed = findNextAvailableBed(current);
       if (bed !== null) {
-        advanceable.push({
-          pid: top.pid,
-          action: () => {
-            patientHook.assignBed(top.pid, bed);
-            addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
-          },
-        });
+        if (isOverdue) {
+          // Overdue patients get assigned immediately — not randomly
+          patientHook.assignBed(top.pid, bed);
+          addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
+        } else {
+          advanceable.push({
+            pid: top.pid,
+            action: () => {
+              patientHook.assignBed(top.pid, bed);
+              addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
+            },
+          });
+        }
       }
     }
 
