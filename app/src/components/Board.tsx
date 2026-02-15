@@ -5,6 +5,7 @@ import { Patient, PatientStatus, LogEntry } from "@/lib/types";
 import { Column } from "./Column";
 import { BedGrid } from "./BedGrid";
 import { PatientModal } from "./PatientModal";
+import { usePatientContext } from "@/context/PatientContext";
 
 interface BoardProps {
   patients: Patient[];
@@ -213,6 +214,9 @@ export function Board({
   eventLog = [],
   overdueWaitPids,
 }: BoardProps) {
+  const { appMode, setBaselineSelectedPid } = usePatientContext();
+  const isBaseline = appMode === "baseline";
+
   const waitTimes = useMemo(() => {
     const map = new Map<string, Date>();
     for (const entry of eventLog) {
@@ -227,7 +231,10 @@ export function Board({
 
   const handlePatientClick = useCallback((patient: Patient) => {
     setSelectedPatient(patient);
-  }, []);
+    if (isBaseline) {
+      setBaselineSelectedPid(patient.pid);
+    }
+  }, [isBaseline, setBaselineSelectedPid]);
 
   const bedsAvailable = findNextAvailableBed(patients) !== null;
 
@@ -252,16 +259,18 @@ export function Board({
             className="flex gap-3 items-center px-4 py-4 origin-center"
             style={{ transform: `scale(${scale})` }}
           >
-            {/* Called In */}
+            {/* Called In / Walked In */}
             <div className="w-[230px] shrink-0">
               <Column
-                title="Called In"
+                title={isBaseline ? "Walked In" : "Called In"}
                 patients={byStatus(patients, "called_in")}
                 onPatientClick={handlePatientClick}
                 accentColor="border-l-gray-500/30"
                 waitTimes={waitTimes}
                 titleColor="text-slate-500"
-                icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>}
+                icon={isBaseline
+                  ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="13" cy="4" r="2"/><path d="M7 21l3-7 2.5 2V21h2v-6.5l-2.5-2 .5-3c1.5 1.5 3.5 2.5 6 2.5v-2c-2 0-3.5-1-4.5-2.5l-1-1.5c-.5-.5-1-1-1.5-1s-1 0-1.5.5L6 10v4h2V11l1.5-1L7 21z"/></svg>
+                  : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>}
               />
             </div>
 

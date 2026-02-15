@@ -17,6 +17,8 @@ function findNextAvailableBed(patients: Patient[]): number | null {
   return null;
 }
 
+export type AppMode = "docbox" | "baseline";
+
 interface PatientContextValue {
   patients: Patient[];
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>;
@@ -40,6 +42,12 @@ interface PatientContextValue {
   resetSim: () => Promise<void>;
   injectNewPatient: () => Promise<void>;
   eventLog: LogEntry[];
+  appMode: AppMode;
+  setAppMode: (mode: AppMode) => void;
+  baselineSelectedPid: string | null;
+  setBaselineSelectedPid: (pid: string | null) => void;
+  /** Raw patients (before baseline color override) for sidebar file viewer */
+  rawPatients: Patient[];
 }
 
 const PatientContext = createContext<PatientContextValue | null>(null);
@@ -50,6 +58,8 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   const patientHook = usePatients();
   const simHook = useSimulation();
   const [eventLog, setEventLog] = useState<LogEntry[]>([]);
+  const [appMode, setAppMode] = useState<AppMode>("docbox");
+  const [baselineSelectedPid, setBaselineSelectedPid] = useState<string | null>(null);
 
   const addLogEntry = useCallback((pid: string, patientName: string, event: LogEventType, tick: number) => {
     const entry: LogEntry = {
@@ -77,6 +87,8 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   modeRef.current = simHook.simState.mode;
   const tickRef = useRef(simHook.simState.current_tick);
   tickRef.current = simHook.simState.current_tick;
+  const appModeRef = useRef(appMode);
+  appModeRef.current = appMode;
 
   const addLogEntryRef = useRef(addLogEntry);
   addLogEntryRef.current = addLogEntry;
@@ -94,8 +106,8 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     const waitingCandidates: Patient[] = [];
 
     for (const p of current) {
-      // Check for surprising lab results arriving this tick — turn patient red
-      if (p.status === "er_bed" && p.color !== "red" && p.color !== "green" && p.lab_results) {
+      // Check for surprising lab results arriving this tick — turn patient red (skip in baseline)
+      if (appModeRef.current === "docbox" && p.status === "er_bed" && p.color !== "red" && p.color !== "green" && p.lab_results) {
         const hasSurprise = p.lab_results.some(
           (lab) => lab.is_surprising && !lab.acknowledged && lab.arrives_at_tick <= currentTick
         );
@@ -108,7 +120,8 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       }
 
       // called_in → waiting_room (auto in all modes except manual and nurse-manual)
-      const autoAccept = mode !== "manual" && mode !== "nurse-manual";
+      // In baseline mode, never auto-accept — nurse must manually accept
+      const autoAccept = appModeRef.current !== "baseline" && mode !== "manual" && mode !== "nurse-manual";
       if (p.status === "called_in" && autoAccept) {
         advanceable.push({ pid: p.pid, action: () => {
           patientHook.acceptPatient(p.pid);
@@ -173,29 +186,41 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     }
 
     // Assign beds: overdue patients get immediate priority (guaranteed), others go in the random pool
+    // In baseline mode, assign all waiting patients to beds immediately
     if (waitingCandidates.length > 0) {
-      waitingCandidates.sort((a, b) => {
-        const aOverdue = (waitTimers.current.get(a.pid) ?? Infinity) <= currentTick ? 0 : 1;
-        const bOverdue = (waitTimers.current.get(b.pid) ?? Infinity) <= currentTick ? 0 : 1;
-        if (aOverdue !== bOverdue) return aOverdue - bOverdue;
-        return (a.esi_score ?? 5) - (b.esi_score ?? 5);
-      });
-      const top = waitingCandidates[0];
-      const isOverdue = (waitTimers.current.get(top.pid) ?? Infinity) <= currentTick;
-      const bed = findNextAvailableBed(current);
-      if (bed !== null) {
-        if (isOverdue) {
-          // Overdue patients get assigned immediately — not randomly
-          patientHook.assignBed(top.pid, bed);
-          addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
-        } else {
-          advanceable.push({
-            pid: top.pid,
-            action: () => {
-              patientHook.assignBed(top.pid, bed);
-              addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
-            },
-          });
+      if (appModeRef.current === "baseline") {
+        // Baseline: assign all waiting patients immediately
+        for (const candidate of waitingCandidates) {
+          const bed = findNextAvailableBed(current);
+          if (bed !== null) {
+            patientHook.assignBed(candidate.pid, bed);
+            addLogEntryRef.current(candidate.pid, candidate.name, "assigned_bed", currentTick);
+          }
+        }
+      } else {
+        waitingCandidates.sort((a, b) => {
+          const aOverdue = (waitTimers.current.get(a.pid) ?? Infinity) <= currentTick ? 0 : 1;
+          const bOverdue = (waitTimers.current.get(b.pid) ?? Infinity) <= currentTick ? 0 : 1;
+          if (aOverdue !== bOverdue) return aOverdue - bOverdue;
+          return (a.esi_score ?? 5) - (b.esi_score ?? 5);
+        });
+        const top = waitingCandidates[0];
+        const isOverdue = (waitTimers.current.get(top.pid) ?? Infinity) <= currentTick;
+        const bed = findNextAvailableBed(current);
+        if (bed !== null) {
+          if (isOverdue) {
+            // Overdue patients get assigned immediately — not randomly
+            patientHook.assignBed(top.pid, bed);
+            addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
+          } else {
+            advanceable.push({
+              pid: top.pid,
+              action: () => {
+                patientHook.assignBed(top.pid, bed);
+                addLogEntryRef.current(top.pid, top.name, "assigned_bed", currentTick);
+              },
+            });
+          }
         }
       }
     }
@@ -287,8 +312,9 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [patientHook, addLogEntry]);
 
-  // Compute which waiting room patient is overdue (max 1)
+  // Compute which waiting room patient is overdue (max 1) — empty in baseline
   const overdueWaitPids = useMemo(() => {
+    if (appMode === "baseline") return new Set<string>();
     const tick = simHook.simState.current_tick;
     let oldestPid: string | null = null;
     let oldestThreshold = Infinity;
@@ -302,10 +328,35 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     if (oldestPid) set.add(oldestPid);
     return set;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [simHook.simState.current_tick, patientHook.patients]);
+  }, [simHook.simState.current_tick, patientHook.patients, appMode]);
+
+  // In baseline mode, override all patient colors to grey
+  const exposedPatients = useMemo(() => {
+    if (appMode === "baseline") {
+      return patientHook.patients.map((p) => ({ ...p, color: "grey" as const }));
+    }
+    return patientHook.patients;
+  }, [appMode, patientHook.patients]);
+
+  // In baseline mode, flagForDischarge skips setting color to green
+  const flagForDischargeWrapped = useCallback((pid: string) => {
+    if (appMode === "baseline") {
+      patientHook.setPatients((prev) =>
+        prev.map((p) =>
+          p.pid === pid
+            ? { ...p, time_to_discharge: undefined, version: p.version + 1 }
+            : p
+        )
+      );
+    } else {
+      patientHook.flagForDischarge(pid);
+    }
+  }, [appMode, patientHook]);
 
   const value: PatientContextValue = {
     ...patientHook,
+    patients: exposedPatients,
+    flagForDischarge: flagForDischargeWrapped,
     dischargePatient: dischargePatientWithLog,
     markDone: markDoneWithLog,
     acknowledgeLab,
@@ -320,6 +371,11 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     resetSim,
     injectNewPatient,
     eventLog,
+    appMode,
+    setAppMode,
+    baselineSelectedPid,
+    setBaselineSelectedPid,
+    rawPatients: patientHook.patients,
   };
 
   return (

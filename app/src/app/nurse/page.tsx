@@ -26,7 +26,8 @@ const COLOR_BORDER: Record<string, string> = {
 };
 
 export default function NursePage() {
-  const { patients, updatePatient, acceptPatient, eventLog } = usePatientContext();
+  const { patients, updatePatient, acceptPatient, eventLog, appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
 
   const arrivalTimes = useMemo(() => {
     const map = new Map<string, Date>();
@@ -63,10 +64,12 @@ export default function NursePage() {
       <div className="sticky top-[44px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
-            <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Nurse Inbox</h1>
-            <span className="text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-              {calledIn.length}
-            </span>
+            <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">{isBaseline ? "Nurse Station" : "Nurse Inbox"}</h1>
+            {!isBaseline && (
+              <span className="text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                {calledIn.length}
+              </span>
+            )}
           </div>
           <Input
             placeholder="Search patients..."
@@ -82,7 +85,7 @@ export default function NursePage() {
         <div className="space-y-2.5">
           {calledIn.length === 0 && (
             <p className="text-muted-foreground/50 text-sm font-mono py-12 text-center">
-              No incoming patients.
+              {isBaseline ? "No walked-in patients." : "No incoming patients."}
             </p>
           )}
           {calledIn.map((p) => (
@@ -91,7 +94,7 @@ export default function NursePage() {
               type="button"
               className={cn(
                 "w-full rounded-lg border-l-[3px] border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors text-left px-5 py-3.5",
-                COLOR_BORDER[p.color] || "border-l-gray-500"
+                isBaseline ? "border-l-gray-500" : (COLOR_BORDER[p.color] || "border-l-gray-500")
               )}
               onClick={() => setSelectedPid(p.pid)}
             >
@@ -103,12 +106,12 @@ export default function NursePage() {
                   </span>
                 )}
                 <div className="flex-1" />
-                {p.esi_score != null && (
+                {!isBaseline && p.esi_score != null && (
                   <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
                     ESI {p.esi_score}
                   </Badge>
                 )}
-                {arrivalTimes.get(p.pid) && (
+                {!isBaseline && arrivalTimes.get(p.pid) && (
                   <ElapsedTime since={arrivalTimes.get(p.pid)!} className="text-yellow-600 text-[11px] font-mono shrink-0" />
                 )}
               </div>
@@ -150,27 +153,51 @@ function NurseModal({
   onAccept: () => void;
   onSave: (changes: Partial<Patient>) => void;
 }) {
-  const [draft, setDraft] = useState(() => ({
+  const { appMode } = usePatientContext();
+  const isBaselineModal = appMode === "baseline";
+  const [draft, setDraft] = useState(() => isBaselineModal ? {
+    name: "",
+    age: 0,
+    sex: "",
+    chief_complaint: "",
+    triage_notes: "",
+    esi_score: 0,
+  } : {
     name: patient.name,
     age: patient.age ?? 0,
     sex: patient.sex ?? "",
     chief_complaint: patient.chief_complaint ?? "",
     triage_notes: patient.triage_notes ?? "",
     esi_score: patient.esi_score ?? 3,
-  }));
+  });
 
   useEffect(() => {
-    setDraft({
-      name: patient.name,
-      age: patient.age ?? 0,
-      sex: patient.sex ?? "",
-      chief_complaint: patient.chief_complaint ?? "",
-      triage_notes: patient.triage_notes ?? "",
-      esi_score: patient.esi_score ?? 3,
-    });
-  }, [patient]);
+    if (isBaselineModal) {
+      setDraft({ name: "", age: 0, sex: "", chief_complaint: "", triage_notes: "", esi_score: 0 });
+    } else {
+      setDraft({
+        name: patient.name,
+        age: patient.age ?? 0,
+        sex: patient.sex ?? "",
+        chief_complaint: patient.chief_complaint ?? "",
+        triage_notes: patient.triage_notes ?? "",
+        esi_score: patient.esi_score ?? 3,
+      });
+    }
+  }, [patient, isBaselineModal]);
+
+  // In baseline, all fields must be filled before accepting
+  const baselineValid = !isBaselineModal || (
+    draft.name.trim() !== "" &&
+    draft.age > 0 &&
+    draft.sex !== "" &&
+    draft.chief_complaint.trim() !== "" &&
+    draft.triage_notes.trim() !== "" &&
+    draft.esi_score >= 1 && draft.esi_score <= 5
+  );
 
   const handleAccept = () => {
+    if (!baselineValid) return;
     onSave({
       name: draft.name,
       age: draft.age,
@@ -191,8 +218,10 @@ function NurseModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
           <div className="flex items-center gap-3">
-            <span className="text-base font-mono font-bold text-gray-900">{patient.name}</span>
-            {arrivalTime && (
+            <span className="text-base font-mono font-bold text-gray-900">
+              {isBaselineModal ? "New Patient Registration" : patient.name}
+            </span>
+            {!isBaselineModal && arrivalTime && (
               <ElapsedTime since={arrivalTime} className="text-yellow-600 text-[11px] font-mono" />
             )}
           </div>
@@ -212,6 +241,7 @@ function NurseModal({
                 <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Name</span>
                 <input
                   className="bg-transparent border-b border-gray-300 text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
+                  placeholder={isBaselineModal ? "Enter patient name..." : undefined}
                   value={draft.name}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                 />
@@ -219,7 +249,8 @@ function NurseModal({
                 <input
                   type="number"
                   className="bg-transparent border-b border-gray-300 text-foreground/85 outline-none text-sm font-mono w-20 focus:border-emerald-500/40 pb-1"
-                  value={draft.age}
+                  placeholder={isBaselineModal ? "—" : undefined}
+                  value={draft.age || ""}
                   onChange={(e) => setDraft({ ...draft, age: parseInt(e.target.value) || 0 })}
                 />
                 <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Sex</span>
@@ -238,6 +269,7 @@ function NurseModal({
                   value={draft.esi_score}
                   onChange={(e) => setDraft({ ...draft, esi_score: parseInt(e.target.value) })}
                 >
+                  {isBaselineModal && <option value={0}>— Select ESI —</option>}
                   <option value={1}>1 — Resuscitation</option>
                   <option value={2}>2 — Emergent</option>
                   <option value={3}>3 — Urgent</option>
@@ -251,6 +283,7 @@ function NurseModal({
             <Section label="Chief Complaint">
               <input
                 className="w-full bg-transparent border-b border-gray-300 text-sm text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
+                placeholder={isBaselineModal ? "Enter chief complaint..." : undefined}
                 value={draft.chief_complaint}
                 onChange={(e) => setDraft({ ...draft, chief_complaint: e.target.value })}
               />
@@ -260,6 +293,7 @@ function NurseModal({
             <Section label="Triage Notes">
               <textarea
                 className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-mono min-h-[80px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
+                placeholder={isBaselineModal ? "Enter triage notes..." : undefined}
                 value={draft.triage_notes}
                 onChange={(e) => setDraft({ ...draft, triage_notes: e.target.value })}
               />
@@ -274,10 +308,11 @@ function NurseModal({
         {/* Footer */}
         <div className="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white shrink-0">
           <Button
-            className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
+            className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9 disabled:opacity-40 disabled:cursor-not-allowed"
             onClick={handleAccept}
+            disabled={!baselineValid}
           >
-            Accept → Waiting Room
+            {isBaselineModal ? "Register → Waiting Room" : "Accept → Waiting Room"}
           </Button>
           <Button
             variant="outline"

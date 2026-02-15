@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { Patient } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { usePatientContext } from "@/context/PatientContext";
 
 const COLOR_BORDER: Record<string, string> = {
   grey: "border-l-gray-500",
@@ -38,6 +39,8 @@ interface PatientRowProps {
 }
 
 export function PatientRow({ patient, children, onEdit, hideDetails, expanded, onToggle, editableFields, draft, onFieldChange, headerExtra, subject, subjectColor }: PatientRowProps) {
+  const { appMode } = usePatientContext();
+  const isBaseline = appMode === "baseline";
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 
@@ -53,7 +56,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
     <div className={cn(
       "rounded-md overflow-hidden border-l-2 border border-gray-200 bg-gray-50 transition-colors",
       expanded && "border-gray-300 bg-gray-100",
-      COLOR_BORDER[patient.color] || "border-l-gray-500"
+      isBaseline ? "border-l-gray-500" : (COLOR_BORDER[patient.color] || "border-l-gray-500")
     )}>
       <div className="flex items-center">
         <button
@@ -207,7 +210,7 @@ export function PatientRow({ patient, children, onEdit, hideDetails, expanded, o
                   </span>
                   <div className="mt-1.5 space-y-1">
                     {patient.lab_results.map((lr) => {
-                      const flagged = lr.is_surprising && !lr.acknowledged;
+                      const flagged = !isBaseline && lr.is_surprising && !lr.acknowledged;
                       return (
                         <div
                           key={lr.test}
