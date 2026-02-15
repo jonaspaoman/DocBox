@@ -22,7 +22,7 @@ export function BedGrid({ patients, onPatientClick, waitTimes }: BedGridProps) {
     <div className="flex flex-col w-[340px]">
       <div className="flex items-center justify-between mb-2 px-2">
         <h3 className="text-[10px] font-mono font-semibold uppercase tracking-widest text-muted-foreground">
-          ER Beds
+          Hospital Beds
         </h3>
         <div className="flex items-center gap-2">
           <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">

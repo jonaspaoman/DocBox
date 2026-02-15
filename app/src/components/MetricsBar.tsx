@@ -35,7 +35,7 @@ const METHODOLOGY: Record<string, string> = {
   "Saved / Pt":
     "Minutes saved per patient vs. national avg ER visit of 270 min (4.5 hrs). = 270 − avg stay.",
   "Bed Util":
-    "Percentage of the 16 ER beds currently occupied.",
+    "Percentage of the 16 hospital beds currently occupied.",
 };
 
 export function MetricsBar({ patients, eventLog, currentTick }: MetricsBarProps) {

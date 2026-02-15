@@ -26,7 +26,7 @@ interface PatientModalProps {
 const STATUS_LABELS: Record<string, string> = {
   called_in: "CALLED IN",
   waiting_room: "WAITING",
-  er_bed: "ER BED",
+  er_bed: "HOSPITAL BED",
   or: "OR",
   icu: "ICU",
   discharge: "DISCHARGING",

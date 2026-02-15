@@ -398,220 +398,227 @@ export default function DoctorPage() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
-      <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-2 max-w-2xl mx-auto w-full">
-        <div className="flex items-center gap-2.5 mb-3">
-          <h1 className="text-lg font-mono font-bold text-foreground/90 tracking-wide">Doctor Inbox</h1>
-          <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-            {inboxItems.length}
-          </span>
-        </div>
-        {inboxItems.length === 0 && (
-          <p className="text-muted-foreground text-xs font-mono py-8 text-center">
-            No notifications right now.
-          </p>
-        )}
-        {inboxItems.map(({ patient: p, subject, subjectColor, timestamp }) => (
-          <button
-            key={p.pid}
-            type="button"
-            className={cn(
-              "w-full rounded-md border-l-2 border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06] transition-colors text-left px-4 py-3",
-              COLOR_BORDER[p.color] || "border-l-gray-500"
-            )}
-            onClick={() => setSelectedPid(p.pid)}
-          >
-            <span className={cn("text-[10px] font-mono font-bold uppercase tracking-wider", subjectColor)}>
-              {subject}
+      {/* Sticky header */}
+      <div className="sticky top-[52px] z-10 px-5 pt-4 pb-3 bg-[oklch(0.13_0_0)]/95 backdrop-blur-md border-b border-white/[0.06]">
+        <div className="max-w-xl mx-auto">
+          <div className="flex items-center gap-3 mb-3">
+            <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Doctor Inbox</h1>
+            <span className="text-[11px] font-mono text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+              {inboxItems.length}
             </span>
-            <div className="flex items-center gap-3 mt-1">
-              <span className="font-medium font-mono text-sm truncate text-foreground/90">{p.name}</span>
-              {p.age != null && p.sex && (
-                <span className="text-muted-foreground text-xs font-mono shrink-0">
-                  {p.age}{p.sex.charAt(0).toUpperCase()}
-                </span>
-              )}
-              <span className="text-muted-foreground text-xs font-mono truncate flex-1 text-right">
-                {p.chief_complaint ?? "—"}
-              </span>
-              {p.esi_score != null && (
-                <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
-                  ESI {p.esi_score}
-                </Badge>
-              )}
-              <ElapsedTime since={timestamp} className="text-muted-foreground/40 text-[10px] shrink-0" />
-            </div>
-          </button>
-        ))}
-      </div>
-
-      <div className="fixed bottom-4 left-0 right-0 px-4 z-10">
-        <div className="max-w-2xl mx-auto">
+          </div>
           <Input
             placeholder="Search inbox..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-11 text-sm font-mono shadow-lg border border-border/40 rounded-lg bg-[#1a1a1a]"
+            className="h-9 text-sm font-mono border border-white/[0.08] rounded-lg bg-white/[0.03] placeholder:text-muted-foreground/30"
           />
         </div>
       </div>
 
+      {/* Inbox list */}
+      <div className="flex-1 overflow-y-auto px-5 py-4 max-w-xl mx-auto w-full">
+        <div className="space-y-2.5">
+          {inboxItems.length === 0 && (
+            <p className="text-muted-foreground/50 text-sm font-mono py-12 text-center">
+              No notifications right now.
+            </p>
+          )}
+          {inboxItems.map(({ patient: p, subject, subjectColor, timestamp }) => (
+            <button
+              key={p.pid}
+              type="button"
+              className={cn(
+                "w-full rounded-lg border-l-[3px] border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] transition-colors text-left px-5 py-3.5",
+                COLOR_BORDER[p.color] || "border-l-gray-500"
+              )}
+              onClick={() => setSelectedPid(p.pid)}
+            >
+              <span className={cn("text-[11px] font-mono font-bold uppercase tracking-wider", subjectColor)}>
+                {subject}
+              </span>
+              <div className="flex items-center gap-3 mt-1.5">
+                <span className="font-medium font-mono text-[15px] truncate text-foreground/90">{p.name}</span>
+                {p.age != null && p.sex && (
+                  <span className="text-muted-foreground/50 text-sm font-mono shrink-0">
+                    {p.age} {p.sex.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <div className="flex-1" />
+                {p.esi_score != null && (
+                  <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
+                    ESI {p.esi_score}
+                  </Badge>
+                )}
+                <ElapsedTime since={timestamp} className="text-muted-foreground/40 text-[11px] font-mono shrink-0" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+
       {/* ===== Patient Detail Modal ===== */}
       {selectedPid && selectedPatient && !reviewingPid && !rejectingPid && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedPid(null)}>
+        <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedPid(null)}>
           <div
-            className="mt-8 mb-8 w-full max-w-2xl max-h-[calc(100vh-64px)] flex flex-col rounded-xl border border-border/40 bg-[oklch(0.13_0_0)] shadow-2xl"
+            className="w-full max-w-2xl flex flex-col border-x border-white/[0.06] bg-[oklch(0.13_0_0)]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 shrink-0">
-              <div className="flex items-center gap-2">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
+              <div className="flex items-center gap-3">
                 <div className={cn(
-                  "w-2.5 h-2.5 rounded-full shrink-0",
+                  "w-3 h-3 rounded-full shrink-0",
                   selectedPatient.color === "green" ? "bg-emerald-500" : "bg-red-500"
                 )} />
-                <span className="text-sm font-mono font-bold text-white">{selectedPatient.name}</span>
+                <span className="text-base font-mono font-bold text-white">{selectedPatient.name}</span>
                 <span className={cn(
-                  "text-[10px] font-mono uppercase tracking-wider",
+                  "text-[11px] font-mono uppercase tracking-wider",
                   selectedItem?.subjectColor
                 )}>
                   {selectedItem?.subject}
                 </span>
               </div>
-              <button onClick={() => setSelectedPid(null)} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <button onClick={() => setSelectedPid(null)} className="text-muted-foreground/40 hover:text-white transition-colors p-1.5 -mr-1.5">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
                 </svg>
               </button>
             </div>
 
-            {/* Modal body — scrollable */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
-              {/* Demographics */}
-              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs font-mono rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
-                <span className="text-muted-foreground/50 uppercase">Age / Sex</span>
-                <span className="text-foreground/80">{selectedPatient.age ?? "—"}{selectedPatient.sex?.charAt(0).toUpperCase() ?? ""}</span>
-                <span className="text-muted-foreground/50 uppercase">Status</span>
-                <span className="text-emerald-400">{selectedPatient.status}</span>
-                {selectedPatient.bed_number != null && (
-                  <>
-                    <span className="text-muted-foreground/50 uppercase">Bed</span>
-                    <span className="text-emerald-400">#{selectedPatient.bed_number}</span>
-                  </>
-                )}
-                {selectedPatient.dob && (
-                  <>
-                    <span className="text-muted-foreground/50 uppercase">DOB</span>
-                    <span className="text-foreground/80">{selectedPatient.dob}</span>
-                  </>
-                )}
-                {selectedPatient.time_to_discharge != null && (
-                  <>
-                    <span className="text-muted-foreground/50 uppercase">TTD</span>
-                    <span className="text-emerald-400">{selectedPatient.time_to_discharge} ticks</span>
-                  </>
-                )}
-              </div>
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-6 py-5">
+              <div className="space-y-4">
+                {/* Demographics */}
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+                  <div className="grid grid-cols-[100px_1fr] gap-y-3 text-sm font-mono">
+                    <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Age / Sex</span>
+                    <span className="text-foreground/85">{selectedPatient.age ?? "—"} {selectedPatient.sex?.charAt(0).toUpperCase() ?? ""}</span>
+                    <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Status</span>
+                    <span className="text-emerald-400">{selectedPatient.status.replace("_", " ")}</span>
+                    {selectedPatient.bed_number != null && (
+                      <>
+                        <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Bed</span>
+                        <span className="text-emerald-400">#{selectedPatient.bed_number}</span>
+                      </>
+                    )}
+                    {selectedPatient.dob && (
+                      <>
+                        <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">DOB</span>
+                        <span className="text-foreground/85">{selectedPatient.dob}</span>
+                      </>
+                    )}
+                    {selectedPatient.time_to_discharge != null && (
+                      <>
+                        <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">TTD</span>
+                        <span className="text-emerald-400">{selectedPatient.time_to_discharge} ticks</span>
+                      </>
+                    )}
+                  </div>
+                </div>
 
-              {/* Clinical sections */}
-              {selectedPatient.chief_complaint && <ReadOnlySection label="Chief Complaint" value={selectedPatient.chief_complaint} />}
-              {selectedPatient.triage_notes && <ReadOnlySection label="Triage Notes" value={selectedPatient.triage_notes} />}
-              {selectedPatient.hpi && <ReadOnlySection label="HPI" value={selectedPatient.hpi} />}
-              {selectedPatient.pmh && <ReadOnlySection label="PMH" value={selectedPatient.pmh} />}
-              {selectedPatient.family_social_history && <ReadOnlySection label="Family / Social Hx" value={selectedPatient.family_social_history} />}
-              {selectedPatient.review_of_systems && <ReadOnlySection label="Review of Systems" value={selectedPatient.review_of_systems} />}
-              {selectedPatient.objective && <ReadOnlySection label="Objective" value={selectedPatient.objective} />}
-              {selectedPatient.primary_diagnoses && <ReadOnlySection label="Diagnoses" value={selectedPatient.primary_diagnoses} />}
-              {selectedPatient.justification && <ReadOnlySection label="Justification" value={selectedPatient.justification} />}
-              {selectedPatient.plan && <ReadOnlySection label="Plan" value={selectedPatient.plan} />}
-              {selectedPatient.discharge_blocked_reason && <ReadOnlySection label="Discharge Blocked" value={selectedPatient.discharge_blocked_reason} highlight />}
+                {/* Clinical sections */}
+                <ReadOnlySection label="Chief Complaint" value={selectedPatient.chief_complaint} />
+                <ReadOnlySection label="Triage Notes" value={selectedPatient.triage_notes} />
+                <ReadOnlySection label="HPI" value={selectedPatient.hpi} />
+                <ReadOnlySection label="Past Medical History" value={selectedPatient.pmh} />
+                <ReadOnlySection label="Family / Social History" value={selectedPatient.family_social_history} />
+                <ReadOnlySection label="Review of Systems" value={selectedPatient.review_of_systems} />
+                <ReadOnlySection label="Objective" value={selectedPatient.objective} />
+                <ReadOnlySection label="Diagnoses" value={selectedPatient.primary_diagnoses} />
+                <ReadOnlySection label="Plan" value={selectedPatient.plan} />
+                {selectedPatient.discharge_blocked_reason && <ReadOnlySection label="Discharge Blocked" value={selectedPatient.discharge_blocked_reason} highlight />}
 
-              {/* Lab Results */}
-              {selectedPatient.lab_results && selectedPatient.lab_results.length > 0 && (
-                <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
-                  <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
+                {/* Lab Results */}
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+                  <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-2">
                     Lab Results
                   </span>
-                  <div className="mt-1.5 space-y-1">
-                    {selectedPatient.lab_results.map((lr) => (
-                      <div
-                        key={lr.test}
-                        className={cn(
-                          "flex items-center gap-2 text-xs font-mono",
-                          lr.is_surprising ? "text-red-400" : "text-foreground/70"
-                        )}
-                      >
-                        <span className={cn(
-                          "shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[9px]",
-                          lr.is_surprising ? "bg-red-500/20" : "bg-emerald-500/15"
-                        )}>
-                          {lr.is_surprising ? "!" : "\u2713"}
-                        </span>
-                        <span className="text-muted-foreground/60">{lr.test}:</span>
-                        <span className={lr.is_surprising ? "font-medium" : ""}>{lr.result}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {selectedPatient.lab_results && selectedPatient.lab_results.length > 0 ? (
+                    <div className="space-y-1.5">
+                      {selectedPatient.lab_results.map((lr) => (
+                        <div
+                          key={lr.test}
+                          className={cn(
+                            "flex items-center gap-2.5 text-sm font-mono",
+                            lr.is_surprising ? "text-red-400" : "text-foreground/75"
+                          )}
+                        >
+                          <span className={cn(
+                            "shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px]",
+                            lr.is_surprising ? "bg-red-500/20" : "bg-emerald-500/15"
+                          )}>
+                            {lr.is_surprising ? "!" : "\u2713"}
+                          </span>
+                          <span className="text-muted-foreground/50">{lr.test}:</span>
+                          <span className={lr.is_surprising ? "font-medium" : ""}>{lr.result}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground/25 italic">Pending</p>
+                  )}
                 </div>
-              )}
 
-              {/* Previous rejection notes */}
-              {selectedPatient.rejection_notes && selectedPatient.rejection_notes.length > 0 && (
-                <div className="rounded-md border border-yellow-500/20 bg-yellow-500/5 p-2.5">
-                  <span className="text-[10px] font-mono font-semibold text-yellow-400/80 uppercase tracking-widest">
-                    Previous Rejection Notes
-                  </span>
-                  <div className="mt-1.5 space-y-1.5">
-                    {selectedPatient.rejection_notes.map((note, i) => (
-                      <div key={i} className="flex gap-2 text-xs font-mono">
-                        <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
-                        <span className="text-foreground/70">{note}</span>
-                      </div>
-                    ))}
+                {/* Previous rejection notes */}
+                {selectedPatient.rejection_notes && selectedPatient.rejection_notes.length > 0 && (
+                  <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
+                    <span className="text-[11px] font-mono font-semibold text-yellow-400/70 uppercase tracking-wider block mb-2">
+                      Previous Rejection Notes
+                    </span>
+                    <div className="space-y-2">
+                      {selectedPatient.rejection_notes.map((note, i) => (
+                        <div key={i} className="flex gap-2.5 text-sm font-mono">
+                          <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
+                          <span className="text-foreground/75">{note}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Discharge Papers */}
-              {selectedPatient.discharge_papers && Object.keys(selectedPatient.discharge_papers).length > 0 && (
-                <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
-                  <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
+                {/* Discharge Papers */}
+                <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+                  <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-2">
                     Discharge Papers
                   </span>
-                  <div className="mt-1.5 space-y-2">
-                    {Object.entries(selectedPatient.discharge_papers).map(([key, val]) => (
-                      <div key={key}>
-                        <span className="text-[10px] font-mono font-medium text-emerald-400/70 uppercase">{key}</span>
-                        <p className="text-sm whitespace-pre-wrap text-foreground/80 mt-0.5">{val}</p>
-                      </div>
-                    ))}
-                  </div>
+                  {selectedPatient.discharge_papers && Object.keys(selectedPatient.discharge_papers).length > 0 ? (
+                    <div className="space-y-3">
+                      {Object.entries(selectedPatient.discharge_papers).map(([key, val]) => (
+                        <div key={key}>
+                          <span className="text-[11px] font-mono font-medium text-emerald-400/60 uppercase tracking-wider">{key.replace(/_/g, " ")}</span>
+                          <p className="text-sm whitespace-pre-wrap text-foreground/80 mt-1 leading-relaxed">{val}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground/25 italic">Pending</p>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
-            {/* Modal footer — always visible */}
-            <div className="flex gap-2 px-4 py-2.5 border-t border-border/30 bg-[oklch(0.13_0_0)] shrink-0">
+            {/* Footer */}
+            <div className="flex gap-3 px-6 py-4 border-t border-white/[0.06] bg-[oklch(0.13_0_0)] shrink-0">
               {selectedPatient.color === "green" && (
                 <Button
-                  size="sm"
-                  className="font-mono text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
                   onClick={() => handleStartReview(selectedPid!, selectedPatient)}
                 >
                   Review Discharge
                 </Button>
               )}
               <Button
-                size="sm"
                 variant="outline"
-                className="font-mono text-xs border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                className="font-mono text-sm border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300 h-9"
                 onClick={() => handleStartReject(selectedPid!)}
               >
                 Reject &amp; Note
               </Button>
               <Button
-                size="sm"
                 variant="outline"
-                className="font-mono text-xs border-border/40 ml-auto"
+                className="font-mono text-sm border-white/[0.1] text-muted-foreground hover:text-foreground h-9"
                 onClick={() => setSelectedPid(null)}
               >
                 Close
@@ -623,61 +630,61 @@ export default function DoctorPage() {
 
       {/* ===== Review Discharge Modal ===== */}
       {reviewingPid && selectedPatient && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={() => setReviewingPid(null)}>
+        <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 backdrop-blur-sm" onClick={() => setReviewingPid(null)}>
           <div
-            className="mt-8 mb-8 w-full max-w-2xl max-h-[calc(100vh-64px)] flex flex-col rounded-xl border border-border/40 bg-[oklch(0.13_0_0)] shadow-2xl"
+            className="w-full max-w-2xl flex flex-col border-x border-white/[0.06] bg-[oklch(0.13_0_0)]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 shrink-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-mono font-bold text-white">{selectedPatient.name}</span>
-                <span className="text-[10px] font-mono text-emerald-400/80 uppercase tracking-wider">Discharge Review</span>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
+              <div className="flex items-center gap-3">
+                <span className="text-base font-mono font-bold text-white">{selectedPatient.name}</span>
+                <span className="text-[11px] font-mono text-emerald-400/80 uppercase tracking-wider">Discharge Review</span>
               </div>
-              <button onClick={() => setReviewingPid(null)} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <button onClick={() => setReviewingPid(null)} className="text-muted-foreground/40 hover:text-white transition-colors p-1.5 -mr-1.5">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
                 </svg>
               </button>
             </div>
 
-            {/* Modal body */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
-              {PAPER_FIELDS.map(({ key, label, multiline }) => (
-                <div key={key} className="rounded-md border border-white/[0.08] bg-white/[0.02] p-2.5">
-                  <label className="text-[10px] font-mono font-semibold text-muted-foreground/60 uppercase tracking-widest block mb-1">
-                    {label}
-                  </label>
-                  {multiline ? (
-                    <textarea
-                      className="w-full rounded-md border border-white/[0.12] bg-white/[0.03] px-3 py-2 text-[13px] font-mono min-h-[90px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
-                      value={paperDrafts[reviewingPid]?.[key] ?? ""}
-                      onChange={(e) => handlePaperFieldChange(reviewingPid, key, e.target.value)}
-                    />
-                  ) : (
-                    <input
-                      className="w-full bg-transparent border-b border-white/[0.15] text-[13px] text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
-                      value={paperDrafts[reviewingPid]?.[key] ?? ""}
-                      onChange={(e) => handlePaperFieldChange(reviewingPid, key, e.target.value)}
-                    />
-                  )}
-                </div>
-              ))}
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-6 py-5">
+              <div className="space-y-4">
+                {PAPER_FIELDS.map(({ key, label, multiline }) => (
+                  <div key={key} className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+                    <label className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-2">
+                      {label}
+                    </label>
+                    {multiline ? (
+                      <textarea
+                        className="w-full rounded-md border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm font-mono min-h-[80px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
+                        value={paperDrafts[reviewingPid]?.[key] ?? ""}
+                        onChange={(e) => handlePaperFieldChange(reviewingPid, key, e.target.value)}
+                      />
+                    ) : (
+                      <input
+                        className="w-full bg-transparent border-b border-white/[0.12] text-sm text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
+                        value={paperDrafts[reviewingPid]?.[key] ?? ""}
+                        onChange={(e) => handlePaperFieldChange(reviewingPid, key, e.target.value)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Modal footer */}
-            <div className="flex gap-2 px-4 py-2.5 border-t border-border/30 bg-[oklch(0.13_0_0)] shrink-0">
+            {/* Footer */}
+            <div className="flex gap-3 px-6 py-4 border-t border-white/[0.06] bg-[oklch(0.13_0_0)] shrink-0">
               <Button
-                size="sm"
-                className="font-mono text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
                 onClick={() => handleApproveDischarge(reviewingPid)}
               >
                 Approve &amp; Discharge
               </Button>
               <Button
-                size="sm"
                 variant="outline"
-                className="font-mono text-xs border-border/40"
+                className="font-mono text-sm border-white/[0.1] text-muted-foreground hover:text-foreground h-9"
                 onClick={() => setReviewingPid(null)}
               >
                 Cancel
@@ -694,14 +701,14 @@ export default function DoctorPage() {
             className="mt-24 w-full max-w-lg rounded-xl border border-red-500/20 bg-[oklch(0.13_0_0)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-red-500/15">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-mono font-bold text-white">{selectedPatient.name}</span>
-                <span className="text-[10px] font-mono text-red-400/80 uppercase tracking-wider">Reject</span>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-red-500/15">
+              <div className="flex items-center gap-3">
+                <span className="text-base font-mono font-bold text-white">{selectedPatient.name}</span>
+                <span className="text-[11px] font-mono text-red-400/80 uppercase tracking-wider">Reject</span>
               </div>
-              <button onClick={() => { setRejectingPid(null); setRejectionNote(""); }} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <button onClick={() => { setRejectingPid(null); setRejectionNote(""); }} className="text-muted-foreground/40 hover:text-white transition-colors p-1.5 -mr-1.5">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
                 </svg>
               </button>
@@ -709,50 +716,48 @@ export default function DoctorPage() {
 
             {/* Previous rejection notes */}
             {selectedPatient.rejection_notes && selectedPatient.rejection_notes.length > 0 && (
-              <div className="mx-4 mt-3 rounded-md border border-yellow-500/20 bg-yellow-500/5 p-2.5">
-                <span className="text-[10px] font-mono font-semibold text-yellow-400/80 uppercase tracking-widest">
+              <div className="mx-6 mt-5 rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
+                <span className="text-[11px] font-mono font-semibold text-yellow-400/70 uppercase tracking-wider block mb-2">
                   Previous Rejection Notes
                 </span>
-                <div className="mt-1.5 space-y-1.5">
+                <div className="space-y-2">
                   {selectedPatient.rejection_notes.map((note, i) => (
-                    <div key={i} className="flex gap-2 text-xs font-mono">
+                    <div key={i} className="flex gap-2.5 text-sm font-mono">
                       <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
-                      <span className="text-foreground/70">{note}</span>
+                      <span className="text-foreground/75">{note}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Modal body */}
-            <div className="px-4 py-3 space-y-2">
-              <label className="text-[10px] font-mono font-semibold text-red-400/80 uppercase tracking-widest">
+            {/* Body */}
+            <div className="px-6 py-5 space-y-3">
+              <label className="text-[11px] font-mono font-semibold text-red-400/70 uppercase tracking-wider">
                 Rejection Note
               </label>
               <textarea
                 autoFocus
-                className="w-full rounded-md border border-red-500/30 bg-red-500/5 px-3 py-2.5 text-sm font-mono min-h-[120px] resize-y text-foreground/90 outline-none focus:border-red-500/50 placeholder:text-muted-foreground/30"
+                className="w-full rounded-md border border-red-500/30 bg-red-500/5 px-3 py-2.5 text-sm font-mono min-h-[120px] resize-y text-foreground/90 outline-none focus:border-red-500/50 placeholder:text-muted-foreground/30 leading-relaxed"
                 placeholder="Explain why this discharge is being rejected..."
                 value={rejectionNote}
                 onChange={(e) => setRejectionNote(e.target.value)}
               />
             </div>
 
-            {/* Modal footer */}
-            <div className="flex gap-2 px-4 py-2.5 border-t border-border/30">
+            {/* Footer */}
+            <div className="flex gap-3 px-6 py-4 border-t border-white/[0.06]">
               <Button
-                size="sm"
                 variant="destructive"
-                className="font-mono text-xs"
+                className="font-mono text-sm h-9"
                 disabled={!rejectionNote.trim() || rejectLoading}
                 onClick={() => handleConfirmReject(rejectingPid)}
               >
                 {rejectLoading ? "Processing..." : "Confirm Rejection"}
               </Button>
               <Button
-                size="sm"
                 variant="outline"
-                className="font-mono text-xs border-border/40"
+                className="font-mono text-sm border-white/[0.1] text-muted-foreground hover:text-foreground h-9"
                 onClick={() => { setRejectingPid(null); setRejectionNote(""); }}
               >
                 Cancel
@@ -765,11 +770,15 @@ export default function DoctorPage() {
   );
 }
 
-function ReadOnlySection({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function ReadOnlySection({ label, value, highlight }: { label: string; value?: string | null; highlight?: boolean }) {
   return (
-    <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2">
-      <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">{label}</span>
-      <p className={cn("text-[13px] mt-0.5 leading-snug", highlight ? "text-red-400" : "text-foreground/80")}>{value}</p>
+    <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+      <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-1.5">{label}</span>
+      {value ? (
+        <p className={cn("text-sm leading-relaxed", highlight ? "text-red-400" : "text-foreground/80")}>{value}</p>
+      ) : (
+        <p className="text-sm text-muted-foreground/25 italic">Pending</p>
+      )}
     </div>
   );
 }

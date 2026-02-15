@@ -59,63 +59,65 @@ export default function NursePage() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
-      <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-2 max-w-2xl mx-auto w-full">
-        <div className="flex items-center gap-2.5 mb-3">
-          <h1 className="text-lg font-mono font-bold text-foreground/90 tracking-wide">Nurse Inbox</h1>
-          <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-            {calledIn.length}
-          </span>
-        </div>
-        {calledIn.length === 0 && (
-          <p className="text-muted-foreground text-xs font-mono py-8 text-center">
-            No notifications right now.
-          </p>
-        )}
-        {calledIn.map((p) => (
-          <button
-            key={p.pid}
-            type="button"
-            className={cn(
-              "w-full rounded-md border-l-2 border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06] transition-colors text-left px-4 py-3",
-              COLOR_BORDER[p.color] || "border-l-gray-500"
-            )}
-            onClick={() => setSelectedPid(p.pid)}
-          >
-            <div className="flex items-center gap-3">
-              <span className="font-medium font-mono text-sm truncate text-foreground/90">{p.name}</span>
-              {p.age != null && p.sex && (
-                <span className="text-muted-foreground text-xs font-mono shrink-0">
-                  {p.age}{p.sex.charAt(0).toUpperCase()}
-                </span>
-              )}
-              <span className="text-muted-foreground text-xs font-mono truncate flex-1 text-right">
-                {p.chief_complaint ?? "—"}
-              </span>
-              {p.esi_score != null && (
-                <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
-                  ESI {p.esi_score}
-                </Badge>
-              )}
-              {arrivalTimes.get(p.pid) && (
-                <ElapsedTime since={arrivalTimes.get(p.pid)!} className="text-yellow-400 text-[10px] shrink-0" />
-              )}
-            </div>
-          </button>
-        ))}
-      </div>
-
-      <div className="fixed bottom-4 left-0 right-0 px-4 z-10">
-        <div className="max-w-2xl mx-auto">
+      {/* Sticky header */}
+      <div className="sticky top-[52px] z-10 px-5 pt-4 pb-3 bg-[oklch(0.13_0_0)]/95 backdrop-blur-md border-b border-white/[0.06]">
+        <div className="max-w-xl mx-auto">
+          <div className="flex items-center gap-3 mb-3">
+            <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Nurse Inbox</h1>
+            <span className="text-[11px] font-mono text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+              {calledIn.length}
+            </span>
+          </div>
           <Input
             placeholder="Search patients..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-11 text-sm font-mono shadow-lg border border-border/40 rounded-lg bg-[#1a1a1a]"
+            className="h-9 text-sm font-mono border border-white/[0.08] rounded-lg bg-white/[0.03] placeholder:text-muted-foreground/30"
           />
         </div>
       </div>
 
-      {/* ===== Patient Modal (edit mode) ===== */}
+      {/* Patient list */}
+      <div className="flex-1 overflow-y-auto px-5 py-4 max-w-xl mx-auto w-full">
+        <div className="space-y-2.5">
+          {calledIn.length === 0 && (
+            <p className="text-muted-foreground/50 text-sm font-mono py-12 text-center">
+              No incoming patients.
+            </p>
+          )}
+          {calledIn.map((p) => (
+            <button
+              key={p.pid}
+              type="button"
+              className={cn(
+                "w-full rounded-lg border-l-[3px] border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] transition-colors text-left px-5 py-3.5",
+                COLOR_BORDER[p.color] || "border-l-gray-500"
+              )}
+              onClick={() => setSelectedPid(p.pid)}
+            >
+              <div className="flex items-center gap-3">
+                <span className="font-medium font-mono text-[15px] truncate text-foreground/90">{p.name}</span>
+                {p.age != null && p.sex && (
+                  <span className="text-muted-foreground/50 text-sm font-mono shrink-0">
+                    {p.age} {p.sex.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <div className="flex-1" />
+                {p.esi_score != null && (
+                  <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
+                    ESI {p.esi_score}
+                  </Badge>
+                )}
+                {arrivalTimes.get(p.pid) && (
+                  <ElapsedTime since={arrivalTimes.get(p.pid)!} className="text-yellow-400/60 text-[11px] font-mono shrink-0" />
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Patient modal */}
       {selectedPid && selectedPatient && (
         <NurseModal
           patient={selectedPatient}
@@ -181,104 +183,105 @@ function NurseModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="mt-8 mb-8 w-full max-w-2xl max-h-[calc(100vh-64px)] flex flex-col rounded-xl border border-border/40 bg-[oklch(0.13_0_0)] shadow-2xl"
+        className="w-full max-w-2xl flex flex-col border-x border-white/[0.06] bg-[oklch(0.13_0_0)]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal header */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-mono font-bold text-white">{patient.name}</span>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="text-base font-mono font-bold text-white">{patient.name}</span>
             {arrivalTime && (
-              <ElapsedTime since={arrivalTime} className="text-yellow-400/70 text-[10px]" />
+              <ElapsedTime since={arrivalTime} className="text-yellow-400/60 text-[11px] font-mono" />
             )}
           </div>
-          <button onClick={onClose} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <button onClick={onClose} className="text-muted-foreground/40 hover:text-white transition-colors p-1.5 -mr-1.5">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
             </svg>
           </button>
         </div>
 
-        {/* Modal body — scrollable */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
-          {/* Editable demographics */}
-          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-xs font-mono rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
-            <span className="text-muted-foreground/50 uppercase">Name</span>
-            <input
-              className="bg-transparent border-b border-white/20 text-foreground/80 outline-none text-xs font-mono focus:border-emerald-500/40 pb-0.5"
-              value={draft.name}
-              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-            />
-            <span className="text-muted-foreground/50 uppercase">Age</span>
-            <input
-              type="number"
-              className="bg-transparent border-b border-white/20 text-foreground/80 outline-none text-xs font-mono w-16 focus:border-emerald-500/40 pb-0.5"
-              value={draft.age}
-              onChange={(e) => setDraft({ ...draft, age: parseInt(e.target.value) || 0 })}
-            />
-            <span className="text-muted-foreground/50 uppercase">Sex</span>
-            <select
-              className="bg-transparent border-b border-white/20 text-foreground/80 outline-none text-xs font-mono focus:border-emerald-500/40"
-              value={draft.sex}
-              onChange={(e) => setDraft({ ...draft, sex: e.target.value })}
-            >
-              <option value="">—</option>
-              <option value="M">M</option>
-              <option value="F">F</option>
-            </select>
-            <span className="text-muted-foreground/50 uppercase">ESI</span>
-            <select
-              className="bg-transparent border-b border-white/20 text-foreground/80 outline-none text-xs font-mono focus:border-emerald-500/40"
-              value={draft.esi_score}
-              onChange={(e) => setDraft({ ...draft, esi_score: parseInt(e.target.value) })}
-            >
-              <option value={1}>1 — Resuscitation</option>
-              <option value={2}>2 — Emergent</option>
-              <option value={3}>3 — Urgent</option>
-              <option value={4}>4 — Less Urgent</option>
-              <option value={5}>5 — Non-Urgent</option>
-            </select>
-          </div>
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-6 py-5">
+          <div className="space-y-4">
+            {/* Demographics */}
+            <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+              <div className="grid grid-cols-[100px_1fr] gap-y-3 text-sm font-mono">
+                <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Name</span>
+                <input
+                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
+                  value={draft.name}
+                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                />
+                <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Age</span>
+                <input
+                  type="number"
+                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono w-20 focus:border-emerald-500/40 pb-1"
+                  value={draft.age}
+                  onChange={(e) => setDraft({ ...draft, age: parseInt(e.target.value) || 0 })}
+                />
+                <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Sex</span>
+                <select
+                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1 w-20"
+                  value={draft.sex}
+                  onChange={(e) => setDraft({ ...draft, sex: e.target.value })}
+                >
+                  <option value="">—</option>
+                  <option value="M">M</option>
+                  <option value="F">F</option>
+                </select>
+                <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">ESI</span>
+                <select
+                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
+                  value={draft.esi_score}
+                  onChange={(e) => setDraft({ ...draft, esi_score: parseInt(e.target.value) })}
+                >
+                  <option value={1}>1 — Resuscitation</option>
+                  <option value={2}>2 — Emergent</option>
+                  <option value={3}>3 — Urgent</option>
+                  <option value={4}>4 — Less Urgent</option>
+                  <option value={5}>5 — Non-Urgent</option>
+                </select>
+              </div>
+            </div>
 
-          {/* Chief Complaint */}
-          <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
-            <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">Chief Complaint</span>
-            <input
-              className="w-full mt-1 bg-transparent border-b border-white/20 text-sm text-foreground/80 outline-none font-mono focus:border-emerald-500/40 pb-0.5"
-              value={draft.chief_complaint}
-              onChange={(e) => setDraft({ ...draft, chief_complaint: e.target.value })}
-            />
-          </div>
+            {/* Chief Complaint */}
+            <Section label="Chief Complaint">
+              <input
+                className="w-full bg-transparent border-b border-white/[0.12] text-sm text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
+                value={draft.chief_complaint}
+                onChange={(e) => setDraft({ ...draft, chief_complaint: e.target.value })}
+              />
+            </Section>
 
-          {/* Triage Notes */}
-          <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
-            <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">Triage Notes</span>
-            <textarea
-              className="w-full mt-1 rounded-md border border-white/[0.15] bg-white/[0.04] px-2 py-1.5 text-sm font-mono min-h-[60px] resize-y text-foreground/80 outline-none focus:border-emerald-500/40"
-              value={draft.triage_notes}
-              onChange={(e) => setDraft({ ...draft, triage_notes: e.target.value })}
-            />
-          </div>
+            {/* Triage Notes */}
+            <Section label="Triage Notes">
+              <textarea
+                className="w-full rounded-md border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm font-mono min-h-[80px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
+                value={draft.triage_notes}
+                onChange={(e) => setDraft({ ...draft, triage_notes: e.target.value })}
+              />
+            </Section>
 
-          {patient.pmh && <ReadOnlySection label="Past Medical History" value={patient.pmh} />}
-          {patient.family_social_history && <ReadOnlySection label="Family / Social Hx" value={patient.family_social_history} />}
+            {/* Read-only sections */}
+            <ReadOnlySection label="Past Medical History" value={patient.pmh} />
+            <ReadOnlySection label="Family / Social History" value={patient.family_social_history} />
+          </div>
         </div>
 
-        {/* Modal footer — sticky at bottom */}
-        <div className="flex gap-2 px-4 py-2.5 border-t border-border/30 bg-[oklch(0.13_0_0)] shrink-0">
+        {/* Footer */}
+        <div className="flex gap-3 px-6 py-4 border-t border-white/[0.06] bg-[oklch(0.13_0_0)] shrink-0">
           <Button
-            size="sm"
-            className="font-mono text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
             onClick={handleAccept}
           >
             Accept → Waiting Room
           </Button>
           <Button
-            size="sm"
             variant="outline"
-            className="font-mono text-xs border-border/40"
+            className="font-mono text-sm border-white/[0.1] text-muted-foreground hover:text-foreground h-9"
             onClick={onClose}
           >
             Cancel
@@ -289,11 +292,24 @@ function NurseModal({
   );
 }
 
-function ReadOnlySection({ label, value }: { label: string; value: string }) {
+function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2">
-      <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">{label}</span>
-      <p className="text-[13px] mt-0.5 leading-snug text-foreground/80">{value}</p>
+    <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+      <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-2">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function ReadOnlySection({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+      <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-1.5">{label}</span>
+      {value ? (
+        <p className="text-sm leading-relaxed text-foreground/80">{value}</p>
+      ) : (
+        <p className="text-sm text-muted-foreground/25 italic">Pending</p>
+      )}
     </div>
   );
 }
