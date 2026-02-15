@@ -4,10 +4,11 @@ import { useState, useMemo } from "react";
 import { Patient } from "@/lib/types";
 import * as api from "@/lib/api";
 import { usePatientContext } from "@/context/PatientContext";
-import { PatientRow } from "@/components/PatientRow";
 import { ElapsedTime } from "@/components/ElapsedTime";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type InboxItem = {
   patient: Patient;
@@ -18,7 +19,6 @@ type InboxItem = {
 
 type DischargePapers = Record<string, string>;
 
-// Discharge paper field definitions in display order
 const PAPER_FIELDS: { key: string; label: string; multiline: boolean }[] = [
   { key: "disposition", label: "Disposition", multiline: false },
   { key: "diagnosis", label: "Diagnosis", multiline: false },
@@ -43,9 +43,7 @@ function pickAttending(): string {
   return ATTENDING_NAMES[Math.floor(Math.random() * ATTENDING_NAMES.length)];
 }
 
-// Generate full discharge papers based on patient data
 function generateDischargePapers(p: Patient): DischargePapers {
-  // If the patient already has discharge_papers, use them as base
   if (p.discharge_papers && Object.keys(p.discharge_papers).length > 0) {
     return { ...p.discharge_papers };
   }
@@ -243,7 +241,6 @@ function generateDischargePapers(p: Patient): DischargePapers {
     };
   }
 
-  // Generic fallback
   const genericDiag = `${p.chief_complaint ?? "Undifferentiated complaint"} — evaluated, stable for discharge`;
   return {
     disposition: "Discharged home in stable condition",
@@ -259,11 +256,26 @@ function generateDischargePapers(p: Patient): DischargePapers {
   };
 }
 
+const ESI_VARIANT: Record<number, "default" | "secondary" | "destructive" | "outline"> = {
+  1: "destructive",
+  2: "destructive",
+  3: "default",
+  4: "secondary",
+  5: "outline",
+};
+
+const COLOR_BORDER: Record<string, string> = {
+  grey: "border-l-gray-500",
+  yellow: "border-l-yellow-500",
+  green: "border-l-emerald-500",
+  red: "border-l-red-500",
+};
+
 export default function DoctorPage() {
   const { patients, updatePatient, dischargePatient, eventLog, simState } = usePatientContext();
 
   const [search, setSearch] = useState("");
-  const [expandedPid, setExpandedPid] = useState<string | null>(null);
+  const [selectedPid, setSelectedPid] = useState<string | null>(null);
 
   // Review mode: editing discharge papers before approving
   const [reviewingPid, setReviewingPid] = useState<string | null>(null);
@@ -314,20 +326,6 @@ export default function DoctorPage() {
     return items.filter((item) => item.patient.name.toLowerCase().includes(q) || item.subject.toLowerCase().includes(q));
   }, [patients, eventTimes, search]);
 
-  const handleToggle = (pid: string) => {
-    if (expandedPid === pid) {
-      setExpandedPid(null);
-      setReviewingPid(null);
-      setRejectingPid(null);
-      setRejectionNote("");
-    } else {
-      setExpandedPid(pid);
-      setReviewingPid(null);
-      setRejectingPid(null);
-      setRejectionNote("");
-    }
-  };
-
   // --- Review Discharge ---
   const handleStartReview = (pid: string, patient: Patient) => {
     setReviewingPid(pid);
@@ -354,7 +352,7 @@ export default function DoctorPage() {
     }
     dischargePatient(pid);
     setReviewingPid(null);
-    setExpandedPid(null);
+    setSelectedPid(null);
   };
 
   // --- Reject & Note ---
@@ -392,23 +390,19 @@ export default function DoctorPage() {
     setRejectLoading(false);
     setRejectingPid(null);
     setRejectionNote("");
-    setExpandedPid(null);
+    setSelectedPid(null);
   };
 
-  // Find the patient object for modals
-  const reviewPatient = reviewingPid ? patients.find((pt) => pt.pid === reviewingPid) : null;
-  const rejectPatient = rejectingPid ? patients.find((pt) => pt.pid === rejectingPid) : null;
+  const selectedItem = selectedPid ? inboxItems.find((item) => item.patient.pid === selectedPid) : null;
+  const selectedPatient = selectedItem?.patient ?? null;
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
       <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-2 max-w-2xl mx-auto w-full">
-        <div className="mb-4">
+        <div className="flex items-center gap-2.5 mb-3">
           <h1 className="text-lg font-mono font-bold text-foreground/90 tracking-wide">Doctor Inbox</h1>
-          <p className="text-[11px] font-mono text-muted-foreground/50 mt-0.5">Notifications requiring your review</p>
-        </div>
-        <div className="flex items-center gap-2 mb-3">
           <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-            {inboxItems.length} pending
+            {inboxItems.length}
           </span>
         </div>
         {inboxItems.length === 0 && (
@@ -417,53 +411,36 @@ export default function DoctorPage() {
           </p>
         )}
         {inboxItems.map(({ patient: p, subject, subjectColor, timestamp }) => (
-          <PatientRow
+          <button
             key={p.pid}
-            patient={p}
-            subject={subject}
-            subjectColor={subjectColor}
-            expanded={expandedPid === p.pid}
-            onToggle={() => handleToggle(p.pid)}
-            headerExtra={<ElapsedTime since={timestamp} className="text-muted-foreground/40 text-[10px] shrink-0" />}
-          >
-            {/* Previous rejection notes */}
-            {p.rejection_notes && p.rejection_notes.length > 0 && (
-              <div className="rounded-md border border-yellow-500/20 bg-yellow-500/5 p-2.5 mb-2">
-                <span className="text-[10px] font-mono font-semibold text-yellow-400/80 uppercase tracking-widest">
-                  Previous Rejection Notes
-                </span>
-                <div className="mt-1.5 space-y-1.5">
-                  {p.rejection_notes.map((note, i) => (
-                    <div key={i} className="flex gap-2 text-xs font-mono">
-                      <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
-                      <span className="text-foreground/70">{note}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            type="button"
+            className={cn(
+              "w-full rounded-md border-l-2 border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06] transition-colors text-left px-4 py-3",
+              COLOR_BORDER[p.color] || "border-l-gray-500"
             )}
-
-            {/* Action buttons — always visible in expanded view */}
-            <div className="flex gap-2 mt-2">
-              {p.color === "green" && (
-                <Button
-                  size="sm"
-                  className="font-mono text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
-                  onClick={() => handleStartReview(p.pid, p)}
-                >
-                  Review Discharge
-                </Button>
+            onClick={() => setSelectedPid(p.pid)}
+          >
+            <span className={cn("text-[10px] font-mono font-bold uppercase tracking-wider", subjectColor)}>
+              {subject}
+            </span>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="font-medium font-mono text-sm truncate text-foreground/90">{p.name}</span>
+              {p.age != null && p.sex && (
+                <span className="text-muted-foreground text-xs font-mono shrink-0">
+                  {p.age}{p.sex.charAt(0).toUpperCase()}
+                </span>
               )}
-              <Button
-                size="sm"
-                variant="outline"
-                className="font-mono text-xs border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                onClick={() => handleStartReject(p.pid)}
-              >
-                Reject &amp; Note
-              </Button>
+              <span className="text-muted-foreground text-xs font-mono truncate flex-1 text-right">
+                {p.chief_complaint ?? "—"}
+              </span>
+              {p.esi_score != null && (
+                <Badge variant={ESI_VARIANT[p.esi_score] ?? "outline"} className="shrink-0 font-mono text-[10px]">
+                  ESI {p.esi_score}
+                </Badge>
+              )}
+              <ElapsedTime since={timestamp} className="text-muted-foreground/40 text-[10px] shrink-0" />
             </div>
-          </PatientRow>
+          </button>
         ))}
       </div>
 
@@ -478,24 +455,184 @@ export default function DoctorPage() {
         </div>
       </div>
 
-      {/* ===== Review Discharge Modal ===== */}
-      {reviewingPid && reviewPatient && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={() => setReviewingPid(null)}>
+      {/* ===== Patient Detail Modal ===== */}
+      {selectedPid && selectedPatient && !reviewingPid && !rejectingPid && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedPid(null)}>
           <div
-            className="mt-8 mb-8 w-full max-w-2xl max-h-[calc(100vh-64px)] overflow-y-auto rounded-xl border border-border/40 bg-[oklch(0.13_0_0)] shadow-2xl"
+            className="mt-8 mb-8 w-full max-w-2xl max-h-[calc(100vh-64px)] flex flex-col rounded-xl border border-border/40 bg-[oklch(0.13_0_0)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-3 border-b border-border/30 bg-[oklch(0.13_0_0)]">
-              <div className="flex items-center gap-2.5">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" className="text-emerald-400" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M2 2h8l4 4v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2z" />
-                  <path d="M10 2v4h4" />
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className={cn(
+                  "w-2.5 h-2.5 rounded-full shrink-0",
+                  selectedPatient.color === "green" ? "bg-emerald-500" : "bg-red-500"
+                )} />
+                <span className="text-sm font-mono font-bold text-white">{selectedPatient.name}</span>
+                <span className={cn(
+                  "text-[10px] font-mono uppercase tracking-wider",
+                  selectedItem?.subjectColor
+                )}>
+                  {selectedItem?.subject}
+                </span>
+              </div>
+              <button onClick={() => setSelectedPid(null)} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
                 </svg>
-                <div>
-                  <span className="text-sm font-mono font-bold text-white">{reviewPatient.name}</span>
-                  <span className="text-[10px] font-mono text-emerald-400/80 ml-2 uppercase tracking-wider">Discharge Review</span>
+              </button>
+            </div>
+
+            {/* Modal body — scrollable */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+              {/* Demographics */}
+              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs font-mono rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
+                <span className="text-muted-foreground/50 uppercase">Age / Sex</span>
+                <span className="text-foreground/80">{selectedPatient.age ?? "—"}{selectedPatient.sex?.charAt(0).toUpperCase() ?? ""}</span>
+                <span className="text-muted-foreground/50 uppercase">Status</span>
+                <span className="text-emerald-400">{selectedPatient.status}</span>
+                {selectedPatient.bed_number != null && (
+                  <>
+                    <span className="text-muted-foreground/50 uppercase">Bed</span>
+                    <span className="text-emerald-400">#{selectedPatient.bed_number}</span>
+                  </>
+                )}
+                {selectedPatient.dob && (
+                  <>
+                    <span className="text-muted-foreground/50 uppercase">DOB</span>
+                    <span className="text-foreground/80">{selectedPatient.dob}</span>
+                  </>
+                )}
+                {selectedPatient.time_to_discharge != null && (
+                  <>
+                    <span className="text-muted-foreground/50 uppercase">TTD</span>
+                    <span className="text-emerald-400">{selectedPatient.time_to_discharge} ticks</span>
+                  </>
+                )}
+              </div>
+
+              {/* Clinical sections */}
+              {selectedPatient.chief_complaint && <ReadOnlySection label="Chief Complaint" value={selectedPatient.chief_complaint} />}
+              {selectedPatient.triage_notes && <ReadOnlySection label="Triage Notes" value={selectedPatient.triage_notes} />}
+              {selectedPatient.hpi && <ReadOnlySection label="HPI" value={selectedPatient.hpi} />}
+              {selectedPatient.pmh && <ReadOnlySection label="PMH" value={selectedPatient.pmh} />}
+              {selectedPatient.family_social_history && <ReadOnlySection label="Family / Social Hx" value={selectedPatient.family_social_history} />}
+              {selectedPatient.review_of_systems && <ReadOnlySection label="Review of Systems" value={selectedPatient.review_of_systems} />}
+              {selectedPatient.objective && <ReadOnlySection label="Objective" value={selectedPatient.objective} />}
+              {selectedPatient.primary_diagnoses && <ReadOnlySection label="Diagnoses" value={selectedPatient.primary_diagnoses} />}
+              {selectedPatient.justification && <ReadOnlySection label="Justification" value={selectedPatient.justification} />}
+              {selectedPatient.plan && <ReadOnlySection label="Plan" value={selectedPatient.plan} />}
+              {selectedPatient.discharge_blocked_reason && <ReadOnlySection label="Discharge Blocked" value={selectedPatient.discharge_blocked_reason} highlight />}
+
+              {/* Lab Results */}
+              {selectedPatient.lab_results && selectedPatient.lab_results.length > 0 && (
+                <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
+                  <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
+                    Lab Results
+                  </span>
+                  <div className="mt-1.5 space-y-1">
+                    {selectedPatient.lab_results.map((lr) => (
+                      <div
+                        key={lr.test}
+                        className={cn(
+                          "flex items-center gap-2 text-xs font-mono",
+                          lr.is_surprising ? "text-red-400" : "text-foreground/70"
+                        )}
+                      >
+                        <span className={cn(
+                          "shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[9px]",
+                          lr.is_surprising ? "bg-red-500/20" : "bg-emerald-500/15"
+                        )}>
+                          {lr.is_surprising ? "!" : "\u2713"}
+                        </span>
+                        <span className="text-muted-foreground/60">{lr.test}:</span>
+                        <span className={lr.is_surprising ? "font-medium" : ""}>{lr.result}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+              )}
+
+              {/* Previous rejection notes */}
+              {selectedPatient.rejection_notes && selectedPatient.rejection_notes.length > 0 && (
+                <div className="rounded-md border border-yellow-500/20 bg-yellow-500/5 p-2.5">
+                  <span className="text-[10px] font-mono font-semibold text-yellow-400/80 uppercase tracking-widest">
+                    Previous Rejection Notes
+                  </span>
+                  <div className="mt-1.5 space-y-1.5">
+                    {selectedPatient.rejection_notes.map((note, i) => (
+                      <div key={i} className="flex gap-2 text-xs font-mono">
+                        <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
+                        <span className="text-foreground/70">{note}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Discharge Papers */}
+              {selectedPatient.discharge_papers && Object.keys(selectedPatient.discharge_papers).length > 0 && (
+                <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2.5">
+                  <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">
+                    Discharge Papers
+                  </span>
+                  <div className="mt-1.5 space-y-2">
+                    {Object.entries(selectedPatient.discharge_papers).map(([key, val]) => (
+                      <div key={key}>
+                        <span className="text-[10px] font-mono font-medium text-emerald-400/70 uppercase">{key}</span>
+                        <p className="text-sm whitespace-pre-wrap text-foreground/80 mt-0.5">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal footer — always visible */}
+            <div className="flex gap-2 px-4 py-2.5 border-t border-border/30 bg-[oklch(0.13_0_0)] shrink-0">
+              {selectedPatient.color === "green" && (
+                <Button
+                  size="sm"
+                  className="font-mono text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={() => handleStartReview(selectedPid!, selectedPatient)}
+                >
+                  Review Discharge
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                className="font-mono text-xs border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                onClick={() => handleStartReject(selectedPid!)}
+              >
+                Reject &amp; Note
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="font-mono text-xs border-border/40 ml-auto"
+                onClick={() => setSelectedPid(null)}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Review Discharge Modal ===== */}
+      {reviewingPid && selectedPatient && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={() => setReviewingPid(null)}>
+          <div
+            className="mt-8 mb-8 w-full max-w-2xl max-h-[calc(100vh-64px)] flex flex-col rounded-xl border border-border/40 bg-[oklch(0.13_0_0)] shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-mono font-bold text-white">{selectedPatient.name}</span>
+                <span className="text-[10px] font-mono text-emerald-400/80 uppercase tracking-wider">Discharge Review</span>
               </div>
               <button onClick={() => setReviewingPid(null)} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -505,10 +642,10 @@ export default function DoctorPage() {
             </div>
 
             {/* Modal body */}
-            <div className="px-5 py-4 space-y-3">
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
               {PAPER_FIELDS.map(({ key, label, multiline }) => (
-                <div key={key} className="rounded-md border border-white/[0.08] bg-white/[0.02] p-3">
-                  <label className="text-[10px] font-mono font-semibold text-muted-foreground/60 uppercase tracking-widest block mb-1.5">
+                <div key={key} className="rounded-md border border-white/[0.08] bg-white/[0.02] p-2.5">
+                  <label className="text-[10px] font-mono font-semibold text-muted-foreground/60 uppercase tracking-widest block mb-1">
                     {label}
                   </label>
                   {multiline ? (
@@ -529,7 +666,7 @@ export default function DoctorPage() {
             </div>
 
             {/* Modal footer */}
-            <div className="sticky bottom-0 flex gap-2 px-5 py-3 border-t border-border/30 bg-[oklch(0.13_0_0)]">
+            <div className="flex gap-2 px-4 py-2.5 border-t border-border/30 bg-[oklch(0.13_0_0)] shrink-0">
               <Button
                 size="sm"
                 className="font-mono text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -551,23 +688,17 @@ export default function DoctorPage() {
       )}
 
       {/* ===== Reject & Note Modal ===== */}
-      {rejectingPid && rejectPatient && (
+      {rejectingPid && selectedPatient && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm" onClick={() => { setRejectingPid(null); setRejectionNote(""); }}>
           <div
             className="mt-24 w-full max-w-lg rounded-xl border border-red-500/20 bg-[oklch(0.13_0_0)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-red-500/15">
-              <div className="flex items-center gap-2.5">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" className="text-red-400" strokeWidth="1.5" strokeLinecap="round">
-                  <circle cx="8" cy="8" r="7" />
-                  <line x1="5" y1="5" x2="11" y2="11" /><line x1="11" y1="5" x2="5" y2="11" />
-                </svg>
-                <div>
-                  <span className="text-sm font-mono font-bold text-white">{rejectPatient.name}</span>
-                  <span className="text-[10px] font-mono text-red-400/80 ml-2 uppercase tracking-wider">Reject Discharge</span>
-                </div>
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-red-500/15">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-mono font-bold text-white">{selectedPatient.name}</span>
+                <span className="text-[10px] font-mono text-red-400/80 uppercase tracking-wider">Reject</span>
               </div>
               <button onClick={() => { setRejectingPid(null); setRejectionNote(""); }} className="text-muted-foreground/50 hover:text-white transition-colors p-1">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -577,13 +708,13 @@ export default function DoctorPage() {
             </div>
 
             {/* Previous rejection notes */}
-            {rejectPatient.rejection_notes && rejectPatient.rejection_notes.length > 0 && (
-              <div className="mx-5 mt-4 rounded-md border border-yellow-500/20 bg-yellow-500/5 p-2.5">
+            {selectedPatient.rejection_notes && selectedPatient.rejection_notes.length > 0 && (
+              <div className="mx-4 mt-3 rounded-md border border-yellow-500/20 bg-yellow-500/5 p-2.5">
                 <span className="text-[10px] font-mono font-semibold text-yellow-400/80 uppercase tracking-widest">
                   Previous Rejection Notes
                 </span>
                 <div className="mt-1.5 space-y-1.5">
-                  {rejectPatient.rejection_notes.map((note, i) => (
+                  {selectedPatient.rejection_notes.map((note, i) => (
                     <div key={i} className="flex gap-2 text-xs font-mono">
                       <span className="text-yellow-400/50 shrink-0">#{i + 1}</span>
                       <span className="text-foreground/70">{note}</span>
@@ -594,7 +725,7 @@ export default function DoctorPage() {
             )}
 
             {/* Modal body */}
-            <div className="px-5 py-4 space-y-2">
+            <div className="px-4 py-3 space-y-2">
               <label className="text-[10px] font-mono font-semibold text-red-400/80 uppercase tracking-widest">
                 Rejection Note
               </label>
@@ -608,7 +739,7 @@ export default function DoctorPage() {
             </div>
 
             {/* Modal footer */}
-            <div className="flex gap-2 px-5 py-3 border-t border-border/30">
+            <div className="flex gap-2 px-4 py-2.5 border-t border-border/30">
               <Button
                 size="sm"
                 variant="destructive"
@@ -630,6 +761,15 @@ export default function DoctorPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ReadOnlySection({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-2">
+      <span className="text-[10px] font-mono font-semibold text-muted-foreground/50 uppercase tracking-widest">{label}</span>
+      <p className={cn("text-[13px] mt-0.5 leading-snug", highlight ? "text-red-400" : "text-foreground/80")}>{value}</p>
     </div>
   );
 }
