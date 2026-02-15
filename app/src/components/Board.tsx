@@ -9,6 +9,7 @@ import { PatientModal } from "./PatientModal";
 interface BoardProps {
   patients: Patient[];
   currentTick: number;
+  isRunning?: boolean;
   onAccept: (pid: string) => void;
   onAssignBed: (pid: string, bedNumber: number) => void;
   onFlagDischarge: (pid: string) => void;
@@ -29,14 +30,28 @@ function findNextAvailableBed(patients: Patient[]): number | null {
   return null;
 }
 
-function FlowArrow({ label }: { label: string }) {
+function FlowArrow({ label, active }: { label: string; active: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center w-8 shrink-0 select-none">
-      <span className="text-[8px] font-mono text-muted-foreground/40 uppercase tracking-wider whitespace-nowrap -rotate-90 mb-2">
+    <div className="flex flex-col items-center justify-center w-20 shrink-0 select-none gap-1.5">
+      <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
-      <div className="w-px flex-1 border-l border-dashed border-muted-foreground/15" />
-      <span className="text-muted-foreground/20 text-xs mt-1">&rsaquo;</span>
+      <div className="relative w-full h-5 flex items-center">
+        {/* Track line */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gray-200 rounded-full" />
+        {/* Animated dots — only when running */}
+        {active && (
+          <div className="absolute inset-x-0 top-0 bottom-0 overflow-hidden">
+            <div className="flow-dot absolute w-[6px] h-[6px] top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
+            <div className="flow-dot flow-dot-delay absolute w-[6px] h-[6px] top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
+            <div className="flow-dot flow-dot-delay-2 absolute w-[6px] h-[6px] top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
+          </div>
+        )}
+        {/* Arrow tip */}
+        <svg className={`absolute -right-1 top-1/2 -translate-y-1/2 ${active ? "text-emerald-400" : "text-gray-300"}`} width="10" height="12" viewBox="0 0 10 12">
+          <path d="M2 2l5 4-5 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
     </div>
   );
 }
@@ -44,6 +59,7 @@ function FlowArrow({ label }: { label: string }) {
 export function Board({
   patients,
   currentTick,
+  isRunning = false,
   onAccept,
   onAssignBed,
   onFlagDischarge,
@@ -80,9 +96,9 @@ export function Board({
 
   return (
     <>
-      <div className="flex gap-0 flex-1 px-4 py-4 overflow-auto items-center justify-center grid-bg">
+      <div className="flex gap-2 flex-1 px-6 py-6 overflow-auto items-center justify-center grid-bg">
         {/* Called In */}
-        <div className="w-[180px] shrink-0">
+        <div className="w-[240px] shrink-0">
           <Column
             title="Called In"
             patients={byStatus(patients, "called_in")}
@@ -92,10 +108,10 @@ export function Board({
           />
         </div>
 
-        <FlowArrow label="Triage" />
+        <FlowArrow label="Triage" active={isRunning} />
 
         {/* Waiting Room */}
-        <div className="w-[180px] shrink-0">
+        <div className="w-[240px] shrink-0">
           <Column
             title="Waiting Room"
             patients={byStatus(patients, "waiting_room")}
@@ -106,11 +122,11 @@ export function Board({
           />
         </div>
 
-        <FlowArrow label="Assign" />
+        <FlowArrow label="Assign" active={isRunning} />
 
         {/* Hospital boundary */}
-        <div className="relative bg-[oklch(0.14_0_0)] rounded-lg p-3 border border-emerald-500/15 flex flex-col gap-3">
-          <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-500/50 bg-[oklch(0.14_0_0)] border border-emerald-500/15 rounded">
+        <div className="relative bg-white rounded-lg p-3 border border-emerald-500/20 flex flex-col gap-3">
+          <div className="absolute -top-2.5 left-3 px-2 py-0.5 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-emerald-600/60 bg-white border border-emerald-500/20 rounded">
             Hospital
           </div>
           <BedGrid
@@ -146,10 +162,10 @@ export function Board({
           </div>
         </div>
 
-        <FlowArrow label="Discharge" />
+        <FlowArrow label="Discharge" active={isRunning} />
 
         {/* Done */}
-        <div className="w-[180px] shrink-0">
+        <div className="w-[240px] shrink-0">
           <Column
             title="Done"
             patients={byStatus(patients, "discharge", "done")}

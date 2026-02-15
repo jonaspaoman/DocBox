@@ -60,11 +60,11 @@ export default function NursePage() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-52px)] grid-bg">
       {/* Sticky header */}
-      <div className="sticky top-[52px] z-10 px-5 pt-4 pb-3 bg-[oklch(0.13_0_0)]/95 backdrop-blur-md border-b border-white/[0.06]">
+      <div className="sticky top-[52px] z-10 px-5 pt-4 pb-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <h1 className="text-base font-mono font-bold text-foreground/90 tracking-wide">Nurse Inbox</h1>
-            <span className="text-[11px] font-mono text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
               {calledIn.length}
             </span>
           </div>
@@ -72,7 +72,7 @@ export default function NursePage() {
             placeholder="Search patients..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-9 text-sm font-mono border border-white/[0.08] rounded-lg bg-white/[0.03] placeholder:text-muted-foreground/30"
+            className="h-9 text-sm font-mono border border-gray-200 rounded-lg bg-gray-50 placeholder:text-muted-foreground/30"
           />
         </div>
       </div>
@@ -90,7 +90,7 @@ export default function NursePage() {
               key={p.pid}
               type="button"
               className={cn(
-                "w-full rounded-lg border-l-[3px] border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] transition-colors text-left px-5 py-3.5",
+                "w-full rounded-lg border-l-[3px] border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors text-left px-5 py-3.5",
                 COLOR_BORDER[p.color] || "border-l-gray-500"
               )}
               onClick={() => setSelectedPid(p.pid)}
@@ -109,7 +109,7 @@ export default function NursePage() {
                   </Badge>
                 )}
                 {arrivalTimes.get(p.pid) && (
-                  <ElapsedTime since={arrivalTimes.get(p.pid)!} className="text-yellow-400/60 text-[11px] font-mono shrink-0" />
+                  <ElapsedTime since={arrivalTimes.get(p.pid)!} className="text-yellow-600 text-[11px] font-mono shrink-0" />
                 )}
               </div>
             </button>
@@ -183,20 +183,20 @@ function NurseModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="w-full max-w-2xl flex flex-col border-x border-white/[0.06] bg-[oklch(0.13_0_0)]"
+        className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border border-gray-200 bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
           <div className="flex items-center gap-3">
-            <span className="text-base font-mono font-bold text-white">{patient.name}</span>
+            <span className="text-base font-mono font-bold text-gray-900">{patient.name}</span>
             {arrivalTime && (
-              <ElapsedTime since={arrivalTime} className="text-yellow-400/60 text-[11px] font-mono" />
+              <ElapsedTime since={arrivalTime} className="text-yellow-600 text-[11px] font-mono" />
             )}
           </div>
-          <button onClick={onClose} className="text-muted-foreground/40 hover:text-white transition-colors p-1.5 -mr-1.5">
+          <button onClick={onClose} className="text-muted-foreground/40 hover:text-foreground transition-colors p-1.5 -mr-1.5">
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
             </svg>
@@ -207,24 +207,24 @@ function NurseModal({
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="space-y-4">
             {/* Demographics */}
-            <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+            <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4">
               <div className="grid grid-cols-[100px_1fr] gap-y-3 text-sm font-mono">
                 <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Name</span>
                 <input
-                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
+                  className="bg-transparent border-b border-gray-300 text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
                   value={draft.name}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                 />
                 <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Age</span>
                 <input
                   type="number"
-                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono w-20 focus:border-emerald-500/40 pb-1"
+                  className="bg-transparent border-b border-gray-300 text-foreground/85 outline-none text-sm font-mono w-20 focus:border-emerald-500/40 pb-1"
                   value={draft.age}
                   onChange={(e) => setDraft({ ...draft, age: parseInt(e.target.value) || 0 })}
                 />
                 <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">Sex</span>
                 <select
-                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1 w-20"
+                  className="bg-transparent border-b border-gray-300 text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1 w-20"
                   value={draft.sex}
                   onChange={(e) => setDraft({ ...draft, sex: e.target.value })}
                 >
@@ -234,7 +234,7 @@ function NurseModal({
                 </select>
                 <span className="text-[11px] text-muted-foreground/40 uppercase tracking-wider self-center">ESI</span>
                 <select
-                  className="bg-transparent border-b border-white/[0.12] text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
+                  className="bg-transparent border-b border-gray-300 text-foreground/85 outline-none text-sm font-mono focus:border-emerald-500/40 pb-1"
                   value={draft.esi_score}
                   onChange={(e) => setDraft({ ...draft, esi_score: parseInt(e.target.value) })}
                 >
@@ -250,7 +250,7 @@ function NurseModal({
             {/* Chief Complaint */}
             <Section label="Chief Complaint">
               <input
-                className="w-full bg-transparent border-b border-white/[0.12] text-sm text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
+                className="w-full bg-transparent border-b border-gray-300 text-sm text-foreground/85 outline-none font-mono focus:border-emerald-500/40 pb-1"
                 value={draft.chief_complaint}
                 onChange={(e) => setDraft({ ...draft, chief_complaint: e.target.value })}
               />
@@ -259,7 +259,7 @@ function NurseModal({
             {/* Triage Notes */}
             <Section label="Triage Notes">
               <textarea
-                className="w-full rounded-md border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm font-mono min-h-[80px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
+                className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-mono min-h-[80px] resize-y text-foreground/85 outline-none focus:border-emerald-500/40 leading-relaxed"
                 value={draft.triage_notes}
                 onChange={(e) => setDraft({ ...draft, triage_notes: e.target.value })}
               />
@@ -272,7 +272,7 @@ function NurseModal({
         </div>
 
         {/* Footer */}
-        <div className="flex gap-3 px-6 py-4 border-t border-white/[0.06] bg-[oklch(0.13_0_0)] shrink-0">
+        <div className="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white shrink-0">
           <Button
             className="font-mono text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-9"
             onClick={handleAccept}
@@ -281,7 +281,7 @@ function NurseModal({
           </Button>
           <Button
             variant="outline"
-            className="font-mono text-sm border-white/[0.1] text-muted-foreground hover:text-foreground h-9"
+            className="font-mono text-sm border-gray-200 text-muted-foreground hover:text-foreground h-9"
             onClick={onClose}
           >
             Cancel
@@ -294,7 +294,7 @@ function NurseModal({
 
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+    <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4">
       <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-2">{label}</span>
       {children}
     </div>
@@ -303,7 +303,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 
 function ReadOnlySection({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+    <div className="rounded-lg border border-gray-200 bg-gray-50/80 p-4">
       <span className="text-[11px] font-mono font-semibold text-muted-foreground/40 uppercase tracking-wider block mb-1.5">{label}</span>
       {value ? (
         <p className="text-sm leading-relaxed text-foreground/80">{value}</p>

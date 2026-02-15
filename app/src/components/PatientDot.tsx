@@ -13,11 +13,11 @@ const COLOR_MAP: Record<PatientColor, string> = {
 };
 
 const ESI_COLOR: Record<number, string> = {
-  1: "text-red-400",
-  2: "text-orange-400",
-  3: "text-yellow-400",
-  4: "text-green-400",
-  5: "text-blue-400",
+  1: "text-red-600",
+  2: "text-orange-600",
+  3: "text-yellow-600",
+  4: "text-green-600",
+  5: "text-blue-600",
 };
 
 const GLOW_MAP: Record<PatientColor, string> = {
@@ -82,7 +82,7 @@ export function PatientDot({ patient, onClick, showLabel = true, showEsi = false
       </div>
       {showLabel && (
         <div className="flex items-baseline gap-1.5 min-w-0">
-          <span className="text-xs font-mono text-muted-foreground truncate max-w-[80px] group-hover:text-foreground transition-colors">
+          <span className="text-xs font-mono text-muted-foreground truncate max-w-[120px] group-hover:text-foreground transition-colors">
             {patient.name.split(" ")[0]}
           </span>
           {showEsi && patient.esi_score != null && (

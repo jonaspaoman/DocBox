@@ -52,7 +52,7 @@ export function BedGrid({ patients, onPatientClick, waitTimes }: BedGridProps) {
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-1 px-1.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08]">
+      <div className="grid grid-cols-4 gap-1 px-1.5 py-1.5 rounded-lg bg-gray-50 border border-gray-200">
         {Array.from({ length: 16 }, (_, i) => {
           const bedNum = i + 1;
           const patient = bedMap.get(bedNum);
@@ -61,8 +61,8 @@ export function BedGrid({ patients, onPatientClick, waitTimes }: BedGridProps) {
               key={bedNum}
               className={`relative aspect-square flex items-center justify-center rounded transition-colors border ${
                 patient
-                  ? "border-white/[0.1] bg-white/[0.04]"
-                  : "border-dashed border-white/[0.06] bg-transparent"
+                  ? "border-gray-200 bg-gray-100"
+                  : "border-dashed border-gray-200 bg-transparent"
               }`}
             >
               <span className="absolute top-1 left-1.5 text-[9px] font-mono text-muted-foreground/40 tabular-nums leading-none z-0">
