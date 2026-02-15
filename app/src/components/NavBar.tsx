@@ -12,7 +12,21 @@ const LINKS = [
   { href: "/doctor", label: "Doctor" },
 ];
 
-function HeartbeatMonitor({ active, color = "#34d399" }: { active: boolean; color?: string }) {
+function HeartbeatMonitor({ active, color = "#34d399", baseline = false }: { active: boolean; color?: string; baseline?: boolean }) {
+  if (baseline) {
+    // Red-only pulsing dot for baseline mode
+    return (
+      <div className="flex items-center gap-1.5">
+        <span className="relative flex h-3 w-3">
+          {active && (
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+          )}
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+        </span>
+      </div>
+    );
+  }
+
   return (
     <svg
       width="32"
@@ -83,7 +97,7 @@ export function NavBar() {
     <header className="bg-white header-glow px-6 py-2 flex items-center justify-between shrink-0">
       <div className="flex items-center gap-3">
         <Link href="/" className="flex items-center gap-3">
-          <HeartbeatMonitor active={simState.is_running} color={appMode === "baseline" ? "#ef4444" : "#34d399"} />
+          <HeartbeatMonitor active={simState.is_running} color={appMode === "baseline" ? "#ef4444" : "#34d399"} baseline={appMode === "baseline"} />
         </Link>
         <div className="relative" ref={dropdownRef}>
           <button

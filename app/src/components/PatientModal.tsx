@@ -80,8 +80,13 @@ export function PatientModal({
 
   if (isBaseline) {
     return (
-      <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-        <DialogContent className="max-w-md max-h-[85vh] flex flex-col overflow-hidden bg-white border-gray-200 p-0 shadow-xl" overlayClassName="bg-transparent pointer-events-none">
+      <Dialog open={open} onOpenChange={() => {}} modal={false}>
+        <DialogContent
+          className="max-w-md max-h-[85vh] flex flex-col overflow-hidden bg-white border-gray-200 p-0 shadow-xl"
+          overlayClassName="bg-transparent pointer-events-none"
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          showCloseButton={false}
+        >
           <BaselineModalBody
             patient={patient}
             currentTick={currentTick}
@@ -303,6 +308,20 @@ function DocboxModalBody({
   );
 }
 
+const BASELINE_DISCHARGE_FIELDS = DISCHARGE_FIELDS.slice(0, 5);
+
+/** Score first N words of two strings — returns count of matching words */
+function scoreFirstNWords(submitted: string, truth: string, n: number): number {
+  const normalize = (s: string) => s.trim().toLowerCase().replace(/[^\w\s]/g, "").split(/\s+/).filter(Boolean);
+  const subWords = normalize(submitted);
+  const truthWords = normalize(truth);
+  let matched = 0;
+  for (let i = 0; i < Math.min(n, truthWords.length); i++) {
+    if (i < subWords.length && subWords[i] === truthWords[i]) matched++;
+  }
+  return matched;
+}
+
 /** Baseline modal body — editable blank fields, sticky footer, validation errors */
 function BaselineModalBody({
   patient,
@@ -325,6 +344,7 @@ function BaselineModalBody({
   eventLog: LogEntry[];
   updatePatient: (pid: string, changes: Partial<Patient>, version?: number) => void;
 }) {
+  const { baselineGroundTruth, recordBaselineScore } = usePatientContext();
   const isCalledIn = patient.status === "called_in";
   const isErBed = patient.status === "er_bed";
 
@@ -364,7 +384,7 @@ function BaselineModalBody({
   const intakeValid = !Object.values(intakeErrors).some(Boolean);
 
   const dischargeErrors: Record<string, boolean> = {};
-  for (const { key } of DISCHARGE_FIELDS) {
+  for (const { key } of BASELINE_DISCHARGE_FIELDS) {
     dischargeErrors[key] = (papers[key] ?? "").trim() === "";
   }
   const dischargeValid = !Object.values(dischargeErrors).some(Boolean);
@@ -375,25 +395,60 @@ function BaselineModalBody({
   const handleAccept = useCallback(() => {
     setSubmitted(true);
     if (!intakeValid || !onAccept) return;
-    updatePatient(patient.pid, {
-      name: intake.name,
-      age: intake.age,
-      sex: intake.sex,
-      chief_complaint: intake.chief_complaint,
-      triage_notes: intake.triage_notes,
-      esi_score: intake.esi_score,
-    });
+
+    // Score intake against ground truth
+    const gt = baselineGroundTruth.get(patient.pid);
+    if (gt) {
+      let score = 0;
+      let max = 0;
+      // Exact match fields: name (case-insensitive), age, sex, esi_score
+      max += 1; if (intake.name.trim().toLowerCase() === (gt.name ?? "").trim().toLowerCase()) score += 1;
+      max += 1; if (intake.age === gt.age) score += 1;
+      max += 1; if (intake.sex === gt.sex) score += 1;
+      max += 1; if (intake.esi_score === gt.esi_score) score += 1;
+      // First 8 words: chief_complaint, triage_notes
+      const ccMax = Math.min(8, (gt.chief_complaint ?? "").trim().split(/\s+/).filter(Boolean).length);
+      max += ccMax;
+      score += scoreFirstNWords(intake.chief_complaint, gt.chief_complaint ?? "", 8);
+      const tnMax = Math.min(8, (gt.triage_notes ?? "").trim().split(/\s+/).filter(Boolean).length);
+      max += tnMax;
+      score += scoreFirstNWords(intake.triage_notes, gt.triage_notes ?? "", 8);
+      recordBaselineScore(patient.pid, "intake", score, max);
+    }
+
+    // Don't update patient data — keep original file intact for sidebar
     onAccept(patient.pid);
     onClose();
-  }, [intakeValid, onAccept, updatePatient, patient.pid, intake, onClose]);
+  }, [intakeValid, onAccept, patient.pid, onClose, baselineGroundTruth, recordBaselineScore]);
 
   const handleDischarge = useCallback(() => {
     setSubmitted(true);
     if (!dischargeValid || !onDischarge) return;
-    updatePatient(patient.pid, { discharge_papers: papers });
+
+    // Score discharge against ground truth (if available)
+    const gt = baselineGroundTruth.get(patient.pid);
+    if (gt?.discharge_papers) {
+      let score = 0;
+      let max = 0;
+      for (const { key, multiline } of BASELINE_DISCHARGE_FIELDS) {
+        const truthVal = gt.discharge_papers[key] ?? "";
+        if (!truthVal) continue; // skip fields with no ground truth
+        if (multiline) {
+          const wordMax = Math.min(8, truthVal.trim().split(/\s+/).filter(Boolean).length);
+          max += wordMax;
+          score += scoreFirstNWords(papers[key] ?? "", truthVal, 8);
+        } else {
+          max += 1;
+          if ((papers[key] ?? "").trim().toLowerCase() === truthVal.trim().toLowerCase()) score += 1;
+        }
+      }
+      if (max > 0) recordBaselineScore(patient.pid, "discharge", score, max);
+    }
+
+    // Don't update patient data — keep original file intact for sidebar
     onDischarge(patient.pid);
     onClose();
-  }, [dischargeValid, onDischarge, updatePatient, patient.pid, papers, onClose]);
+  }, [dischargeValid, onDischarge, patient.pid, onClose, baselineGroundTruth, recordBaselineScore]);
 
   const statusLabel = BASELINE_STATUS_LABELS[patient.status] ?? patient.status.replace("_", " ").toUpperCase();
 
@@ -403,6 +458,16 @@ function BaselineModalBody({
 
   return (
     <>
+      {/* Custom X button (since we disabled Radix's built-in close) */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 rounded-xs opacity-70 transition-opacity hover:opacity-100"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
       {/* Header */}
       <div className="px-6 pt-6 pb-0 shrink-0">
         <DialogHeader>
@@ -507,7 +572,7 @@ function BaselineModalBody({
                 <span className="text-foreground">#{patient.bed_number ?? "—"}</span>
               </div>
 
-              {DISCHARGE_FIELDS.map(({ key, label, multiline }) => (
+              {BASELINE_DISCHARGE_FIELDS.map(({ key, label, multiline }) => (
                 <div key={key}>
                   <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-1">{label}</div>
                   {multiline ? (

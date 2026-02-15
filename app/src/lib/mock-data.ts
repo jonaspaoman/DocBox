@@ -165,5 +165,6 @@ export function getNextMockPatient(): Patient {
     version: 1,
     entered_current_status_tick: 0,
     lab_results: raw.ed_session.labs.length > 0 ? raw.ed_session.labs : undefined,
+    discharge_papers: raw.ed_session.discharge_papers ?? undefined,
   };
 }
